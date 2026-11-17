@@ -1,0 +1,89 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Providers;
+
+use App\Models\Activity;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Deal;
+use App\Models\FollowUp;
+use App\Models\ImportExportJob;
+use App\Models\Lead;
+use App\Models\Pipeline;
+use App\Models\PipelineStage;
+use App\Models\Quotation;
+use App\Models\Task;
+use App\Models\Team;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        //
+    }
+
+    public function boot(): void
+    {
+        Model::shouldBeStrict(! $this->app->isProduction());
+
+        Relation::enforceMorphMap([
+            'user' => User::class,
+            'team' => Team::class,
+            'company' => Company::class,
+            'contact' => Contact::class,
+            'lead' => Lead::class,
+            'pipeline' => Pipeline::class,
+            'pipeline_stage' => PipelineStage::class,
+            'deal' => Deal::class,
+            'activity' => Activity::class,
+            'task' => Task::class,
+            'follow_up' => FollowUp::class,
+            'quotation' => Quotation::class,
+            'import_export_job' => ImportExportJob::class,
+        ]);
+
+        Password::defaults(function (): Password {
+            $rule = Password::min(12)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+                ->symbols();
+
+            return $this->app->isProduction() ? $rule->uncompromised() : $rule;
+        });
+
+        Gate::before(function (User $user, string $ability, array $arguments = []): ?bool {
+            if (! $user->hasRole('Super Admin')) {
+                return null;
+            }
+
+            if (
+                isset($arguments[0])
+                && $arguments[0] instanceof Lead
+                && $arguments[0]->isConverted()
+                && in_array($ability, ['update', 'convert'], true)
+            ) {
+                return false;
+            }
+
+            if (
+                isset($arguments[0])
+                && $arguments[0] instanceof Quotation
+                && ! $arguments[0]->isDraft()
+                && $ability === 'update'
+            ) {
+                return false;
+            }
+
+            return true;
+        });
+    }
+}

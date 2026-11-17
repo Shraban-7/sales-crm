@@ -1,0 +1,106 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Http\Controllers\Activities\ActivityController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Companies\CompanyController;
+use App\Http\Controllers\Contacts\ContactController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Deals\DealController;
+use App\Http\Controllers\Deals\MoveDealStageController;
+use App\Http\Controllers\FollowUps\FollowUpController;
+use App\Http\Controllers\Imports\ImportExportController;
+use App\Http\Controllers\Leads\ConvertLeadController;
+use App\Http\Controllers\Leads\LeadController;
+use App\Http\Controllers\Notifications\NotificationController;
+use App\Http\Controllers\Pipelines\PipelineController;
+use App\Http\Controllers\Pipelines\PipelineStageController;
+use App\Http\Controllers\Quotations\QuotationController;
+use App\Http\Controllers\Quotations\QuotationWorkflowController;
+use App\Http\Controllers\Reports\ReportController;
+use App\Http\Controllers\Settings\AuditLogController;
+use App\Http\Controllers\Settings\TeamController;
+use App\Http\Controllers\Settings\UserController;
+use App\Http\Controllers\Tasks\TaskController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('guest')->group(function (): void {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::get('/', DashboardController::class)->name('dashboard');
+
+    // Leads
+    Route::resource('leads', LeadController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::post('/leads/{lead}/convert', ConvertLeadController::class)->name('leads.convert');
+
+    // Companies & Contacts
+    Route::resource('companies', CompanyController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::resource('contacts', ContactController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+
+    // Pipelines & Kanban
+    Route::get('/pipelines', [PipelineController::class, 'index'])->name('pipelines.index');
+    Route::post('/pipelines', [PipelineController::class, 'store'])->name('pipelines.store');
+    Route::get('/pipelines/{pipeline?}/kanban', [PipelineController::class, 'kanban'])->name('pipelines.kanban');
+    Route::post('/pipelines/{pipeline}/stages', [PipelineStageController::class, 'store'])->name('pipelines.stages.store');
+    Route::post('/pipelines/{pipeline}/stages/reorder', [PipelineStageController::class, 'reorder'])->name('pipelines.stages.reorder');
+    Route::delete('/pipelines/{pipeline}/stages/{stage}', [PipelineStageController::class, 'destroy'])->name('pipelines.stages.destroy');
+
+    // Deals
+    Route::resource('deals', DealController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::patch('/deals/{deal}/stage', MoveDealStageController::class)->name('deals.move-stage');
+
+    // Activities
+    Route::post('/activities', [ActivityController::class, 'store'])->name('activities.store');
+    Route::delete('/activities/{activity}', [ActivityController::class, 'destroy'])->name('activities.destroy');
+
+    // Tasks
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::patch('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
+    Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+    // Follow-Ups
+    Route::get('/follow-ups', [FollowUpController::class, 'index'])->name('follow-ups.index');
+    Route::post('/follow-ups', [FollowUpController::class, 'store'])->name('follow-ups.store');
+    Route::patch('/follow-ups/{followUp}/complete', [FollowUpController::class, 'complete'])->name('follow-ups.complete');
+    Route::delete('/follow-ups/{followUp}', [FollowUpController::class, 'destroy'])->name('follow-ups.destroy');
+
+    // Quotations
+    Route::resource('quotations', QuotationController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
+    Route::post('/quotations/{quotation}/send', [QuotationWorkflowController::class, 'send'])->name('quotations.send');
+    Route::post('/quotations/{quotation}/accept', [QuotationWorkflowController::class, 'accept'])->name('quotations.accept');
+    Route::post('/quotations/{quotation}/reject', [QuotationWorkflowController::class, 'reject'])->name('quotations.reject');
+    Route::post('/quotations/{quotation}/clone', [QuotationWorkflowController::class, 'cloneVersion'])->name('quotations.clone');
+    Route::get('/quotations/{quotation}/print', [QuotationWorkflowController::class, 'print'])->name('quotations.print');
+
+    // Reports
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::put('/notifications/preferences', [NotificationController::class, 'updatePreferences'])->name('notifications.preferences');
+
+    // Imports & Exports
+    Route::get('/imports', [ImportExportController::class, 'index'])->name('imports.index');
+    Route::post('/imports', [ImportExportController::class, 'storeImport'])->name('imports.store');
+    Route::post('/exports', [ImportExportController::class, 'storeExport'])->name('exports.store');
+    Route::get('/imports/{job}/download', [ImportExportController::class, 'download'])->name('imports.download');
+
+    // Settings (Users, Teams, Audit Logs)
+    Route::prefix('settings')->name('settings.')->group(function (): void {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::post('/users/{user}/reassign', [UserController::class, 'reassign'])->name('users.reassign');
+        Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+        Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+    });
+});
