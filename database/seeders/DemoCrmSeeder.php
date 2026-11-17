@@ -54,7 +54,7 @@ class DemoCrmSeeder extends Seeder
             ]
         );
 
-        $password = Hash::make('Password@12345');
+        $password = Hash::make('password');
 
         $superAdmin = User::query()->firstOrCreate(
             ['email' => 'superadmin@salescrm.test'],
