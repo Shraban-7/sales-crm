@@ -1,4 +1,4 @@
-# Migrations Execution Order & Indexing Blueprint — Sales CRM
+# Migrations Execution Order & Indexing Blueprint — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (18 Migrations Verified)`  

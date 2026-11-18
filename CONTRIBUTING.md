@@ -5,7 +5,7 @@
 
 ## 1. Development Workflow Overview
 
-Development on **Sales CRM** follows a documentation-first, test-verified workflow across PHP 8.3+, Laravel 13.x, MySQL 8.0+, Blade, Tailwind CSS v4, and Vanilla ES2022 JavaScript.
+Development on **Sale Fusion CRM** follows a documentation-first, test-verified workflow across PHP 8.3+, Laravel 13.x, MySQL 8.0+, Blade, Tailwind CSS v4, and Vanilla ES2022 JavaScript.
 
 ```mermaid
 flowchart LR

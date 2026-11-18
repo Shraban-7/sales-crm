@@ -1,4 +1,4 @@
-<x-layouts.app title="Pipelines — Sales CRM" header="Sales Pipelines Configuration">
+<x-layouts.app title="Pipelines — Sale Fusion CRM" header="Sales Pipelines Configuration">
     @can('create', \App\Models\Pipeline::class)
         <form method="POST" action="{{ route('pipelines.store') }}" class="crm-card p-5 space-y-3">
             @csrf

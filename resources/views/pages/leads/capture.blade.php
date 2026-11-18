@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Talk to Sales — Sales CRM</title>
+    <title>Talk to Sales — Sale Fusion CRM</title>
     <x-crm.favicons />
     @vite(['resources/css/app.css'])
 </head>

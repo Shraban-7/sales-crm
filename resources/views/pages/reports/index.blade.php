@@ -1,4 +1,4 @@
-<x-layouts.app title="Reports — Sales CRM" header="Reports & Executive Analytics">
+<x-layouts.app title="Reports — Sale Fusion CRM" header="Reports & Executive Analytics">
     <search aria-label="Report filters" class="block crm-card p-5">
         <form method="GET" action="{{ route('reports.index') }}" class="flex flex-wrap gap-3 items-end">
             <div>

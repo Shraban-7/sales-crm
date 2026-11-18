@@ -1,4 +1,4 @@
-# Deployment Guide — Sales CRM
+# Deployment Guide — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Operational Runbook)`  

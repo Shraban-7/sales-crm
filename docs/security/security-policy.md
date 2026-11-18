@@ -1,4 +1,4 @@
-# Security Policy & Threat Model — Sales CRM
+# Security Policy & Threat Model — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Security Standard)`  
@@ -6,7 +6,7 @@
 
 ## 1. Security Posture Overview
 
-**Sales CRM** processes commercially sensitive B2B/B2C prospect data, contact PII, revenue pipelines, and pricing quotations. Every layer of the [Laravel 12](https://laravel.com/framework/docs/12.x/configuration) application must enforce **Defense-in-Depth**, **Least Privilege**, and **Default-Deny Authorization**.
+**Sale Fusion CRM** processes commercially sensitive B2B/B2C prospect data, contact PII, revenue pipelines, and pricing quotations. Every layer of the [Laravel 12](https://laravel.com/framework/docs/12.x/configuration) application must enforce **Defense-in-Depth**, **Least Privilege**, and **Default-Deny Authorization**.
 
 ## 2. Core Threat Model & Mitigation Matrix
 

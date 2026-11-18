@@ -1,4 +1,4 @@
-# Design Patterns & Anti-Patterns — Sales CRM
+# Design Patterns & Anti-Patterns — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  
@@ -6,7 +6,7 @@
 
 ## 1. Approved Architectural Patterns
 
-| Pattern | Where Used in Sales CRM | Purpose & Benefit |
+| Pattern | Where Used in Sale Fusion CRM | Purpose & Benefit |
 | :--- | :--- | :--- |
 | **Action Pattern (Command)** | `app/Actions/<Domain>/*Action.php` | Encapsulates a single atomic business mutation (`ConvertLeadToDealAction`, `MoveDealStageAction`, `ApproveQuotationAction`) callable from Web Controllers, CLI Commands, or Queue Jobs. |
 | **Domain Service Pattern** | `app/Services/<Domain>/*Service.php` | Coordinates broader domain calculations or multi-query read/write workflows (`PipelineForecastService`, `CsvImportService`). |

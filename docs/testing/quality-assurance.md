@@ -1,4 +1,4 @@
-# Quality Assurance & Static Analysis Gates — Sales CRM
+# Quality Assurance & Static Analysis Gates — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Active QA Standard (Verified)`  

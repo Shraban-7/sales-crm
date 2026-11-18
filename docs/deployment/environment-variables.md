@@ -1,4 +1,4 @@
-# Environment Variables Specification (`.env.example`) — Sales CRM
+# Environment Variables Specification (`.env.example`) — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  
@@ -11,7 +11,7 @@ Per [Laravel 12 Configuration](https://laravel.com/framework/docs/12.x/configura
 ## 2. Canonical `.env.example` Template
 
 ```ini
-APP_NAME="Sales CRM"
+APP_NAME="Sale Fusion CRM"
 APP_ENV=production
 APP_KEY=
 APP_DEBUG=false
@@ -55,7 +55,7 @@ MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS="noreply@crm.example.com"
 MAIL_FROM_NAME="${APP_NAME}"
 
-# Custom Sales CRM Business Configuration (mapped in config/crm.php)
+# Custom Sale Fusion CRM Business Configuration (mapped in config/crm.php)
 CRM_DEFAULT_CURRENCY=BDT
 CRM_QUOTE_NUMBER_PREFIX=QT
 CRM_DEFAULT_DEAL_ROTTING_DAYS=14

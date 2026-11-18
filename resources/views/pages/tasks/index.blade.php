@@ -1,4 +1,4 @@
-<x-layouts.app title="Tasks — Sales CRM" header="Tasks & Reminders">
+<x-layouts.app title="Tasks — Sale Fusion CRM" header="Tasks & Reminders">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="inline-flex items-center gap-1.5 rounded-xl bg-slate-200/70 p-1 text-sm">
             <a href="{{ route('tasks.index', ['filter' => 'open']) }}"

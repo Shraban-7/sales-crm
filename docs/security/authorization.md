@@ -1,4 +1,4 @@
-# Authorization, RBAC & Data Isolation (IDOR Prevention) — Sales CRM
+# Authorization, RBAC & Data Isolation (IDOR Prevention) — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  
@@ -6,7 +6,7 @@
 
 ## 1. Dual-Layer Authorization Model
 
-To guarantee that users can neither execute unauthorized actions nor access records belonging to other sales reps/teams (Insecure Direct Object Reference — IDOR), **Sales CRM** enforces a two-layer authorization model:
+To guarantee that users can neither execute unauthorized actions nor access records belonging to other sales reps/teams (Insecure Direct Object Reference — IDOR), **Sale Fusion CRM** enforces a two-layer authorization model:
 
 1. **Capability Layer ([Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/v8/installation-laravel)):** Checks whether the user's assigned Role grants the permission slug (e.g., `deals.update.own` vs `deals.update.team`).
 2. **Record Ownership & Team Layer (Laravel Policies + Eloquent Query Scopes):** Verifies whether the specific model instance's `owner_id` or `team_id` matches the authenticated user.

@@ -1,4 +1,4 @@
-<x-layouts.app title="Security — Sales CRM" header="Security Settings">
+<x-layouts.app title="Security — Sale Fusion CRM" header="Security Settings">
     <div class="max-w-2xl space-y-6">
         <div class="crm-card p-6 space-y-4">
             <div class="flex items-start justify-between gap-4">

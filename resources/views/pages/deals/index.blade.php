@@ -1,4 +1,4 @@
-<x-layouts.app title="Deals — Sales CRM" header="Deals & Opportunities">
+<x-layouts.app title="Deals — Sale Fusion CRM" header="Deals & Opportunities">
     <div class="crm-card p-4 flex flex-wrap items-center justify-between gap-3">
         <form method="GET" action="{{ route('deals.index') }}" class="flex flex-wrap items-center gap-2.5 flex-1">
             <div class="relative flex-1 min-w-52 max-w-sm">

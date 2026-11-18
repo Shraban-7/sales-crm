@@ -1,4 +1,4 @@
-<x-layouts.app title="Pipeline Kanban — Sales CRM" header="{{ $pipeline->name }} — Kanban">
+<x-layouts.app title="Pipeline Kanban — Sale Fusion CRM" header="{{ $pipeline->name }} — Kanban">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-2">
             @foreach ($pipelines as $item)

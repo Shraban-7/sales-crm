@@ -1,4 +1,4 @@
-# Authentication & Session Security — Sales CRM
+# Authentication & Session Security — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  

@@ -1,4 +1,4 @@
-# Common Troubleshooting Runbook — Sales CRM
+# Common Troubleshooting Runbook — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Operational Guide)`  

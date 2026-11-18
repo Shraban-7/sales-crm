@@ -1,4 +1,4 @@
-# Queue Workers & Task Scheduler Configuration — Sales CRM
+# Queue Workers & Task Scheduler Configuration — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Operational Runbook)`  

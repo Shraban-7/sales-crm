@@ -1,4 +1,4 @@
-# Debugging Guide & Root-Cause Workflow — Sales CRM
+# Debugging Guide & Root-Cause Workflow — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Operational Guide)`  

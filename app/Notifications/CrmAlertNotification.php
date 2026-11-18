@@ -53,7 +53,7 @@ final class CrmAlertNotification extends Notification implements ShouldQueue
             ->line($this->message);
 
         if ($this->actionUrl !== null) {
-            $mail->action('View in Sales CRM', $this->actionUrl);
+            $mail->action('View in '.config('app.name', 'Sale Fusion CRM'), $this->actionUrl);
         }
 
         return $mail;

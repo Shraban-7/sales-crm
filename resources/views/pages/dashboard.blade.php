@@ -1,4 +1,4 @@
-<x-layouts.app title="Dashboard — Sales CRM" header="Executive Dashboard">
+<x-layouts.app title="Dashboard — Sale Fusion CRM" header="Executive Dashboard">
     @php
         $openPipelineLines = $openPipelineByCurrency
             ->map(fn ($row) => $row->currency.' '.number_format((float) $row->total_value, 2))

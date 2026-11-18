@@ -1,4 +1,4 @@
-<x-layouts.app title="New Quotation — Sales CRM" header="Create Quotation">
+<x-layouts.app title="New Quotation — Sale Fusion CRM" header="Create Quotation">
     <form method="POST" action="{{ route('quotations.store') }}" data-module="quotation-calculator" class="crm-card p-6 space-y-6">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">

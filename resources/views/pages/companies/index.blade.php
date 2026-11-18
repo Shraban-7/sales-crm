@@ -1,4 +1,4 @@
-<x-layouts.app title="Companies — Sales CRM" header="Companies">
+<x-layouts.app title="Companies — Sale Fusion CRM" header="Companies">
     <div class="crm-card p-4 flex flex-wrap items-center justify-between gap-3">
         <form method="GET" action="{{ route('companies.index') }}" class="flex flex-wrap items-center gap-2.5 flex-1">
             <div class="relative flex-1 min-w-52 max-w-sm">

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Sign In — {{ config('app.name', 'Sales CRM') }}</title>
+    <title>Sign In — {{ config('app.name', 'Sale Fusion CRM') }}</title>
     <x-crm.favicons />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -27,7 +27,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-base font-bold tracking-tight text-white">{{ config('app.name', 'Sales CRM') }}</p>
+                    <p class="text-base font-bold tracking-tight text-white">{{ config('app.name', 'Sale Fusion CRM') }}</p>
                     <p class="text-xs text-slate-400">Revenue Operations Platform</p>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-base font-bold tracking-tight text-slate-900">{{ config('app.name', 'Sales CRM') }}</p>
+                        <p class="text-base font-bold tracking-tight text-slate-900">{{ config('app.name', 'Sale Fusion CRM') }}</p>
                         <p class="text-xs text-slate-500">Revenue Operations</p>
                     </div>
                 </div>

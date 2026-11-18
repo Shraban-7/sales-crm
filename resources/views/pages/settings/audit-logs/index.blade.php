@@ -1,4 +1,4 @@
-<x-layouts.app title="Audit Logs — Sales CRM" header="Immutable Security & Compliance Audit Logs">
+<x-layouts.app title="Audit Logs — Sale Fusion CRM" header="Immutable Security & Compliance Audit Logs">
     <form method="GET" action="{{ route('settings.audit-logs.index') }}" class="crm-card p-5 flex flex-wrap gap-3 items-end">
         <div>
             <label class="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Event</label>

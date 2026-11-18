@@ -1,4 +1,4 @@
-# Coding Standards & Style Guide — Sales CRM
+# Coding Standards & Style Guide — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Active Governance Standard (Verified)`  

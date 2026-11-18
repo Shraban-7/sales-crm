@@ -1,4 +1,4 @@
-# Application Directory Structure — Sales CRM
+# Application Directory Structure — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  

@@ -1,4 +1,4 @@
-<x-layouts.app title="Notifications — Sales CRM" header="Notifications & Preferences">
+<x-layouts.app title="Notifications — Sale Fusion CRM" header="Notifications & Preferences">
     <div class="flex justify-end">
         <form method="POST" action="{{ route('notifications.read-all') }}">
             @csrf

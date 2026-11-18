@@ -7,7 +7,7 @@
 
 ## 1. Context
 
-The **Sales CRM** project requires a maintainable, high-velocity architecture supporting 14 interconnected CRM domains (Leads, Contacts, Companies, Pipelines, Deals, Tasks, Activities, Follow-Ups, Quotations, Reports, RBAC, Notifications, Imports/Exports, Audit Logs) developed primarily via Google Gemini Antigravity IDE.
+The **Sale Fusion CRM** project requires a maintainable, high-velocity architecture supporting 14 interconnected CRM domains (Leads, Contacts, Companies, Pipelines, Deals, Tasks, Activities, Follow-Ups, Quotations, Reports, RBAC, Notifications, Imports/Exports, Audit Logs) developed primarily via Google Gemini Antigravity IDE.
 
 ## 2. Options Considered
 

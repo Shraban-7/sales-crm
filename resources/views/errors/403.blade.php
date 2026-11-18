@@ -11,7 +11,7 @@
 @section('tone', 'rose')
 @section('title', 'Access restricted')
 @section('message', $reason)
-@section('tip', 'Sales CRM isolates records by role and team ownership, and signed quotation links expire automatically. Contact your Sales Manager or Org Admin if you need access.')
+@section('tip', 'Sale Fusion CRM isolates records by role and team ownership, and signed quotation links expire automatically. Contact your Sales Manager or Org Admin if you need access.')
 
 @section('icon')
     <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">

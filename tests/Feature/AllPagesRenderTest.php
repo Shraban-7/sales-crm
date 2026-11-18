@@ -42,6 +42,7 @@ final class AllPagesRenderTest extends TestCase
 
         $this->get(route('login'))
             ->assertOk()
+            ->assertSee('Sale Fusion CRM')
             ->assertSee('Sign In to Workspace')
             ->assertSee('favicon.svg', false)
             ->assertSee('favicon.ico', false)
@@ -176,6 +177,7 @@ final class AllPagesRenderTest extends TestCase
             $response = $this->actingAs($superAdmin)->get($url);
 
             $response->assertOk()
+                ->assertSee('Sale Fusion CRM')
                 ->assertSee('aria-label="Notifications', false)
                 ->assertSee('<svg', false)
                 ->assertSee('favicon.svg', false)

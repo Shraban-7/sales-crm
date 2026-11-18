@@ -4,7 +4,7 @@
 @section('label', 'Maintenance Mode')
 @section('tone', 'indigo')
 @section('title', 'Scheduled maintenance in progress')
-@section('message', 'Sales CRM is temporarily offline while an update or database backup completes. Service will resume shortly.')
+@section('message', 'Sale Fusion CRM is temporarily offline while an update or database backup completes. Service will resume shortly.')
 @section('tip', 'Your active deals, leads, and quotations are unaffected—please check back in a few minutes.')
 
 @section('icon')

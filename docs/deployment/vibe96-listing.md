@@ -1,4 +1,4 @@
-# Vibe96 Marketplace Listing & Submission Package — Sales CRM
+# Vibe96 Marketplace Listing & Submission Package — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Target Platform:** [Vibe96 Marketplace (`vibe96.com`)](https://vibe96.com/) & [Vibe Studio (`studio.vibe96.com`)](https://studio.vibe96.com/)  
@@ -15,8 +15,8 @@ Use the fields below directly when completing the seller submission form on **Vi
 
 | Upload Field | Recommended Value |
 | :--- | :--- |
-| **Product Title** | **Sales CRM — Full-Lifecycle B2B/B2C Revenue, Pipeline & Quotation Platform (Laravel + Tailwind v4)** |
-| **Short Tagline (≤ 140 chars)** | Turnkey B2B/B2C Sales CRM with Kanban pipelines, atomic lead conversion, versioned PDF quotations, team RBAC, and revenue forecasting. |
+| **Product Title** | **Sale Fusion CRM — Full-Lifecycle B2B/B2C Revenue, Pipeline & Quotation Platform (Laravel + Tailwind v4)** |
+| **Short Tagline (≤ 140 chars)** | Turnkey B2B/B2C Sale Fusion CRM with Kanban pipelines, atomic lead conversion, versioned PDF quotations, team RBAC, and revenue forecasting. |
 | **Demo URL** | `https://sales-crm.devshraban.com` |
 | **Primary Category** | CRM & Sales Platforms (`CRM and E-commerce platforms` / `Business Administration & Micro-SaaS`) |
 | **Secondary Category** | Project Management & Operations Tools / Full Web Apps with Admin Dashboards & Customer Portals |
@@ -32,7 +32,7 @@ Use the fields below directly when completing the seller submission form on **Vi
 
 ### Overview & Problem Solved
 
-Modern revenue teams outgrow spreadsheets quickly, yet enterprise CRM subscriptions charge steep per-seat fees while locking away data and workflow customization. **Sales CRM** is a production-ready, self-hostable B2B/B2C Customer Relationship Management application engineered on **Laravel 13 (PHP 8.3+)**, **MySQL 8.0+**, **Tailwind CSS v4**, and **Vanilla ES2022 JavaScript**.
+Modern revenue teams outgrow spreadsheets quickly, yet enterprise CRM subscriptions charge steep per-seat fees while locking away data and workflow customization. **Sale Fusion CRM** is a production-ready, self-hostable B2B/B2C Customer Relationship Management application engineered on **Laravel 13 (PHP 8.3+)**, **MySQL 8.0+**, **Tailwind CSS v4**, and **Vanilla ES2022 JavaScript**.
 
 It delivers the complete revenue operations lifecycle out of the box—from public web-to-lead capture (`/capture/lead`), HMAC-signed webhook ingestion (`POST /api/leads/capture`), and lead scoring to interactive Kanban deal pipelines, versioned quotations with manager discount approvals, signed public customer acceptance portals (`/q/{ulid}`), mPDF proposal generation, SLA follow-up cadences, multi-currency revenue analytics, and branded HTTP error pages (`401–503`).
 
@@ -133,7 +133,7 @@ php artisan serve
 
 ## 5. Vibe96 Automated Audit ("Warden") Readiness Summary
 
-| Audit Dimension | Sales CRM Verification Evidence | Status |
+| Audit Dimension | Sale Fusion CRM Verification Evidence | Status |
 | :--- | :--- | :--- |
 | **1. Zero Secrets & Clean Package Hygiene** | `.env`, `.git/`, `vendor/`, `node_modules/`, internal AI/audit files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `project-discovery-report.md`, `report.md`, `docs/CHANGELOG.md`, `docs/prompts/`), logs, and sqlite artifacts are excluded by `scripts/package-vibe96.ps1`. | **PASS** |
 | **2. Strict Type Safety & Code Formatting** | Every PHP file declares `declare(strict_types=1);` with typed signatures. `vendor/bin/pint --test` passes with `0` issues. | **PASS** |

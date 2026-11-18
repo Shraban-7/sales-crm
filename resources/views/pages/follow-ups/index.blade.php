@@ -1,4 +1,4 @@
-<x-layouts.app title="Follow-Ups — Sales CRM" header="Customer Follow-Ups">
+<x-layouts.app title="Follow-Ups — Sale Fusion CRM" header="Customer Follow-Ups">
     @can('create', \App\Models\FollowUp::class)
         <form method="POST" action="{{ route('follow-ups.store') }}" class="crm-card p-5 space-y-3">
             @csrf

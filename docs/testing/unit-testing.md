@@ -1,4 +1,4 @@
-# Unit Testing Guide — Sales CRM
+# Unit Testing Guide — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  

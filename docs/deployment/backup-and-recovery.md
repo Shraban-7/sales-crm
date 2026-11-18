@@ -1,4 +1,4 @@
-# Backup & Disaster Recovery Plan — Sales CRM
+# Backup & Disaster Recovery Plan — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Operational Runbook)`  

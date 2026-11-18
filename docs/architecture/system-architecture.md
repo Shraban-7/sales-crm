@@ -1,4 +1,4 @@
-# System Architecture — Sales CRM
+# System Architecture — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Production Architecture)`  
@@ -6,7 +6,7 @@
 
 ## 1. Architectural Vision
 
-**Sales CRM** is architected as a **Modular Monolith** built on [Laravel 12](https://laravel.com/framework/docs/12.x/configuration), MySQL 8.0+, Server-Side Rendered (SSR) Laravel Blade templates, [Tailwind CSS v4](https://tailwindcss.com/docs/upgrade-guide), and progressive Vanilla JavaScript enhancement.
+**Sale Fusion CRM** is architected as a **Modular Monolith** built on [Laravel 12](https://laravel.com/framework/docs/12.x/configuration), MySQL 8.0+, Server-Side Rendered (SSR) Laravel Blade templates, [Tailwind CSS v4](https://tailwindcss.com/docs/upgrade-guide), and progressive Vanilla JavaScript enhancement.
 
 This architecture deliberately avoids the operational complexity of distributed microservices or dual-repository SPA setups while maintaining strict domain boundaries between CRM modules (`Leads`, `Contacts`, `Companies`, `Deals`, `Quotations`, `Activities`, `Tasks`, `Reports`).
 

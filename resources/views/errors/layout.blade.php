@@ -32,7 +32,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('code', 'Error') — @yield('title', 'Something went wrong') | {{ config('app.name', 'Sales CRM') }}</title>
+    <title>@yield('code', 'Error') — @yield('title', 'Something went wrong') | {{ config('app.name', 'Sale Fusion CRM') }}</title>
     <x-crm.favicons />
     @if ($hasAssets)
         @vite(['resources/css/app.css'])
@@ -55,7 +55,7 @@
                 </svg>
             </span>
             <span>
-                <span class="block text-sm font-bold tracking-tight text-white">{{ config('app.name', 'Sales CRM') }}</span>
+                <span class="block text-sm font-bold tracking-tight text-white">{{ config('app.name', 'Sale Fusion CRM') }}</span>
                 <span class="block text-[11px] text-slate-400">Revenue Workspace</span>
             </span>
         </a>
@@ -113,7 +113,7 @@
     </main>
 
     <footer class="relative z-10 mx-auto w-full max-w-4xl flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
-        <span>{{ config('app.name', 'Sales CRM') }} &middot; Protected Workspace</span>
+        <span>{{ config('app.name', 'Sale Fusion CRM') }} &middot; Protected Workspace</span>
         <span>{{ now()->toFormattedDateString() }}</span>
     </footer>
 </body>

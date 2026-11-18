@@ -1,4 +1,4 @@
-# Request & Job Lifecycle — Sales CRM
+# Request & Job Lifecycle — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  

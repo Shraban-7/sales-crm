@@ -1,4 +1,4 @@
-# Logging & Observability Standards — Sales CRM
+# Logging & Observability Standards — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  

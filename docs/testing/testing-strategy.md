@@ -1,4 +1,4 @@
-# Testing Strategy & Architecture — Sales CRM
+# Testing Strategy & Architecture — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  
@@ -6,11 +6,11 @@
 
 ## 1. Testing Philosophy
 
-Every module in **Sales CRM** is verified using an automated test pyramid built on **[Pest PHP](https://pestphp.com/docs/writing-tests)** (or PHPUnit 11, fully compatible under the same `php artisan test` runner in [Laravel 12](https://laravel.com/framework/docs/12.x/configuration)).
+Every module in **Sale Fusion CRM** is verified using an automated test pyramid built on **[Pest PHP](https://pestphp.com/docs/writing-tests)** (or PHPUnit 11, fully compatible under the same `php artisan test` runner in [Laravel 12](https://laravel.com/framework/docs/12.x/configuration)).
 
 ```mermaid
 flowchart TB
-    subgraph Pyramid["Sales CRM Automated Testing Pyramid"]
+    subgraph Pyramid["Sale Fusion CRM Automated Testing Pyramid"]
         E2E["1. Workflow & Integration Feature Tests (25%) — Multi-step Lead->Deal->Quote flows"]
         HTTP["2. HTTP, FormRequest & RBAC Policy Tests (50%) — Every endpoint, 403 IDOR, 422 validation"]
         UNIT["3. Pure Domain Unit Tests (25%) — Quotation math, Enum state transitions, DTOs, Scorers"]

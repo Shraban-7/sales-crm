@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Sales CRM' }}</title>
+    <title>{{ $title ?? config('app.name', 'Sale Fusion CRM') }}</title>
     <x-crm.favicons />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -28,7 +28,7 @@
                     </svg>
                 </span>
                 <div>
-                    <p class="text-sm font-semibold tracking-tight text-white">Sales CRM</p>
+                    <p class="text-sm font-semibold tracking-tight text-white">{{ config('app.name', 'Sale Fusion CRM') }}</p>
                     <p class="text-[11px] text-slate-400">Revenue Workspace</p>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                 <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
                         <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-brand-600 font-bold text-white">S</span>
-                        <span class="text-sm font-semibold">Sales CRM</span>
+                        <span class="text-sm font-semibold">{{ config('app.name', 'Sale Fusion CRM') }}</span>
                     </div>
                     <button type="button" data-mobile-nav-close aria-label="Close navigation" class="rounded-lg p-1.5 text-slate-300 hover:bg-slate-800">
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -92,7 +92,7 @@
                     </svg>
                 </button>
                 <div class="min-w-0">
-                    <h1 class="text-base sm:text-lg font-semibold tracking-tight text-slate-900 truncate">{{ $header ?? 'Sales CRM' }}</h1>
+                    <h1 class="text-base sm:text-lg font-semibold tracking-tight text-slate-900 truncate">{{ $header ?? config('app.name', 'Sale Fusion CRM') }}</h1>
                 </div>
             </div>
 

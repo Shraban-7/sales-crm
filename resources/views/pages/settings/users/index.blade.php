@@ -1,4 +1,4 @@
-<x-layouts.app title="Users & Teams — Sales CRM" header="Users & Sales Teams">
+<x-layouts.app title="Users & Teams — Sale Fusion CRM" header="Users & Sales Teams">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         @can('create', \App\Models\User::class)
             <form method="POST" action="{{ route('settings.users.store') }}" class="crm-card p-6 space-y-4">

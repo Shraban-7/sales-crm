@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-11-19
 
-All notable changes to the **Sales CRM** application and documentation are tracked in this file. This project follows [Semantic Versioning](https://semver.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+All notable changes to the **Sale Fusion CRM** application and documentation are tracked in this file. This project follows [Semantic Versioning](https://semver.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 

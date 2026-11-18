@@ -1,4 +1,4 @@
-# Feature & HTTP Workflow Testing — Sales CRM
+# Feature & HTTP Workflow Testing — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Implemented (Active Engineering Specification)`  

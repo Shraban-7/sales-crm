@@ -1,4 +1,4 @@
-# Regression Testing Protocol — Sales CRM
+# Regression Testing Protocol — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
 **Implementation Status:** `Active QA Standard (Verified)`  
@@ -6,7 +6,7 @@
 
 ## 1. Bug-Fix Regression Rule
 
-Whenever a defect is discovered in **Sales CRM**:
+Whenever a defect is discovered in **Sale Fusion CRM**:
 1. Reproduce the defect first by writing a failing automated test in `tests/Feature/` or `tests/Unit/` before modifying application code.
 2. Implement the fix in the appropriate Action, Service, Policy, or Blade view.
 3. Verify the new regression test passes alongside the full test suite (`php artisan test --parallel`).

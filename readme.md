@@ -1,16 +1,16 @@
-# Sales CRM — User Guide, Live Demo & Platform Documentation
+# Sale Fusion CRM — User Guide, Live Demo & Platform Documentation
 
 **Live / Production Domain:** [`https://sales-crm.devshraban.com`](https://sales-crm.devshraban.com)  
 **Built With:** PHP 8.3+ · Laravel 13 · MySQL 8.0 · Blade · Tailwind CSS v4 · Vanilla JS · mPDF  
 **Project Status:** Complete across all `14` CRM modules (`18` database migrations, automated PHPUnit suite & Laravel Pint style checks verified — see [PROJECT_STATUS.md](PROJECT_STATUS.md))
 
-![Sales CRM Executive Dashboard](docs/screenshots/03-dashboard.png)
+![Sale Fusion CRM Executive Dashboard](docs/screenshots/03-dashboard.png)
 
 ---
 
 ## Table of Contents
 
-1. [What Is Sales CRM? (Plain-English Overview)](#1-what-is-sales-crm-plain-english-overview)
+1. [What Is Sale Fusion CRM? (Plain-English Overview)](#1-what-is-sale-fusion-crm-plain-english-overview)
 2. [Demo Site Access & Login Credentials](#2-demo-site-access--login-credentials)
 3. [Everyday User Guide (Step-by-Step Tutorial)](#3-everyday-user-guide-step-by-step-tutorial)
 4. [Visual Tour of Every Screen (`28` Pages)](#4-visual-tour-of-every-screen-28-pages)
@@ -20,9 +20,9 @@
 
 ---
 
-## 1. What Is Sales CRM? (Plain-English Overview)
+## 1. What Is Sale Fusion CRM? (Plain-English Overview)
 
-**Sales CRM** is an all-in-one web workspace where sales teams capture new customer enquiries, track every conversation and deal on a visual drag-and-drop board, send formal price quotes that buyers can approve online, and monitor real revenue in real time—without paying per-user monthly subscription fees.
+**Sale Fusion CRM** is an all-in-one web workspace where sales teams capture new customer enquiries, track every conversation and deal on a visual drag-and-drop board, send formal price quotes that buyers can approve online, and monitor real revenue in real time—without paying per-user monthly subscription fees.
 
 ### What Problems Does It Solve?
 - **No More Lost Enquiries:** Website forms and external landing pages send prospects straight into the CRM, automatically score their readiness (`0–100`), spot duplicate entries, and assign the right sales representative.
@@ -61,7 +61,7 @@ When seeded with the sample company dataset (`DemoCrmSeeder`), you can sign in u
 
 ## 3. Everyday User Guide (Step-by-Step Tutorial)
 
-This section explains how a non-technical team uses Sales CRM day to day.
+This section explains how a non-technical team uses Sale Fusion CRM day to day.
 
 ### Step 1: Signing In & Turning On 2-Step Verification
 1. Visit [`https://sales-crm.devshraban.com/login`](https://sales-crm.devshraban.com/login) and sign in with your work email and password (use the **eye icon** if you want to check what you typed).
@@ -239,7 +239,7 @@ flowchart LR
 
 1. **Configure `.env` on the production server:**
    ```dotenv
-   APP_NAME="Sales CRM"
+   APP_NAME="Sale Fusion CRM"
    APP_ENV=production
    APP_KEY=base64:GENERATE_WITH_ARTISAN_KEY_GENERATE
    APP_DEBUG=false
@@ -263,7 +263,7 @@ flowchart LR
    MAIL_USERNAME=your-smtp-user
    MAIL_PASSWORD=your-smtp-password
    MAIL_FROM_ADDRESS="crm@devshraban.com"
-   MAIL_FROM_NAME="Sales CRM"
+   MAIL_FROM_NAME="Sale Fusion CRM"
 
    CRM_DEFAULT_CURRENCY=BDT
    CRM_DEFAULT_COUNTRY=BD
