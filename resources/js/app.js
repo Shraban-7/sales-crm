@@ -27,8 +27,30 @@ function initMobileNav() {
     });
 }
 
+function initLoginForm() {
+    const form = document.querySelector('[data-login-form]');
+    if (!form) return;
+
+    const passwordInput = form.querySelector('#password');
+    const toggleBtn = form.querySelector('[data-toggle-password]');
+    if (!toggleBtn || !passwordInput) return;
+
+    const eyeOpen = toggleBtn.querySelector('[data-eye-open]');
+    const eyeClosed = toggleBtn.querySelector('[data-eye-closed]');
+
+    toggleBtn.addEventListener('click', () => {
+        const isHidden = passwordInput.type === 'password';
+        passwordInput.type = isHidden ? 'text' : 'password';
+        toggleBtn.setAttribute('aria-pressed', String(isHidden));
+        toggleBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        eyeOpen?.classList.toggle('hidden', isHidden);
+        eyeClosed?.classList.toggle('hidden', !isHidden);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
+    initLoginForm();
     initKanbanBoard();
     initQuotationCalculator();
 });

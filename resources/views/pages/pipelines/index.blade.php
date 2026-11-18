@@ -1,49 +1,69 @@
 <x-layouts.app title="Pipelines — Sales CRM" header="Sales Pipelines Configuration">
     @can('create', \App\Models\Pipeline::class)
-        <form method="POST" action="{{ route('pipelines.store') }}" class="bg-white rounded-xl border border-slate-200 p-5 flex flex-wrap gap-3 items-center">
+        <form method="POST" action="{{ route('pipelines.store') }}" class="crm-card p-5 space-y-3">
             @csrf
-            <input type="text" name="name" placeholder="New Pipeline Name *" required class="flex-1 min-w-60 rounded-lg border border-slate-300 px-3 py-2 text-sm">
-            <select name="team_id" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
-                <option value="">Organization-wide</option>
-                @foreach ($teams as $team)
-                    <option value="{{ $team->id }}">{{ $team->name }}</option>
-                @endforeach
-            </select>
-            <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="is_default" value="1">
-                <span>Default</span>
-            </label>
-            <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Create Pipeline</button>
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500">Create New Sales Pipeline</h2>
+            <div class="flex flex-wrap gap-3 items-center">
+                <input type="text" name="name" placeholder="New Pipeline Name *" required class="crm-input flex-1 min-w-60">
+                <select name="team_id" class="crm-select w-auto min-w-44">
+                    <option value="">Organization-wide</option>
+                    @foreach ($teams as $team)
+                        <option value="{{ $team->id }}">{{ $team->name }}</option>
+                    @endforeach
+                </select>
+                <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                    <input type="checkbox" name="is_default" value="1" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                    <span>Set as default</span>
+                </label>
+                <button type="submit" class="crm-btn-primary">Create Pipeline</button>
+            </div>
         </form>
     @endcan
 
-    <div class="space-y-4">
+    <div class="space-y-5">
         @foreach ($pipelines as $pipeline)
-            <div class="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
-                <div class="flex items-center justify-between">
+            <section class="crm-card p-6 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <h3 class="text-base font-semibold text-slate-900">
-                            {{ $pipeline->name }}
+                        <div class="flex items-center gap-2.5">
+                            <h3 class="text-base font-bold text-slate-900">{{ $pipeline->name }}</h3>
                             @if ($pipeline->is_default)
-                                <span class="ml-2 rounded bg-brand-50 px-2 py-0.5 text-xs text-brand-700">Default</span>
+                                <span class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700 ring-1 ring-inset ring-brand-200/80">Default</span>
                             @endif
-                        </h3>
-                        <p class="text-xs text-slate-500">{{ $pipeline->deals_count }} deals &middot; {{ $pipeline->stages->count() }} stages</p>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">{{ $pipeline->deals_count }} deals &middot; {{ $pipeline->stages->count() }} stages</p>
                     </div>
-                    <a href="{{ route('pipelines.kanban.show', $pipeline) }}" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50">Open Kanban</a>
+                    <a href="{{ route('pipelines.kanban.show', $pipeline) }}" class="crm-btn-secondary py-1.5 text-xs">
+                        <svg class="h-3.5 w-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h4.5v13.5h-4.5V5.25ZM9.75 5.25h4.5v8.25h-4.5V5.25ZM15.75 5.25h4.5v10.5h-4.5V5.25Z" />
+                        </svg>
+                        Open Kanban
+                    </a>
                 </div>
 
-                <div class="divide-y divide-slate-100 border rounded-lg border-slate-200">
+                <div class="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden">
                     @foreach ($pipeline->stages as $index => $stage)
-                        <div class="p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-                            <div class="flex items-center gap-2">
+                        @php
+                            $dotClass = match ($stage->color) {
+                                'blue' => 'bg-blue-500',
+                                'cyan' => 'bg-cyan-500',
+                                'amber' => 'bg-amber-500',
+                                'emerald' => 'bg-emerald-500',
+                                'rose' => 'bg-rose-500',
+                                'indigo' => 'bg-indigo-500',
+                                default => 'bg-slate-400',
+                            };
+                        @endphp
+                        <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-2 text-xs hover:bg-slate-50/70 transition">
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <span class="h-2.5 w-2.5 rounded-full {{ $dotClass }}"></span>
                                 <span class="font-mono text-slate-400">#{{ $stage->position }}</span>
                                 <span class="font-semibold text-slate-900">{{ $stage->name }}</span>
                                 <span class="text-slate-500">{{ $stage->default_probability }}% &middot; {{ $stage->rotting_days }}d rot</span>
                                 @if ($stage->is_won_stage)
-                                    <span class="rounded bg-emerald-50 px-1.5 py-0.5 text-emerald-700">Won</span>
+                                    <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200/80">Won</span>
                                 @elseif ($stage->is_lost_stage)
-                                    <span class="rounded bg-rose-50 px-1.5 py-0.5 text-rose-700">Lost</span>
+                                    <span class="rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-medium text-rose-700 ring-1 ring-inset ring-rose-200/80">Lost</span>
                                 @endif
                                 <span class="text-slate-400">({{ $stage->deals_count }} deals)</span>
                             </div>
@@ -62,23 +82,23 @@
                                             @foreach ($ids as $id)
                                                 <input type="hidden" name="stage_ids[]" value="{{ $id }}">
                                             @endforeach
-                                            <button type="submit" class="rounded border border-slate-300 px-2 py-1 hover:bg-slate-50">&uarr;</button>
+                                            <button type="submit" title="Move stage up" class="crm-btn-secondary px-2 py-1 text-xs">&uarr;</button>
                                         </form>
                                     @endif
 
                                     @if ($pipeline->stages->count() > 1)
-                                        <form method="POST" action="{{ route('pipelines.stages.destroy', [$pipeline, $stage]) }}" class="flex items-center gap-1">
+                                        <form method="POST" action="{{ route('pipelines.stages.destroy', [$pipeline, $stage]) }}" class="flex items-center gap-1.5">
                                             @csrf
                                             @method('DELETE')
                                             @if ($stage->deals_count > 0)
-                                                <select name="reassign_to_stage_id" required class="rounded border border-slate-300 px-2 py-1 text-xs">
+                                                <select name="reassign_to_stage_id" required class="crm-select w-auto py-1 text-xs">
                                                     @foreach ($pipeline->stages as $target)
                                                         @continue($target->id === $stage->id)
                                                         <option value="{{ $target->id }}">Move to {{ $target->name }}</option>
                                                     @endforeach
                                                 </select>
                                             @endif
-                                            <button type="submit" class="rounded border border-rose-200 bg-rose-50 px-2 py-1 text-rose-700 hover:bg-rose-100">Delete</button>
+                                            <button type="submit" class="crm-btn-danger px-2.5 py-1 text-xs">Delete</button>
                                         </form>
                                     @endif
                                 </div>
@@ -88,20 +108,20 @@
                 </div>
 
                 @can('update', $pipeline)
-                    <form method="POST" action="{{ route('pipelines.stages.store', $pipeline) }}" class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
+                    <form method="POST" action="{{ route('pipelines.stages.store', $pipeline) }}" class="flex flex-wrap items-center gap-2.5 pt-2 border-t border-slate-100 text-xs">
                         @csrf
-                        <input type="text" name="name" placeholder="Stage name *" required class="rounded-lg border border-slate-300 px-2.5 py-1.5">
-                        <input type="number" step="0.01" min="0" max="100" name="default_probability" placeholder="Prob %" value="50" required class="w-24 rounded-lg border border-slate-300 px-2.5 py-1.5">
-                        <input type="number" min="1" max="365" name="rotting_days" placeholder="Rot days" value="14" required class="w-24 rounded-lg border border-slate-300 px-2.5 py-1.5">
-                        <select name="color" class="rounded-lg border border-slate-300 px-2.5 py-1.5">
+                        <input type="text" name="name" placeholder="Stage name *" required class="crm-input w-auto min-w-44 py-1.5 text-xs">
+                        <input type="number" step="0.01" min="0" max="100" name="default_probability" placeholder="Prob %" value="50" required class="crm-input w-24 py-1.5 text-xs">
+                        <input type="number" min="1" max="365" name="rotting_days" placeholder="Rot days" value="14" required class="crm-input w-24 py-1.5 text-xs">
+                        <select name="color" class="crm-select w-auto py-1.5 text-xs">
                             @foreach (['slate', 'blue', 'cyan', 'amber', 'emerald', 'rose', 'indigo'] as $color)
                                 <option value="{{ $color }}">{{ ucfirst($color) }}</option>
                             @endforeach
                         </select>
-                        <button type="submit" class="rounded-lg bg-slate-900 px-3 py-1.5 font-semibold text-white">Add Stage</button>
+                        <button type="submit" class="crm-btn-dark py-1.5 text-xs">Add Stage</button>
                     </form>
                 @endcan
-            </div>
+            </section>
         @endforeach
     </div>
 </x-layouts.app>

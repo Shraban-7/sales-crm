@@ -38,15 +38,24 @@ final class ReportController extends Controller
             ownerId: $ownerId,
         );
 
+        $user = $request->user();
+        $canViewAll = $user->can('reports.view.all');
+        $canViewTeam = $canViewAll || $user->can('reports.view.team');
+
         $pipelines = Pipeline::query()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
-        $teams = Team::query()->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+
+        // Only offer filters the request authorization will accept. Listing
+        // every team/owner made reps and managers hit a guaranteed 403.
+        $teams = Team::query()
+            ->where('is_active', true)
+            ->when(! $canViewAll, fn ($q) => $q->whereKey($user->team_id))
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         $owners = User::query()
             ->where('is_active', true)
-            ->when(
-                ! $request->user()->can('reports.view.all'),
-                fn ($q) => $q->where('team_id', $request->user()->team_id),
-            )
+            ->when(! $canViewAll, fn ($q) => $q->where('team_id', $user->team_id))
+            ->when(! $canViewTeam, fn ($q) => $q->whereKey($user->id))
             ->orderBy('name')
             ->get(['id', 'name']);
 

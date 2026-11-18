@@ -270,9 +270,9 @@ final class ProductFixesRegressionTest extends TestCase
         ]);
 
         $summary = app(AnalyticsService::class)->getSummary($analyst, now()->subDays(30), now());
-        $currencies = $summary['currency_totals']->keyBy('currency');
-        $this->assertSame('5000.00', number_format((float) $currencies['BDT']->won_value, 2, '.', ''));
-        $this->assertSame('200.00', number_format((float) $currencies['USD']->won_value, 2, '.', ''));
+        $currencies = collect($summary['currency_totals'])->keyBy('currency');
+        $this->assertSame('5000.00', number_format((float) $currencies['BDT']['won_value'], 2, '.', ''));
+        $this->assertSame('200.00', number_format((float) $currencies['USD']['won_value'], 2, '.', ''));
 
         // Analyst can view tasks/follow-ups & mobile nav exists on dashboard
         for ($i = 1; $i <= 8; $i++) {
@@ -449,6 +449,34 @@ final class ProductFixesRegressionTest extends TestCase
         $this->assertSame($rep2->id, $deal->fresh()->owner_id);
         $this->assertSame($rep2->id, $quote->fresh()->owner_id);
         $this->assertSame($rep2->id, $activity->fresh()->user_id);
+    }
+
+    public function test_report_filters_only_offer_teams_and_owners_the_user_may_query(): void
+    {
+        $alpha = Team::query()->create(['name' => 'Alpha Reports', 'slug' => 'alpha-reports', 'is_active' => true]);
+        $beta = Team::query()->create(['name' => 'Beta Reports', 'slug' => 'beta-reports', 'is_active' => true]);
+
+        $rep = $this->makeUser($alpha, 'Sales Rep', 'rep-alpha@salescrm.test');
+        $peer = $this->makeUser($alpha, 'Sales Rep', 'peer-alpha@salescrm.test');
+        $manager = $this->makeUser($alpha, 'Sales Manager', 'manager-alpha@salescrm.test');
+        $this->makeUser($beta, 'Sales Rep', 'rep-beta@salescrm.test');
+
+        // A Sales Rep may only filter by themselves, not teammates or other teams.
+        $this->actingAs($rep)
+            ->get(route('reports.index'))
+            ->assertOk()
+            ->assertSee('rep-alpha')
+            ->assertDontSee('peer-alpha')
+            ->assertDontSee('manager-alpha')
+            ->assertDontSee('Beta Reports');
+
+        // A Sales Manager may filter their team, but not another team.
+        $this->actingAs($manager)
+            ->get(route('reports.index'))
+            ->assertOk()
+            ->assertSee('peer-alpha')
+            ->assertDontSee('rep-beta')
+            ->assertDontSee('Beta Reports');
     }
 
     private function makeUser(Team $team, string $role, string $email, bool $active = true): User
