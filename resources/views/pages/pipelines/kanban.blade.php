@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
             @foreach ($pipelines as $item)
-                <a href="{{ route('pipelines.kanban', $item) }}" class="rounded-lg px-3 py-1.5 text-sm font-medium {{ $item->id === $pipeline->id ? 'bg-brand-600 text-white' : 'bg-white border border-slate-200 text-slate-700' }}">
+                <a href="{{ route('pipelines.kanban.show', $item) }}" class="rounded-lg px-3 py-1.5 text-sm font-medium {{ $item->id === $pipeline->id ? 'bg-brand-600 text-white' : 'bg-white border border-slate-200 text-slate-700' }}">
                     {{ $item->name }}
                 </a>
             @endforeach

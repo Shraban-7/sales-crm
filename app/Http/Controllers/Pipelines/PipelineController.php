@@ -59,7 +59,7 @@ final class PipelineController extends Controller
             return $pipeline;
         });
 
-        return redirect()->route('pipelines.kanban', $pipeline)->with('status', 'Pipeline created.');
+        return redirect()->route('pipelines.kanban.show', $pipeline)->with('status', 'Pipeline created.');
     }
 
     public function kanban(Request $request, ?Pipeline $pipeline = null): View

@@ -46,7 +46,8 @@ Route::middleware('auth')->group(function (): void {
     // Pipelines & Kanban
     Route::get('/pipelines', [PipelineController::class, 'index'])->name('pipelines.index');
     Route::post('/pipelines', [PipelineController::class, 'store'])->name('pipelines.store');
-    Route::get('/pipelines/{pipeline?}/kanban', [PipelineController::class, 'kanban'])->name('pipelines.kanban');
+    Route::get('/pipelines/kanban', [PipelineController::class, 'kanban'])->name('pipelines.kanban');
+    Route::get('/pipelines/{pipeline}/kanban', [PipelineController::class, 'kanban'])->name('pipelines.kanban.show');
     Route::post('/pipelines/{pipeline}/stages', [PipelineStageController::class, 'store'])->name('pipelines.stages.store');
     Route::post('/pipelines/{pipeline}/stages/reorder', [PipelineStageController::class, 'reorder'])->name('pipelines.stages.reorder');
     Route::delete('/pipelines/{pipeline}/stages/{stage}', [PipelineStageController::class, 'destroy'])->name('pipelines.stages.destroy');

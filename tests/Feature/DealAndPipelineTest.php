@@ -126,4 +126,33 @@ final class DealAndPipelineTest extends TestCase
         $this->assertSame(1, $s2->fresh()->position);
         $this->assertSame(2, $s1->fresh()->position);
     }
+
+    public function test_pipeline_kanban_routes_render_successfully(): void
+    {
+        $team = Team::query()->create(['name' => 'Alpha', 'slug' => 'alpha']);
+        $rep = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Rep',
+            'email' => 'rep@salescrm.test',
+            'password' => Hash::make('Password@12345'),
+            'is_active' => true,
+        ]);
+        $rep->assignRole('Sales Rep');
+
+        $pipeline = Pipeline::query()->create(['name' => 'Default', 'is_default' => true]);
+        PipelineStage::query()->create([
+            'pipeline_id' => $pipeline->id,
+            'name' => 'Qualification',
+            'slug' => 'qualification',
+            'position' => 1,
+        ]);
+
+        $this->actingAs($rep)
+            ->get(route('pipelines.kanban'))
+            ->assertOk();
+
+        $this->actingAs($rep)
+            ->get(route('pipelines.kanban.show', $pipeline))
+            ->assertOk();
+    }
 }

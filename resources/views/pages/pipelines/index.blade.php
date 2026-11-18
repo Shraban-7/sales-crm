@@ -30,7 +30,7 @@
                         </h3>
                         <p class="text-xs text-slate-500">{{ $pipeline->deals_count }} deals &middot; {{ $pipeline->stages->count() }} stages</p>
                     </div>
-                    <a href="{{ route('pipelines.kanban', $pipeline) }}" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50">Open Kanban</a>
+                    <a href="{{ route('pipelines.kanban.show', $pipeline) }}" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50">Open Kanban</a>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     @foreach ($pipeline->stages as $stage)
