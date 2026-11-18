@@ -1,10 +1,10 @@
 # Master Test Case Catalog — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/testing/testing-strategy.md`, `docs/modules/`
 
-## 1. End-to-End Test Case Matrix Across Modules (`Proposed`)
+## 1. End-to-End Test Case Matrix Across Modules
 
 | Test ID | Module | Scenario Description | Input / Precondition | Expected Outcome |
 | :--- | :--- | :--- | :--- | :--- |

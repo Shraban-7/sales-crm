@@ -1,7 +1,7 @@
 # Design Patterns & Anti-Patterns — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/architecture/backend-architecture.md`, `docs/adr/ADR-005-business-logic-organization.md`
 
 ## 1. Approved Architectural Patterns
@@ -16,7 +16,7 @@
 | **Polymorphic Relation Pattern** | `activities`, `tasks`, `notes`, `attachments`, `audit_logs` | Allows a single unified table to attach records to `Lead`, `Contact`, `Company`, `Deal`, or `Quotation` models via `morphTo()`. |
 | **Domain Event & Listener Pattern** | `app/Events/` & `app/Listeners/` | Decouples core database transactions from secondary side effects (sending email notifications, recalculating dashboard cache, writing audit logs). |
 
-## 2. State Transition Pattern Example (`app/Enums/QuotationStatus.php`) (`Proposed`)
+## 2. State Transition Pattern Example (`app/Enums/QuotationStatus.php`)
 
 ```php
 <?php

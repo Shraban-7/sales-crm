@@ -26,3 +26,13 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Internal AI agent, audit & pre-build docs (excluded from Vibe96 deliverable)
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md
+/project-discovery-report.md
+/report.md
+/docs/CHANGELOG.md
+/docs/prompts/
+

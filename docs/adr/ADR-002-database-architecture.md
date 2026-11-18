@@ -1,7 +1,7 @@
 # ADR-002: Relational MySQL 8.0+ Schema with Polymorphic Engagement Hubs
 
 **Date:** 2026-11-17  
-**Status:** `Proposed (Greenfield Recommendation)`  
+**Status:** `Accepted (Implemented)`  
 **Deciders:** Database Architect, Principal Software Architect  
 **Related Docs:** `docs/database/database-design.md`, `docs/database/database-relationships.md`, `docs/database/erd.md`
 

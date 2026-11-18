@@ -1,8 +1,8 @@
 # Regression Testing Protocol — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Active QA Standard)`  
-**Related Docs:** `docs/testing/testing-strategy.md`, `docs/prompts/testing-prompt.md`
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Active QA Standard (Verified)`  
+**Related Docs:** `docs/testing/testing-strategy.md`
 
 ## 1. Bug-Fix Regression Rule
 

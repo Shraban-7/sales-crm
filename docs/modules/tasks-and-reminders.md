@@ -1,19 +1,16 @@
 # Tasks & Reminders Module (MOD-07)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Enable sales reps and managers to assign, prioritize, track, and receive timely automated reminders for actionable tasks linked polymorphically to any Lead, Contact, Company, or Deal.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Polymorphic task creation (`taskable_type`, `taskable_id`) with priority (`low`, `medium`, `high`, `urgent`) and status (`pending`, `in_progress`, `completed`, `cancelled`).
 - Task assignment across team members with instant assignee notification.
 - Configurable reminders (`reminders` table) dispatched via Laravel Scheduler (`crm:dispatch-due-reminders`) every minute.

@@ -1,14 +1,14 @@
 # Environment Variables Specification (`.env.example`) — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/deployment/deployment-guide.md`, `docs/security/authentication.md`
 
 ## 1. Environment Variable Governance
 
 Per [Laravel 12 Configuration](https://laravel.com/framework/docs/12.x/configuration), `.env` files must **never** be committed to Git. Application code must never call `env()` directly outside `config/*.php` so that `php artisan config:cache` functions reliably in production.
 
-## 2. Canonical `.env.example` Template (`Proposed`)
+## 2. Canonical `.env.example` Template
 
 ```ini
 APP_NAME="Sales CRM"

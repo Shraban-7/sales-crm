@@ -1,19 +1,16 @@
 # Users, Sales Teams & Permissions (RBAC) Module (MOD-01)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Govern user identity, sales team membership, monthly revenue targets, role-based access control (RBAC), and strict record-level data visibility across the CRM.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Five canonical CRM roles powered by [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/v8/installation-laravel): `Super Admin`, `Org Admin`, `Sales Manager`, `Sales Rep`, and `Read-Only Analyst`.
 - Sales Team management (`teams` table) with `leader_id` and `monthly_revenue_target`.
 - User deactivation (`is_active = false`) with immediate session invalidation and bulk record ownership transfer wizard.

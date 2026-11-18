@@ -1,26 +1,26 @@
-# Contributing Guide & Antigravity Engineering Workflow
+# Contributing Guide & Engineering Workflow
 
-**Last Updated:** 2026-11-17  
-**Status:** `Active Governance Standard`
+**Last Updated:** 2026-11-19  
+**Status:** `Active Engineering Standard`
 
 ## 1. Development Workflow Overview
 
-Development on **Sales CRM** is performed using **Google Gemini Antigravity IDE** guided by this Markdown documentation suite. Every contributor and AI agent session must follow a documentation-first, test-verified workflow.
+Development on **Sales CRM** follows a documentation-first, test-verified workflow across PHP 8.3+, Laravel 13.x, MySQL 8.0+, Blade, Tailwind CSS v4, and Vanilla ES2022 JavaScript.
 
 ```mermaid
 flowchart LR
-    A["1. Read GEMINI.md & Module Spec"] --> B["2. Create Feature Branch"]
+    A["1. Review Module Spec & Schema"] --> B["2. Create Feature Branch"]
     B --> C["3. Write Migrations, Models & Policies"]
-    C --> D["4. Implement Services, Controllers & Blade Views"]
-    D --> E["5. Run Pest/PHPUnit & Security Checks"]
-    E --> F["6. Sync Markdown Docs & CHANGELOG.md"]
+    C --> D["4. Implement Actions, Services, Controllers & Blade Views"]
+    D --> E["5. Run Pint & PHPUnit Suite"]
+    E --> F["6. Sync Module Docs, PROJECT_STATUS.md & CHANGELOG.md"]
     F --> G["7. Open Pull Request"]
 ```
 
 ## 2. Branching Strategy
 
 - `main` — Production-ready, tagged releases only. Protected branch.
-- `develop` — Integration branch for verified phase deliverables.
+- `develop` — Integration branch for verified deliverables.
 - `feature/<module>-<short-description>` — New CRM features (e.g., `feature/leads-atomic-conversion`).
 - `fix/<module>-<bug-description>` — Bug fixes with accompanying regression tests.
 - `docs/<topic>` — Documentation-only updates.
@@ -39,9 +39,9 @@ Format: `<type>(<scope>): <imperative summary>`
 
 Every feature or bugfix PR must satisfy all of the following before merge:
 
-1. **Architecture Alignment:** Controllers are thin; validation lives in `FormRequest` classes; domain logic resides in `app/Services/` or `app/Actions/`.
-2. **Frontend Compliance:** Uses Blade components, [Tailwind CSS v4](https://tailwindcss.com/docs/upgrade-guide) utility classes, and Vanilla JS (or justified Alpine.js). No unapproved JS frameworks.
-3. **Database Safety:** Migrations include `down()` methods, appropriate foreign key constraints, and composite indexes matching query filters. No N+1 queries.
-4. **Security Verification:** Every route enforces authentication, Policy authorization (`$this->authorize()`), team visibility scopes (`visibleTo($user)`), and CSRF protection.
-5. **Automated Tests:** Includes passing Feature, Unit, and Authorization tests (`php artisan test`).
-6. **Documentation Synchronization:** Updates implementation status in `PROJECT_STATUS.md`, the relevant `docs/modules/<module>.md` file, and `CHANGELOG.md`.
+1. **Architecture Alignment:** Controllers remain thin; validation lives in `FormRequest` classes; domain logic resides in `app/Services/` or `app/Actions/`.
+2. **Frontend Compliance:** Uses Blade components, Tailwind CSS v4 utility classes (`resources/css/app.css`), and Vanilla ES2022 JS. No unapproved JS frameworks.
+3. **Database Safety:** Migrations include `down()` methods, appropriate foreign key constraints, and composite indexes matching query filters. Avoid N+1 queries (`Model::shouldBeStrict()` is enabled in non-production).
+4. **Security Verification:** Every route enforces authentication, Policy authorization, team visibility scopes (`scopeVisibleTo()`), and CSRF protection.
+5. **Automated Tests & Style:** Passes `vendor/bin/pint --test` and `php artisan test --compact`.
+6. **Documentation Synchronization:** Updates implementation status in `PROJECT_STATUS.md`, affected `docs/` specs, and `CHANGELOG.md`.

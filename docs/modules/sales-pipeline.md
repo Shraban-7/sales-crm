@@ -1,19 +1,16 @@
 # Sales Pipeline Configuration Module (MOD-05)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Provide configurable multi-stage sales pipelines with deterministic stage ordering, default win probabilities (`0–100%`), deal rotting thresholds, and interactive Kanban board rendering.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Multiple named pipelines per organization/team (e.g., `B2B Enterprise Pipeline`, `SMB Fast-Track`).
 - Ordered `pipeline_stages` (`position`, `default_probability`, `rotting_days`, `is_won_stage`, `is_lost_stage`).
 - Atomic stage reordering (`ReorderPipelineStagesAction`) avoiding unique-constraint collisions on `(pipeline_id, position)`.

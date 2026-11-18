@@ -1,8 +1,8 @@
 # Testing Strategy & Architecture — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
-**Related Docs:** `GEMINI.md`, `docs/testing/unit-testing.md`, `docs/testing/feature-testing.md`, `docs/testing/authorization-testing.md`
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
+**Related Docs:** `docs/testing/unit-testing.md`, `docs/testing/feature-testing.md`, `docs/testing/authorization-testing.md`
 
 ## 1. Testing Philosophy
 
@@ -17,7 +17,7 @@ flowchart TB
     end
 ```
 
-## 2. Test Environment Configuration (`phpunit.xml`) (`Proposed`)
+## 2. Test Environment Configuration (`phpunit.xml`)
 
 - Uses a dedicated isolated test database (`DB_DATABASE=sales_crm_testing` on MySQL 8.0+ to match production foreign key, decimal, and transaction semantics—prefer MySQL test DB over SQLite when testing `LOCK FOR UPDATE` and strict MySQL constraints).
 - Uses `RefreshDatabase` (or `LazilyRefreshDatabase`) trait across all feature and database tests.

@@ -1,7 +1,7 @@
 # Data Protection, Privacy & PII Governance — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/security/security-policy.md`, `docs/modules/audit-logs.md`, `docs/deployment/backup-and-recovery.md`
 
 ## 1. Classification of Sensitive CRM Data
@@ -12,7 +12,7 @@
 | **Tier 2: Customer PII** | Contact/Lead `email`, `phone`, `mobile`, billing/shipping addresses | Scoped access via `VisibleToUserScope`; TLS 1.2/1.3 in transit; audit logged on bulk export |
 | **Tier 3: Commercial & Financial** | `deals.value`, `quotations.grand_total`, discount rates, win/loss notes | Team/Owner policy enforcement; immutable quotation snapshots once sent |
 
-## 2. Eloquent Model Serialization Guards (`$hidden`) (`Proposed`)
+## 2. Eloquent Model Serialization Guards (`$hidden`)
 
 Every `User` model must explicitly hide authentication secrets from JSON/array serialization:
 ```php

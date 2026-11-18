@@ -1,14 +1,14 @@
 # Unit Testing Guide — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/testing/testing-strategy.md`, `docs/modules/quotations-and-proposals.md`
 
 ## 1. Scope of Unit Tests (`tests/Unit/`)
 
 Unit tests verify isolated domain logic, financial calculations, value objects/DTOs, CSV cell sanitization, and Enum state machines with zero HTTP overhead.
 
-## 2. Practical Pest & PHPUnit Examples (`Proposed`)
+## 2. Practical Pest & PHPUnit Examples
 
 ### 2.1 Quotation Total Calculation Unit Test (Pest Syntax)
 ```php

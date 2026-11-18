@@ -1,7 +1,7 @@
 # Backend Architecture — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/architecture/system-architecture.md`, `docs/architecture/design-patterns.md`, `docs/adr/ADR-005-business-logic-organization.md`
 
 ## 1. Backend Design Philosophy
@@ -15,7 +15,7 @@ The backend is built on [Laravel 12](https://laravel.com/framework/docs/12.x/con
 
 ## 2. Component Responsibilities & Code Patterns
 
-### 2.1 Thin Resource & Action Controllers (`Proposed`)
+### 2.1 Thin Resource & Action Controllers
 Controllers must never contain `DB::beginTransaction()`, complex math, or multi-model creation logic.
 
 ```php
@@ -54,7 +54,7 @@ final class ConvertLeadController extends Controller
 }
 ```
 
-### 2.2 Invokable Domain Actions (`Proposed`)
+### 2.2 Invokable Domain Actions
 Each Action class performs one well-defined domain mutation inside a database transaction:
 
 ```php
@@ -131,7 +131,7 @@ final readonly class ConvertLeadToDealAction
 }
 ```
 
-### 2.3 Eloquent Strictness in `AppServiceProvider` (`Proposed`)
+### 2.3 Eloquent Strictness in `AppServiceProvider`
 To eliminate silent bugs in development and testing, `AppServiceProvider::boot()` must configure:
 
 ```php

@@ -1,8 +1,8 @@
 # Frontend Architecture — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
-**Related Docs:** `GEMINI.md`, `docs/adr/ADR-004-frontend-architecture.md`, `docs/architecture/coding-standards.md`
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
+**Related Docs:** `docs/adr/ADR-004-frontend-architecture.md`, `docs/architecture/coding-standards.md`
 
 ## 1. Frontend Stack & Philosophy
 
@@ -13,7 +13,7 @@ The frontend uses **Server-Side Rendered (SSR) Laravel Blade** styled with **[Ta
 - **CSS-First Design System:** [Tailwind CSS v4](https://tailwindcss.com/docs/upgrade-guide) replaces `tailwind.config.js` with native CSS `@import "tailwindcss";` and `@theme` variables compiled at high speed via `@tailwindcss/vite`.
 - **Strict Dependency Discipline:** Alpine.js (`~15KB`) is permitted **only** on high-interactivity views (Pipeline Kanban board, Quotation dynamic line-item calculator, accessible modal/drawer state) where Vanilla JS DOM boilerplate would reduce maintainability. React, Vue, Livewire, and Inertia are strictly prohibited.
 
-## 2. Tailwind CSS v4 Configuration (`resources/css/app.css`) (`Proposed`)
+## 2. Tailwind CSS v4 Configuration (`resources/css/app.css`)
 
 In Tailwind CSS v4, no `tailwind.config.js` file is used. All design tokens are declared directly in `resources/css/app.css`:
 
@@ -40,7 +40,7 @@ In Tailwind CSS v4, no `tailwind.config.js` file is used. All design tokens are 
 }
 ```
 
-## 3. Blade Component Hierarchy (`Proposed`)
+## 3. Blade Component Hierarchy
 
 ```mermaid
 flowchart TD
@@ -74,7 +74,7 @@ flowchart TD
 </span>
 ```
 
-## 4. Vanilla JavaScript Architecture (`resources/js/`) (`Proposed`)
+## 4. Vanilla JavaScript Architecture (`resources/js/`)
 
 JavaScript is organized into small ES modules loaded via `resources/js/app.js` and scoped via `data-module` attributes on DOM containers:
 

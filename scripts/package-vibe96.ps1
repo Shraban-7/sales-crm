@@ -64,7 +64,14 @@ try {
         '^storage/framework/sessions/(?!\.gitignore$).*',
         '^storage/framework/cache/data/(?!\.gitignore$).*',
         '^database/.*\.sqlite(-journal|-shm|-wal)?$',
-        '.*\.log$'
+        '.*\.log$',
+        '^AGENTS\.md$',
+        '^CLAUDE\.md$',
+        '^GEMINI\.md$',
+        '^project-discovery-report\.md$',
+        '^report\.md$',
+        '^docs/CHANGELOG\.md$',
+        '^docs/prompts(/|$)'
     )
 
     $AllFiles = Get-ChildItem -LiteralPath $RepoRoot -Recurse -Force -File

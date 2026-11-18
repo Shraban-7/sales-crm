@@ -1,7 +1,7 @@
 # Request & Job Lifecycle — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/architecture/system-architecture.md`, `docs/security/authentication.md`, `docs/security/authorization.md`
 
 ## 1. Synchronous Web / AJAX Request Lifecycle
@@ -37,7 +37,7 @@ sequenceDiagram
     Ctrl-->>User: 200 JSON / 302 Redirect with Flash Message
 ```
 
-## 2. Middleware Execution Order (`bootstrap/app.php`) (`Proposed`)
+## 2. Middleware Execution Order (`bootstrap/app.php`)
 
 1. `TrustProxies` & `SecurityHeadersMiddleware` (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Content-Security-Policy`).
 2. `EncryptCookies` & `StartSession`.
@@ -47,7 +47,7 @@ sequenceDiagram
 6. `ThrottleRequests` (rate-limits login, exports, and API-like AJAX endpoints).
 7. `SubstituteBindings` (resolves route-model bindings).
 
-## 3. Asynchronous Queue & Scheduler Lifecycle (`Proposed`)
+## 3. Asynchronous Queue & Scheduler Lifecycle
 
 Heavy or time-delayed operations never block the HTTP response thread:
 - **Queued Jobs (`database` or `redis` driver):**

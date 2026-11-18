@@ -1,19 +1,16 @@
 # Companies (Accounts) Management Module (MOD-04)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Manage B2B client organizations, corporate hierarchies (parent company and subsidiaries), industry classifications, billing/shipping addresses, and aggregated account pipeline value.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Company CRUD with industry, size tier, annual revenue, registration number, and billing/shipping addresses.
 - Self-referencing parent-subsidiary hierarchy (`parent_company_id`) with cycle detection.
 - Aggregated Account Rollup Metrics (total open pipeline value, total won revenue, active contacts count).

@@ -1,11 +1,9 @@
 # ADR-004: Laravel Blade + Tailwind CSS v4 + Vanilla JS Frontend Architecture
 
 **Date:** 2026-11-17  
-**Status:** `Proposed (Greenfield Recommendation)`  
+**Status:** `Accepted (Implemented)`  
 **Deciders:** Principal Software Architect, Project Owner  
-**Related Docs:** `docs/architecture/frontend-architecture.md`, `GEMINI.md`
-
-## 1. Context
+**Related Docs:** `docs/architecture/frontend-architecture.md`, ## 1. Context
 
 The project requires a responsive, fast, maintainable CRM interface (data tables, 360-degree entity views, Kanban pipeline board, and dynamic quotation builder) without introducing heavy single-page application (SPA) frameworks.
 

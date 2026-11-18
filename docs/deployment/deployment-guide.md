@@ -1,7 +1,7 @@
 # Deployment Guide — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Operational Runbook)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Operational Runbook)`  
 **Related Docs:** `docs/deployment/environment-variables.md`, `docs/deployment/production-checklist.md`, `docs/deployment/queue-and-scheduler.md`
 
 ## 1. Target Production Infrastructure
@@ -25,7 +25,7 @@ flowchart LR
     F --> G["7. php artisan queue:restart"]
 ```
 
-## 3. Standard Release Script (`deploy.sh`) (`Proposed`)
+## 3. Standard Release Script (`deploy.sh`)
 
 ```bash
 #!/usr/bin/env bash

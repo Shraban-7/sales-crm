@@ -1,7 +1,7 @@
 # Authentication & Session Security — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/security/security-policy.md`, `docs/modules/users-teams-and-permissions.md`, `docs/adr/ADR-003-authentication-and-authorization.md`
 
 ## 1. Authentication Architecture
@@ -33,7 +33,7 @@ sequenceDiagram
     end
 ```
 
-## 2. Password & Credential Standards (`Proposed`)
+## 2. Password & Credential Standards
 
 - **Hashing Algorithm:** `bcrypt` (cost factor `12`) or `argon2id` via `config/hashing.php`.
 - **Password Complexity Rule:** Enforced in `AppServiceProvider` via `Password::defaults()`:
@@ -55,7 +55,7 @@ sequenceDiagram
   - `SESSION_SAME_SITE=lax`
   - `SESSION_SECURE_COOKIE=true` (in production HTTPS)
 
-## 3. Immediate Deactivation Enforcement (`EnsureUserIsActive`) (`Proposed`)
+## 3. Immediate Deactivation Enforcement (`EnsureUserIsActive`)
 
 If an administrator sets `users.is_active = false`, the `EnsureUserIsActive` middleware runs on every authenticated web request:
 ```php

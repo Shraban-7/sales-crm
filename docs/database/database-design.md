@@ -1,12 +1,12 @@
 # Database Design Specification — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint — 0 Migrations Implemented Yet)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (18 Ordered Migrations)`  
 **Related Docs:** `docs/database/erd.md`, `docs/database/database-relationships.md`, `docs/database/migrations-and-indexes.md`, `docs/database/data-integrity.md`
 
-## 1. Source of Truth & Greenfield Status
+## 1. Schema Standard & Relational Basis
 
-Per `project-discovery-report.md`, no migrations or models exist in the workspace yet. This document defines the **Proposed Canonical Relational Schema** for MySQL 8.0+ (`InnoDB`, character set `utf8mb4`, collation `utf8mb4_unicode_ci`) to be implemented using [Laravel 12 Eloquent ORM](https://api.laravel.com/docs/12.x/index.html).
+This document specifies the **Canonical Relational Schema** for MySQL 8.0+ (`InnoDB`, character set `utf8mb4`, collation `utf8mb4_unicode_ci`) implemented using Laravel Eloquent ORM across `18` migrations in `database/migrations/`.
 
 ## 2. Global Schema Conventions
 
@@ -21,7 +21,7 @@ Per `project-discovery-report.md`, no migrations or models exist in the workspac
 | **Timestamps** | `created_at` and `updated_at` (`TIMESTAMP NULL`) in UTC | Consistent timezone normalization across users |
 | **Soft Deletes** | `deleted_at` (`TIMESTAMP NULL`) on core commercial records | Prevents accidental permanent loss of revenue/customer history |
 
-## 3. Complete Domain Table Catalog (`Proposed` — 18 Core Tables + Laravel/Spatie System Tables)
+## 3. Complete Domain Table Catalog (18 Core Entities + System Tables)
 
 | # | Table Name | Domain Module | Primary Responsibility | Soft Deletes |
 | :--- | :--- | :--- | :--- | :--- |
@@ -47,7 +47,7 @@ Per `project-discovery-report.md`, no migrations or models exist in the workspac
 | 20 | `attachments` | Shared / Security | Polymorphic private file metadata linked to Deals, Quotations, Activities | Yes |
 | 21 | `notifications` | Notifications | Native Laravel database notifications table (`uuid` PK) | No |
 
-## 4. Core Table Column Specifications (`Proposed`)
+## 4. Core Table Column Specifications
 
 ### 4.1 `teams` & `users`
 - **`teams`**: `id`, `name` (`VARCHAR(120)`), `slug` (`VARCHAR(120) UNIQUE`), `leader_id` (`FK -> users.id NULLABLE`), `monthly_revenue_target` (`DECIMAL(15,2)`), `is_active` (`BOOLEAN`), `timestamps`, `softDeletes`.

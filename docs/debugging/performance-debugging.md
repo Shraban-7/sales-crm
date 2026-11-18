@@ -1,10 +1,10 @@
 # Performance Debugging & Profiling Guide — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
-**Related Docs:** `docs/database/database-optimization.md`, `docs/architecture/scalability-strategy.md`, `docs/prompts/performance-optimization-prompt.md`
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
+**Related Docs:** `docs/database/database-optimization.md`, `docs/architecture/scalability-strategy.md`
 
-## 1. Slow Query Detection in `AppServiceProvider` (`Proposed`)
+## 1. Slow Query Detection in `AppServiceProvider`
 
 Register a database query duration threshold listener in `AppServiceProvider::boot()` to automatically log queries exceeding `500ms`:
 

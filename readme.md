@@ -353,7 +353,6 @@ php artisan test --compact
 ## 7. Complete Engineering Documentation Index
 
 ### Project Governance & Status
-- [GEMINI.md](GEMINI.md) — Engineering conventions, strict typing, security, and documentation sync rules
 - [PROJECT_STATUS.md](PROJECT_STATUS.md) — Module readiness matrix across Phases 1–6
 - [CHANGELOG.md](CHANGELOG.md) — Milestone tracking and change history
 - [CONTRIBUTING.md](CONTRIBUTING.md) — Git workflow and contribution guidelines

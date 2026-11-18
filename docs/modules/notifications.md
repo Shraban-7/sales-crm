@@ -1,19 +1,16 @@
 # Notifications & Real-Time Alerts Module (MOD-12)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Keep sales reps and managers informed of time-sensitive events (lead assignment, task/follow-up reminders, deal rotting, quotation acceptance, import completion) via in-app database alerts and queued emails.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Native Laravel `notifications` table integration for in-app notification bell dropdown.
 - Queued email notifications (`ShouldQueue`) for external delivery without slowing HTTP requests.
 - Per-user notification preference matrix (`users.notification_preferences` JSON column) allowing users to toggle email vs in-app per event category.

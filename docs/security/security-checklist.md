@@ -1,8 +1,8 @@
 # Security Verification Checklist — Sales CRM
 
-**Last Updated:** 2026-11-17  
+**Last Updated:** 2026-11-19  
 **Implementation Status:** `Active Engineering Gate`  
-**Related Docs:** `GEMINI.md`, `docs/security/security-policy.md`, `docs/prompts/security-audit-prompt.md`
+**Related Docs:** `docs/security/security-policy.md`
 
 ## 1. Feature & Pull Request Security Gate
 

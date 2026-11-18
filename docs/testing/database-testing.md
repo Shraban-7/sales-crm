@@ -1,7 +1,7 @@
 # Database Integrity, Migration & Constraint Testing — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/database/data-integrity.md`, `docs/database/migrations-and-indexes.md`
 
 ## 1. Database Testing Objectives
@@ -12,7 +12,7 @@ Database tests validate:
 3. **Zero Lazy Loading (`N+1` Prevention):** Running index and dashboard routes with `Model::preventLazyLoading()` enabled throws an immediate failure if any relation is not eager-loaded.
 4. **Immutable Audit Logs:** Attempting to call `update()` or `delete()` on `AuditLog` throws `ImmutableRecordException`.
 
-## 2. Foreign Key & Immutability Test Examples (`Proposed`)
+## 2. Foreign Key & Immutability Test Examples
 
 ```php
 <?php

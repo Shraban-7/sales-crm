@@ -1,14 +1,14 @@
 # Feature & HTTP Workflow Testing — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/testing/testing-strategy.md`, `docs/modules/leads.md`, `docs/modules/deals-and-opportunities.md`
 
 ## 1. Feature Test Structure (`tests/Feature/`)
 
 Feature tests exercise the full [Laravel 12](https://laravel.com/framework/docs/12.x/configuration) HTTP stack: Routing -> Middleware -> FormRequest -> Policy -> Controller -> Action/Service -> MySQL -> Blade/Redirect response.
 
-## 2. Lead Atomic Conversion Feature Test (`Proposed`)
+## 2. Lead Atomic Conversion Feature Test
 
 ```php
 <?php

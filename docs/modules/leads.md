@@ -1,19 +1,16 @@
 # Leads Management Module (MOD-02)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Capture, deduplicate, score, qualify, and atomically convert inbound and outbound sales prospects into structured Company, Contact, and Deal records without losing historical activity context.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Manual lead creation, web-to-lead webhook ingestion, and bulk CSV import.
 - Lead status lifecycle (`new` -> `contacted` -> `qualified` -> `converted` or `disqualified`).
 - Rule-based lead score calculation (`0–100`) and duplicate detection by email/phone.

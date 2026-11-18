@@ -1,7 +1,7 @@
 # ADR-001: Modular Monolith Application Architecture on Laravel 12
 
 **Date:** 2026-11-17  
-**Status:** `Proposed (Greenfield Recommendation)`  
+**Status:** `Accepted (Implemented)`  
 **Deciders:** Principal Software Architect, Project Owner  
 **Related Docs:** `docs/architecture/system-architecture.md`, `docs/architecture/application-structure.md`
 
@@ -22,4 +22,4 @@ Adopt a **Modular Monolith on [Laravel 12](https://laravel.com/framework/docs/12
 ## 4. Consequences
 
 - **Positive:** Fast local and AI-assisted development in Antigravity IDE; ACID transactions across CRM modules; simple deployment and testing.
-- **Negative / Mitigation:** Requires strict discipline so controllers do not bypass domain services—enforced via `GEMINI.md` and code review prompts.
+- **Negative / Mitigation:** Requires strict discipline so controllers do not bypass domain services—enforced via and code review prompts.

@@ -1,7 +1,7 @@
 # ADR-003: Stateful Web Session Auth + Spatie RBAC + Eloquent Ownership Scopes
 
 **Date:** 2026-11-17  
-**Status:** `Proposed (Greenfield Recommendation)`  
+**Status:** `Accepted (Implemented)`  
 **Deciders:** Security Engineer, Principal Software Architect  
 **Related Docs:** `docs/security/authentication.md`, `docs/security/authorization.md`, `docs/security/role-permission-matrix.md`
 

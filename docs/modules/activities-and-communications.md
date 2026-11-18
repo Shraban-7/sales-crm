@@ -1,19 +1,16 @@
 # Activities & Communications Module (MOD-08)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Record a chronological, polymorphic timeline of all customer touchpoints (calls, emails, meetings, notes, and system events) across Leads, Contacts, Companies, and Deals.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Polymorphic activity logging (`call`, `email`, `meeting`, `note`, `system`) with direction (`inbound`, `outbound`), duration, and outcome.
 - Automatic touchpoint timestamp propagation: logging an activity on a Deal or Contact updates `last_activity_at` on the Deal (resetting its rotting timer) and `last_contacted_at` on a Lead.
 - Chronological activity feed with type filtering (`All`, `Calls`, `Emails`, `Meetings`, `Notes`).

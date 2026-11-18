@@ -1,14 +1,14 @@
 # File Upload & Attachment Security — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/security/security-policy.md`, `docs/modules/quotations-and-proposals.md`, `docs/modules/import-and-export.md`
 
 ## 1. Threat Overview
 
 CRM users upload deal attachments (contracts, POs, PDFs) and CSV/XLSX import sheets. Unvalidated uploads stored in `public/` could allow Remote Code Execution (RCE), Stored XSS (via `.svg` or `.html` files), or unauthorized direct URL scraping.
 
-## 2. Six Mandatory File Upload Controls (`Proposed`)
+## 2. Six Mandatory File Upload Controls
 
 1. **Strict MIME & Extension Allowlist:**
    - Attachments: `mimes:pdf,doc,docx,xls,xlsx,csv,png,jpg,jpeg` (`max:10240` = 10 MB).

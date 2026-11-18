@@ -1,10 +1,10 @@
 # Role-Permission Matrix — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/security/authorization.md`, `docs/modules/users-teams-and-permissions.md`
 
-## 1. Canonical CRM Roles (`Proposed`)
+## 1. Canonical CRM Roles
 
 1. **Super Admin (`super_admin`):** Full system configuration, role management, all-team record access, audit log access. Bypass granted via `Gate::before` except on immutable domain rules (e.g., cannot edit an already-converted lead or mutate an audit log).
 2. **Org Admin (`org_admin`):** Manages users, teams, pipelines, stages, imports/exports, and all commercial records across teams; cannot modify `Super Admin` accounts.
@@ -12,7 +12,7 @@
 4. **Sales Rep (`sales_rep`):** Creates and manages their own (`owner_id === $user->id`) Leads, Contacts, Companies, Deals, Activities, Tasks, Follow-Ups, and Draft Quotations.
 5. **Read-Only Analyst (`read_only_analyst`):** Read-only access to commercial records, pipelines, and executive analytics reports; zero create/update/delete capabilities.
 
-## 2. Granular Permission Matrix (`Proposed`)
+## 2. Granular Permission Matrix
 
 Legend: `All` = Organization-wide | `Team` = Within `user->team_id` | `Own` = Where `owner_id === user->id` | `—` = Denied (`403`)
 

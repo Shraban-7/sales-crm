@@ -1,10 +1,10 @@
 # Exception & Error Handling Architecture — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/architecture/backend-architecture.md`, `docs/debugging/logging-and-monitoring.md`
 
-## 1. Custom Domain Exception Hierarchy (`app/Exceptions/`) (`Proposed`)
+## 1. Custom Domain Exception Hierarchy (`app/Exceptions/`)
 
 | Exception Class | HTTP Status | When Thrown |
 | :--- | :---: | :--- |
@@ -12,7 +12,7 @@
 | `ImmutableRecordException` | `403 Forbidden` / `500` | Attempt to update or delete an `AuditLog` or `system` activity |
 | `TenantIsolationException` | `403 Forbidden` | Cross-team foreign key reference detected at service layer |
 
-## 2. Centralized Exception Rendering (`bootstrap/app.php`) (`Proposed`)
+## 2. Centralized Exception Rendering (`bootstrap/app.php`)
 
 In [Laravel 12](https://laravel.com/framework/docs/12.x/configuration), exception rendering and reporting are configured in `bootstrap/app.php`:
 

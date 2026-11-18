@@ -1,10 +1,10 @@
 # Database Relationships & Eloquent Mapping — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/database/database-design.md`, `docs/database/erd.md`, `docs/database/data-integrity.md`
 
-## 1. Relationship Matrix Across CRM Entities (`Proposed`)
+## 1. Relationship Matrix Across CRM Entities
 
 | Source Model | Relationship Method | Relation Type | Target Model | Foreign Key / Morph Key |
 | :--- | :--- | :--- | :--- | :--- |
@@ -34,7 +34,7 @@
 | `Quotation` | `deal()` | `BelongsTo` | `Deal` | `quotations.deal_id` |
 | `Quotation` | `items()` | `HasMany` | `QuotationItem` | `quotation_items.quotation_id` (ordered by `position`) |
 
-## 2. Polymorphic Relationships (`MorphTo` / `MorphMany`) (`Proposed`)
+## 2. Polymorphic Relationships (`MorphTo` / `MorphMany`)
 
 To avoid duplicating timeline, task, attachment, and audit tables across every CRM entity, five polymorphic hubs are used.
 
@@ -63,7 +63,7 @@ flowchart LR
     L & C & Co & D & Q --> Aud
 ```
 
-### Mandatory `Relation::enforceMorphMap()` Registration (`Proposed`)
+### Mandatory `Relation::enforceMorphMap()` Registration
 Never store fully qualified PHP class names (`App\Models\Deal`) in polymorphic `*_type` columns. Register a strict morph map in `AppServiceProvider::boot()` per [Laravel 12 API Docs](https://api.laravel.com/docs/12.x/index.html):
 
 ```php

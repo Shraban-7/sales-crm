@@ -1,7 +1,7 @@
 # Authorization, RBAC & Data Isolation (IDOR Prevention) — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/security/role-permission-matrix.md`, `docs/adr/ADR-003-authentication-and-authorization.md`
 
 ## 1. Dual-Layer Authorization Model
@@ -11,7 +11,7 @@ To guarantee that users can neither execute unauthorized actions nor access reco
 1. **Capability Layer ([Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/v8/installation-laravel)):** Checks whether the user's assigned Role grants the permission slug (e.g., `deals.update.own` vs `deals.update.team`).
 2. **Record Ownership & Team Layer (Laravel Policies + Eloquent Query Scopes):** Verifies whether the specific model instance's `owner_id` or `team_id` matches the authenticated user.
 
-## 2. Record Visibility Query Scope (`HasVisibilityScope` Trait) (`Proposed`)
+## 2. Record Visibility Query Scope (`HasVisibilityScope` Trait)
 
 Every primary CRM model (`Lead`, `Contact`, `Company`, `Deal`, `Quotation`, `Activity`, `Task`, `FollowUp`) must implement `scopeVisibleTo(Builder $query, User $user): Builder`:
 
@@ -45,7 +45,7 @@ trait HasVisibilityScope
 }
 ```
 
-## 3. Policy Implementation Pattern (`app/Policies/DealPolicy.php`) (`Proposed`)
+## 3. Policy Implementation Pattern (`app/Policies/DealPolicy.php`)
 
 ```php
 <?php

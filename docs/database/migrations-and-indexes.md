@@ -1,16 +1,16 @@
 # Migrations Execution Order & Indexing Blueprint — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (18 Migrations Verified)`  
 **Related Docs:** `docs/database/database-design.md`, `docs/database/database-optimization.md`, `docs/database/data-integrity.md`
 
-## 1. Strict Migration Execution Sequence (`Proposed`)
+## 1. Ordered Migration Execution Sequence
 
-Because MySQL `InnoDB` foreign key constraints require referenced parent tables to exist before child tables are created, migrations **must** be generated and ordered in the following sequence:
+Because MySQL `InnoDB` foreign key constraints require referenced parent tables to exist before child tables are created, migrations are ordered in the following sequence (`database/migrations/`):
 
-| Order | Proposed Migration Filename | Tables Created | Depends On |
+| Order | Migration Filename | Tables Created / Altered | Depends On |
 | :--- | :--- | :--- | :--- |
-| 01 | `0001_01_01_000000_create_users_and_teams_tables.php` | `teams`, `users`, `password_reset_tokens`, `sessions` | None (add `teams.leader_id` FK after `users` table in same migration) |
+| 01 | `0001_01_01_000000_create_users_table.php` | `teams`, `users`, `password_reset_tokens`, `sessions` | None (links `teams.leader_id` FK cleanly) |
 | 02 | `0001_01_01_000001_create_cache_table.php` | `cache`, `cache_locks` | None |
 | 03 | `0001_01_01_000002_create_jobs_table.php` | `jobs`, `job_batches`, `failed_jobs` | None |
 | 04 | `0001_01_02_000001_create_permission_tables.php` | `permissions`, `roles`, `model_has_permissions`, `model_has_roles`, `role_has_permissions` | `users` |
@@ -27,8 +27,9 @@ Because MySQL `InnoDB` foreign key constraints require referenced parent tables 
 | 15 | `0001_01_02_000012_create_import_export_jobs_table.php` | `import_export_jobs` | `teams`, `users` |
 | 16 | `0001_01_02_000013_create_audit_logs_table.php` | `audit_logs` | `teams`, `users` |
 | 17 | `0001_01_02_000014_create_notifications_table.php` | `notifications` | `users` |
+| 18 | `2026_11_18_000001_add_security_and_quotation_approval_columns.php` | `users` (`two_factor_*`), `quotations` (discount approval columns) | `users`, `quotations` |
 
-## 2. Composite Indexing Specification (`Proposed`)
+## 2. Composite Indexing Specification
 
 Every index below is designed around the left-prefix rule to support team/owner RBAC scoping, Kanban rendering, duplicate detection, and dashboard aggregation:
 
@@ -53,7 +54,7 @@ Every index below is designed around the left-prefix rule to support team/owner 
 | `audit_logs` | `idx_audit_morph_created` | `(auditable_type, auditable_id, created_at)` | Record-level security history |
 | `audit_logs` | `idx_audit_team_event_date` | `(team_id, event, created_at)` | Compliance log filtering |
 
-## 3. Reference Migration Example (`deals` Table) (`Proposed`)
+## 3. Reference Migration Example (`deals` Table)
 
 ```php
 Schema::create('deals', function (Blueprint $table): void {

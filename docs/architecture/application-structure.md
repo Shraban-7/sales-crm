@@ -1,14 +1,14 @@
 # Application Directory Structure — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
-**Related Docs:** `GEMINI.md`, `docs/architecture/system-architecture.md`, `docs/architecture/coding-standards.md`
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
+**Related Docs:** `docs/architecture/system-architecture.md`, `docs/architecture/coding-standards.md`
 
 ## 1. Overview
 
 The project follows the streamlined [Laravel 12 Configuration](https://laravel.com/framework/docs/12.x/configuration) directory structure (introduced in Laravel 11/12 with `bootstrap/app.php` routing and middleware registration) augmented with dedicated domain directories (`app/Actions`, `app/Data`, `app/Enums`, `app/Services`, `app/Policies`).
 
-## 2. Canonical Directory Tree (`Proposed`)
+## 2. Canonical Directory Tree
 
 ```text
 sales-crm/
@@ -69,15 +69,16 @@ sales-crm/
 │       └── pages/                # Module views (leads/, contacts/, companies/, deals/, etc.)
 ├── routes/
 │   ├── console.php               # Scheduled tasks definition
-│   └── web.php                   # Authenticated web & JSON fragment routes
+│   ├── api.php                   # Signed webhook endpoints (POST /api/leads/capture)
+│   └── web.php                   # Web & JSON fragment routes
 ├── storage/
 │   └── app/
 │       └── private/              # Protected CRM attachments, imports, generated PDFs
 ├── tests/
-│   ├── Feature/                  # HTTP, Database, Policy, and Workflow tests
-│   └── Unit/                     # Pure domain calculation, Enum, and Action unit tests
-├── GEMINI.md                     # Antigravity IDE agent instructions
+│   ├── Feature/                  # HTTP, Database, Policy, Render & Workflow tests
+│   └── Unit/                     # Unit tests
 ├── PROJECT_STATUS.md             # Module implementation tracker
+├── readme.md                     # User handbook, demo credentials, screenshots & hosting guide
 ├── composer.json
 ├── package.json
 └── vite.config.js

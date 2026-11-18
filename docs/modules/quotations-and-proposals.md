@@ -1,19 +1,16 @@
 # Quotations & Proposals Module (MOD-10)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Generate accurate, versioned commercial quotations with multi-line items, discounts, taxes, terms, and printable PDF output linked directly to Deals and Companies.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Sequential, collision-free quote numbering (`QT-YYYY-00001`) and ULID public identifiers.
 - Line-item builder (`quotation_items`) supporting quantity, unit price, line discount %, and line tax %.
 - Strict server-side decimal math (`CalculateQuotationTotalsAction`) computing `subtotal`, `discount_total`, `tax_total`, and `grand_total`.

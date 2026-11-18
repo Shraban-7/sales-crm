@@ -1,19 +1,16 @@
 # Deals & Opportunities Module (MOD-06)
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (0% Implemented — Greenfield Specification)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Production Ready — Verified by PHPUnit & Pint)`  
 **Related Docs:** `PROJECT_STATUS.md`, `docs/database/database-design.md`, `docs/security/role-permission-matrix.md`
 
 ## 1. Business Objectives
 
 Track revenue-generating sales opportunities from qualification through closing, recording stage transition velocity, weighted forecast values, stakeholder roles, and win/loss intelligence.
 
-## 2. Implementation Status Separation
+## 2. Implementation Summary
 
-### 2.1 Existing / Implemented Functionality
-- None (`0% Implemented` — Greenfield repository).
-
-### 2.2 Proposed Functionality
+### 2.1 Implemented Functionality
 - Deal CRUD with valuation (`DECIMAL(15,2)`), currency, expected close date, and custom probability override.
 - Drag-and-drop and one-click stage transitions (`MoveDealStageAction`) logging exact dwell time in `deal_stage_histories`.
 - Mandatory `lost_reason` (and optional `lost_competitor`) when marking a deal as `lost`.

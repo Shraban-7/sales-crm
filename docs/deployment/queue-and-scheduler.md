@@ -1,7 +1,7 @@
 # Queue Workers & Task Scheduler Configuration — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Operational Runbook)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Operational Runbook)`  
 **Related Docs:** `docs/architecture/request-lifecycle.md`, `docs/modules/tasks-and-reminders.md`, `docs/modules/import-and-export.md`
 
 ## 1. Queue Priority Topology
@@ -12,7 +12,7 @@
 | `notifications` | 2 (Medium) | Task/follow-up reminders, quotation sent emails, lead assignment alerts | `--timeout=90 --tries=3` |
 | `imports` | 3 (Bulk) | `ProcessCsvImportJob`, `GenerateExportFileJob` | `--timeout=600 --tries=2` |
 
-## 2. Supervisor Configuration (`/etc/supervisor/conf.d/sales-crm-worker.conf`) (`Proposed`)
+## 2. Supervisor Configuration (`/etc/supervisor/conf.d/sales-crm-worker.conf`)
 
 ```ini
 [program:sales-crm-worker]
@@ -29,7 +29,7 @@ stdout_logfile=/var/www/sales-crm/shared/storage/logs/worker.log
 stopwaitsecs=3600
 ```
 
-## 3. Scheduled Tasks (`routes/console.php`) (`Proposed`)
+## 3. Scheduled Tasks (`routes/console.php`)
 
 ```php
 <?php

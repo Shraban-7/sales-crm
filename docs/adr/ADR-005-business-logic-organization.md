@@ -1,7 +1,7 @@
 # ADR-005: Domain Services, Invokable Actions & Immutable DTOs
 
 **Date:** 2026-11-17  
-**Status:** `Proposed (Greenfield Recommendation)`  
+**Status:** `Accepted (Implemented)`  
 **Deciders:** Principal Software Architect, Senior Laravel Engineer  
 **Related Docs:** `docs/architecture/backend-architecture.md`, `docs/architecture/design-patterns.md`
 

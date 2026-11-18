@@ -1,10 +1,10 @@
 # Entity-Relationship Diagram (ERD) — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/database/database-design.md`, `docs/database/database-relationships.md`, `docs/database/migrations-and-indexes.md`
 
-## 1. Core Commercial & Pipeline ERD (`Proposed`)
+## 1. Core Commercial & Pipeline ERD
 
 ```mermaid
 erDiagram
@@ -143,7 +143,7 @@ erDiagram
     }
 ```
 
-## 2. Polymorphic Execution & Governance ERD (`Proposed`)
+## 2. Polymorphic Execution & Governance ERD
 
 ```mermaid
 erDiagram

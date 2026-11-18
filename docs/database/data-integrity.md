@@ -1,10 +1,10 @@
 # Data Integrity, Transactions & Concurrency — Sales CRM
 
-**Last Updated:** 2026-11-17  
-**Implementation Status:** `Proposed (Greenfield Blueprint)`  
+**Last Updated:** 2026-11-19  
+**Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/database/database-design.md`, `docs/database/migrations-and-indexes.md`
 
-## 1. Foreign Key Delete & Cascade Policy (`Proposed`)
+## 1. Foreign Key Delete & Cascade Policy
 
 To prevent accidental cascade wiping of commercial records when a user, team, or pipeline stage is modified, foreign keys follow strict rules:
 
