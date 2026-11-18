@@ -39,26 +39,28 @@
                 <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500">Quick Add Lead</h2>
                 <span class="text-xs text-slate-400">Scored automatically on creation</span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <input type="text" name="first_name" placeholder="First Name *" required class="crm-input">
                 <input type="text" name="last_name" placeholder="Last Name" class="crm-input">
                 <input type="text" name="company_name" placeholder="Company" class="crm-input">
                 <input type="email" name="email" placeholder="Email" class="crm-input">
                 <input type="text" name="phone" placeholder="Phone" class="crm-input">
-                <select name="source" required class="crm-select">
+                <select name="source" required class="crm-select w-full">
                     @foreach (\App\Enums\LeadSource::cases() as $case)
                         @continue($case === \App\Enums\LeadSource::Import)
                         <option value="{{ $case->value }}">{{ $case->label() }}</option>
                     @endforeach
                 </select>
                 @if ($owners->isNotEmpty() && (auth()->user()->can('leads.update.team') || auth()->user()->can('leads.update.all')))
-                    <select name="owner_id" class="crm-select">
+                    <select name="owner_id" class="crm-select w-full">
                         <option value="{{ auth()->id() }}">Assign to me</option>
                         @foreach ($owners as $owner)
                             @continue($owner->id === auth()->id())
                             <option value="{{ $owner->id }}">{{ $owner->name }}</option>
                         @endforeach
                     </select>
+                @else
+                    <div class="hidden lg:block"></div>
                 @endif
                 <input type="hidden" name="status" value="new">
                 <button type="submit" class="crm-btn-primary">Add Lead</button>

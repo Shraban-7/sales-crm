@@ -14,6 +14,7 @@
     --color-brand-600: oklch(0.55 0.215 262.8);
     --color-brand-700: oklch(0.48 0.205 263.3);
     --color-brand-900: oklch(0.32 0.125 265.5);
+    --color-brand-950: oklch(0.22 0.095 266.0);
 
     --color-stage-new: oklch(0.62 0.18 250);
     --color-stage-qualified: oklch(0.65 0.17 195);
