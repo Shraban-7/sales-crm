@@ -61,6 +61,7 @@ final class UpdateCompanyRequest extends FormRequest
             while ($currentId > 0 && $depth < 6) {
                 if ($currentId === $company->id) {
                     $validator->errors()->add('parent_company_id', 'Circular parent company hierarchy is not allowed.');
+
                     return;
                 }
 

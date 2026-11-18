@@ -25,7 +25,7 @@ final class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request, AuditLoggerService $auditLogger): RedirectResponse
     {
-        $throttleKey = Str::lower((string) $request->input('email')) . '|' . $request->ip();
+        $throttleKey = Str::lower((string) $request->input('email')).'|'.$request->ip();
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
@@ -41,7 +41,7 @@ final class AuthenticatedSessionController extends Controller
             'is_active' => true,
         ];
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (! Auth::validate($credentials)) {
             RateLimiter::hit($throttleKey, 60);
 
             $auditLogger->log(
@@ -57,11 +57,38 @@ final class AuthenticatedSessionController extends Controller
             ]);
         }
 
+        /** @var User|null $user */
+        $user = User::query()
+            ->where('email', $request->input('email'))
+            ->where('is_active', true)
+            ->first();
+
+        if ($user === null) {
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
         RateLimiter::clear($throttleKey);
+
+        if ($user->two_factor_enabled) {
+            TwoFactorChallengeController::rememberPendingUser($request, $user, $request->boolean('remember'));
+            TwoFactorChallengeController::issueCode($user);
+
+            $auditLogger->log(
+                event: 'two_factor_challenge_sent',
+                auditable: $user,
+                actor: $user,
+                teamId: $user->team_id,
+                request: $request,
+            );
+
+            return redirect()->route('two-factor.challenge');
+        }
+
+        Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
 
-        /** @var User $user */
-        $user = $request->user();
         $user->update([
             'last_login_at' => now(),
             'last_login_ip' => $request->ip(),

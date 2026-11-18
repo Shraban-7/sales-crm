@@ -12,8 +12,11 @@ use App\Models\Company;
 use App\Models\Contact;
 use App\Models\ImportExportJob;
 use App\Models\Lead;
+use App\Models\Team;
 use App\Notifications\CrmAlertNotification;
+use App\Services\Leads\LeadDuplicateService;
 use App\Support\CsvSanitizer;
+use App\Support\PhoneNumber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -84,31 +87,59 @@ final class ProcessCsvImportJob implements ShouldQueue
             $headers
         );
 
+        $requiredHeader = $jobRecord->module === ImportExportModule::Companies ? 'name' : 'first_name';
+        if (! in_array($requiredHeader, $headers, true)) {
+            fclose($handle);
+            $jobRecord->update([
+                'status' => ImportExportStatus::Failed,
+                'error_summary' => ["Missing required '{$requiredHeader}' column in CSV headers."],
+                'completed_at' => now(),
+            ]);
+
+            return;
+        }
+
         $totalRows = 0;
         $processedRows = 0;
         $failedRows = 0;
         $errorRows = [];
         $lineNumber = 1;
 
-        while (($row = fgetcsv($handle)) !== false) {
-            $lineNumber++;
-            if ($row === [null] || $row === []) {
-                continue;
-            }
+        try {
+            while (($row = fgetcsv($handle)) !== false) {
+                $lineNumber++;
+                if ($row === [null] || $row === []) {
+                    continue;
+                }
 
-            $totalRows++;
-            $assoc = [];
-            foreach ($headers as $idx => $key) {
-                $assoc[$key] = CsvSanitizer::sanitizeCell($row[$idx] ?? '');
-            }
+                $totalRows++;
+                $assoc = [];
+                foreach ($headers as $idx => $key) {
+                    // Inbound data is validated/normalised per field. Export-only
+                    // formula escaping must never be applied to stored values.
+                    $assoc[$key] = trim((string) ($row[$idx] ?? ''));
+                }
 
-            $error = $this->processRow($jobRecord, $assoc);
-            if ($error !== null) {
-                $failedRows++;
-                $errorRows[] = ['line' => $lineNumber, 'error' => $error, 'data' => $assoc];
-            } else {
-                $processedRows++;
+                $error = $this->processRow($jobRecord, $assoc);
+                if ($error !== null) {
+                    $failedRows++;
+                    $errorRows[] = ['line' => $lineNumber, 'error' => $error, 'data' => $assoc];
+                } else {
+                    $processedRows++;
+                }
             }
+        } catch (\Throwable $e) {
+            fclose($handle);
+            $jobRecord->update([
+                'status' => ImportExportStatus::Failed,
+                'total_rows' => $totalRows,
+                'processed_rows' => $processedRows,
+                'failed_rows' => $failedRows,
+                'error_summary' => ['Import aborted: '.$e->getMessage()],
+                'completed_at' => now(),
+            ]);
+
+            throw $e;
         }
 
         fclose($handle);
@@ -168,6 +199,12 @@ final class ProcessCsvImportJob implements ShouldQueue
      */
     private function importLead(ImportExportJob $job, array $row): ?string
     {
+        $email = $this->normalizeEmail($row['email'] ?? null);
+        $phone = PhoneNumber::normalize($row['phone'] ?? null);
+
+        $row['email'] = $email ?? '';
+        $row['phone'] = $phone ?? '';
+
         $validator = Validator::make($row, [
             'first_name' => ['required', 'string', 'max:100'],
             'email' => ['nullable', 'email:rfc', 'max:191', 'required_without:phone'],
@@ -178,20 +215,22 @@ final class ProcessCsvImportJob implements ShouldQueue
             return implode('; ', $validator->errors()->all());
         }
 
-        $existing = ! empty($row['email'])
-            ? Lead::query()->where('team_id', $job->team_id)->where('email', $row['email'])->first()
-            : null;
+        $team = Team::query()->findOrFail($job->team_id);
+
+        $existing = app(LeadDuplicateService::class)->find($team, $email, $phone);
 
         if ($existing !== null) {
             if ($this->duplicateStrategy === 'skip') {
-                return 'Duplicate lead email skipped.';
+                return 'Duplicate lead skipped.';
             }
 
             $existing->update([
                 'first_name' => $row['first_name'],
-                'last_name' => $row['last_name'] ?? $existing->last_name,
-                'company_name' => $row['company_name'] ?? $existing->company_name,
-                'phone' => $row['phone'] ?: $existing->phone,
+                'last_name' => ($row['last_name'] ?? '') ?: $existing->last_name,
+                'company_name' => ($row['company_name'] ?? '') ?: $existing->company_name,
+                'job_title' => ($row['job_title'] ?? '') ?: $existing->job_title,
+                'email' => $email ?? $existing->email,
+                'phone' => $phone ?? $existing->phone,
             ]);
 
             return null;
@@ -201,11 +240,11 @@ final class ProcessCsvImportJob implements ShouldQueue
             'team_id' => $job->team_id,
             'owner_id' => $job->user_id,
             'first_name' => $row['first_name'],
-            'last_name' => $row['last_name'] ?: null,
-            'company_name' => $row['company_name'] ?: null,
-            'job_title' => $row['job_title'] ?: null,
-            'email' => $row['email'] ?: null,
-            'phone' => $row['phone'] ?: null,
+            'last_name' => ($row['last_name'] ?? '') ?: null,
+            'company_name' => ($row['company_name'] ?? '') ?: null,
+            'job_title' => ($row['job_title'] ?? '') ?: null,
+            'email' => $email,
+            'phone' => $phone,
             'source' => LeadSource::Import,
             'status' => LeadStatus::New,
             'score' => 20,
@@ -219,14 +258,61 @@ final class ProcessCsvImportJob implements ShouldQueue
      */
     private function importContact(ImportExportJob $job, array $row): ?string
     {
+        $email = $this->normalizeEmail($row['email'] ?? null);
+        $phone = PhoneNumber::normalize($row['phone'] ?? null);
+
+        $row['email'] = $email ?? '';
+        $row['phone'] = $phone ?? '';
+
         $validator = Validator::make($row, [
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'email' => ['nullable', 'email:rfc', 'max:191'],
+            'phone' => ['nullable', 'string', 'max:30'],
         ]);
 
         if ($validator->fails()) {
             return implode('; ', $validator->errors()->all());
+        }
+
+        $existing = null;
+
+        if ($email !== null || $phone !== null) {
+            $comparablePhone = PhoneNumber::comparable($phone);
+
+            $existing = Contact::query()
+                ->where('team_id', $job->team_id)
+                ->where(function ($sub) use ($email, $comparablePhone): void {
+                    if ($email !== null) {
+                        $sub->whereRaw('LOWER(email) = ?', [$email]);
+                    }
+
+                    if ($comparablePhone !== null) {
+                        $method = $email !== null ? 'orWhereRaw' : 'whereRaw';
+                        $sub->{$method}(
+                            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, ' ', ''), '-', ''), '(', ''), ')', ''), '+', '') = ?",
+                            [$comparablePhone],
+                        );
+                    }
+                })
+                ->orderBy('id')
+                ->first();
+        }
+
+        if ($existing !== null) {
+            if ($this->duplicateStrategy === 'skip') {
+                return 'Duplicate contact skipped.';
+            }
+
+            $existing->update([
+                'first_name' => $row['first_name'],
+                'last_name' => $row['last_name'],
+                'email' => $email ?? $existing->email,
+                'phone' => $phone ?? $existing->phone,
+                'job_title' => ($row['job_title'] ?? '') ?: $existing->job_title,
+            ]);
+
+            return null;
         }
 
         Contact::query()->create([
@@ -234,9 +320,9 @@ final class ProcessCsvImportJob implements ShouldQueue
             'owner_id' => $job->user_id,
             'first_name' => $row['first_name'],
             'last_name' => $row['last_name'],
-            'email' => $row['email'] ?: null,
-            'phone' => $row['phone'] ?: null,
-            'job_title' => $row['job_title'] ?: null,
+            'email' => $email,
+            'phone' => $phone,
+            'job_title' => ($row['job_title'] ?? '') ?: null,
         ]);
 
         return null;
@@ -247,24 +333,83 @@ final class ProcessCsvImportJob implements ShouldQueue
      */
     private function importCompany(ImportExportJob $job, array $row): ?string
     {
+        $website = $this->normalizeWebsite($row['website'] ?? null);
+        $phone = PhoneNumber::normalize($row['phone'] ?? null);
+
+        $row['phone'] = $phone ?? '';
+
         $validator = Validator::make($row, [
             'name' => ['required', 'string', 'max:191'],
+            'phone' => ['nullable', 'string', 'max:30'],
         ]);
 
         if ($validator->fails()) {
             return implode('; ', $validator->errors()->all());
         }
 
+        $name = trim($row['name']);
+
+        $existing = Company::query()
+            ->where('team_id', $job->team_id)
+            ->where(function ($query) use ($name, $website): void {
+                $query->whereRaw('LOWER(name) = ?', [mb_strtolower($name)]);
+
+                if ($website !== null) {
+                    $query->orWhereRaw('LOWER(website) = ?', [$website]);
+                }
+            })
+            ->orderBy('id')
+            ->first();
+
+        if ($existing !== null) {
+            if ($this->duplicateStrategy === 'skip') {
+                return 'Duplicate company skipped.';
+            }
+
+            $existing->update([
+                'name' => $name,
+                'industry' => ($row['industry'] ?? '') ?: $existing->industry,
+                'phone' => $phone ?? $existing->phone,
+                'website' => $website ?? $existing->website,
+                'city' => ($row['city'] ?? '') ?: $existing->city,
+                'country' => ($row['country'] ?? '') ?: $existing->country,
+            ]);
+
+            return null;
+        }
+
         Company::query()->create([
             'team_id' => $job->team_id,
             'owner_id' => $job->user_id,
-            'name' => $row['name'],
-            'industry' => $row['industry'] ?: null,
-            'phone' => $row['phone'] ?: null,
-            'city' => $row['city'] ?: null,
-            'country' => $row['country'] ?: config('crm.country', 'BD'),
+            'name' => $name,
+            'industry' => ($row['industry'] ?? '') ?: null,
+            'phone' => $phone,
+            'website' => $website,
+            'city' => ($row['city'] ?? '') ?: null,
+            'country' => ($row['country'] ?? '') ?: config('crm.country', 'BD'),
         ]);
 
         return null;
+    }
+
+    private function normalizeEmail(?string $email): ?string
+    {
+        $email = $email !== null ? mb_strtolower(trim($email)) : null;
+
+        return $email !== '' ? $email : null;
+    }
+
+    private function normalizeWebsite(?string $website): ?string
+    {
+        $website = $website !== null ? trim($website) : null;
+
+        if ($website === null || $website === '') {
+            return null;
+        }
+
+        $url = str_contains($website, '://') ? $website : 'https://'.$website;
+        $host = parse_url($url, PHP_URL_HOST);
+
+        return is_string($host) && $host !== '' ? mb_strtolower($host) : mb_strtolower($website);
     }
 }

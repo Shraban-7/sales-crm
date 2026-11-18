@@ -11,9 +11,11 @@ use App\Http\Requests\FollowUps\CompleteFollowUpRequest;
 use App\Http\Requests\FollowUps\StoreFollowUpRequest;
 use App\Models\Deal;
 use App\Models\FollowUp;
+use App\Models\Reminder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
 final class FollowUpController extends Controller
@@ -63,7 +65,7 @@ final class FollowUpController extends Controller
         $this->authorize('view', $subject);
 
         $user = $request->user();
-        FollowUp::query()->create([
+        $followUp = FollowUp::query()->create([
             'team_id' => $user->team_id,
             'owner_id' => $user->id,
             'subject_type' => $subject->getMorphClass(),
@@ -72,6 +74,20 @@ final class FollowUpController extends Controller
             'status' => FollowUpStatus::Scheduled,
             'scheduled_at' => $data['scheduled_at'],
             'objective' => $data['objective'],
+        ]);
+
+        $scheduledAt = Carbon::parse((string) $data['scheduled_at']);
+        $remindAt = $scheduledAt->copy()->subMinutes(30);
+        if ($remindAt->isPast()) {
+            $remindAt = $scheduledAt;
+        }
+
+        Reminder::query()->create([
+            'user_id' => $user->id,
+            'remindable_type' => $followUp->getMorphClass(),
+            'remindable_id' => $followUp->id,
+            'remind_at' => $remindAt,
+            'channel' => 'database',
         ]);
 
         return back()->with('status', 'Follow-up scheduled.');

@@ -69,4 +69,18 @@ final class QuotationPolicy
 
         return $this->canDeleteScoped($user, $quotation, 'quotations');
     }
+
+    public function approveDiscount(User $user, Quotation $quotation): bool
+    {
+        if (! $quotation->isDraft() || ! $quotation->requiresDiscountApproval()) {
+            return false;
+        }
+
+        if (! $user->can('quotations.approve_discount')) {
+            return false;
+        }
+
+        return $user->hasAnyRole(['Super Admin', 'Org Admin'])
+            || (int) $quotation->team_id === (int) $user->team_id;
+    }
 }

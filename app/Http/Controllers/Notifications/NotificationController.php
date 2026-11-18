@@ -24,7 +24,10 @@ final class NotificationController extends Controller
 
     public function markRead(Request $request, DatabaseNotification $notification): JsonResponse|RedirectResponse
     {
-        if ((int) $notification->notifiable_id !== (int) $request->user()->id) {
+        if (
+            (int) $notification->notifiable_id !== (int) $request->user()->id
+            || $notification->notifiable_type !== $request->user()->getMorphClass()
+        ) {
             abort(403);
         }
 

@@ -28,7 +28,7 @@ final class PipelineStageController extends Controller
 
         $pipeline->stages()->create([
             'name' => $data['name'],
-            'slug' => Str::slug($data['name']) . '-' . ($maxPos + 1),
+            'slug' => Str::slug($data['name']).'-'.($maxPos + 1),
             'position' => $maxPos + 1,
             'default_probability' => $data['default_probability'],
             'rotting_days' => $data['rotting_days'],

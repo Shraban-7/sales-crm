@@ -8,19 +8,39 @@
                     <option value="{{ $case->value }}" @selected($status === $case->value)>{{ $case->label() }}</option>
                 @endforeach
             </select>
+            <select name="source" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">
+                <option value="">All Sources</option>
+                @foreach (\App\Enums\LeadSource::cases() as $case)
+                    <option value="{{ $case->value }}" @selected($source === $case->value)>{{ $case->label() }}</option>
+                @endforeach
+            </select>
             <button type="submit" class="rounded-lg bg-slate-800 px-3 py-2 text-sm font-medium text-white">Filter</button>
         </form>
     </div>
 
     @can('create', \App\Models\Lead::class)
-        <form method="POST" action="{{ route('leads.store') }}" class="bg-white rounded-xl border border-slate-200 p-5 grid grid-cols-1 md:grid-cols-6 gap-3">
+        <form method="POST" action="{{ route('leads.store') }}" class="bg-white rounded-xl border border-slate-200 p-5 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 gap-3">
             @csrf
             <input type="text" name="first_name" placeholder="First Name *" required class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
             <input type="text" name="last_name" placeholder="Last Name" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
             <input type="text" name="company_name" placeholder="Company" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
             <input type="email" name="email" placeholder="Email" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
             <input type="text" name="phone" placeholder="Phone" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
-            <input type="hidden" name="source" value="website">
+            <select name="source" required class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                @foreach (\App\Enums\LeadSource::cases() as $case)
+                    @continue($case === \App\Enums\LeadSource::Import)
+                    <option value="{{ $case->value }}">{{ $case->label() }}</option>
+                @endforeach
+            </select>
+            @if ($owners->isNotEmpty() && (auth()->user()->can('leads.update.team') || auth()->user()->can('leads.update.all')))
+                <select name="owner_id" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                    <option value="{{ auth()->id() }}">Assign to me</option>
+                    @foreach ($owners as $owner)
+                        @continue($owner->id === auth()->id())
+                        <option value="{{ $owner->id }}">{{ $owner->name }}</option>
+                    @endforeach
+                </select>
+            @endif
             <input type="hidden" name="status" value="new">
             <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">Add Lead</button>
         </form>

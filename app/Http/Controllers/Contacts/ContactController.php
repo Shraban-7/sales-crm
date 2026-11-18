@@ -66,6 +66,7 @@ final class ContactController extends Controller
             'activities.user',
             'tasks.assignee',
             'followUps.owner',
+            'attachments.uploader',
         ]);
 
         $companies = Company::query()->visibleTo($request->user())->orderBy('name')->get(['id', 'name']);

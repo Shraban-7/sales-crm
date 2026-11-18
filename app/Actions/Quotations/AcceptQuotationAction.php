@@ -17,14 +17,36 @@ final readonly class AcceptQuotationAction
         private AuditLoggerService $auditLogger,
     ) {}
 
-    public function handle(Quotation $quotation, User $actor): Quotation
+    public function handle(Quotation $quotation, ?User $actor = null, ?string $acceptedByName = null): Quotation
     {
-        return DB::transaction(function () use ($quotation, $actor): Quotation {
+        $snapshot = Quotation::query()->findOrFail($quotation->id);
+
+        if ($snapshot->status === QuotationStatus::Sent && $snapshot->valid_until->isPast()) {
+            $snapshot->update(['status' => QuotationStatus::Expired]);
+
+            throw new DomainRuleException(
+                'This quotation expired on '.$snapshot->valid_until->toFormattedDateString().' and can no longer be accepted.',
+                409,
+            );
+        }
+
+        return DB::transaction(function () use ($quotation, $actor, $acceptedByName): Quotation {
             /** @var Quotation $locked */
             $locked = Quotation::query()->lockForUpdate()->findOrFail($quotation->id);
 
-            if (! in_array($locked->status, [QuotationStatus::Draft, QuotationStatus::Sent], true)) {
-                throw new DomainRuleException('Only draft or sent quotations can be accepted.');
+            if ($locked->status === QuotationStatus::Expired) {
+                throw new DomainRuleException('This quotation has expired and can no longer be accepted.', 409);
+            }
+
+            if ($locked->status !== QuotationStatus::Sent) {
+                throw new DomainRuleException('Only sent quotations can be accepted.', 409);
+            }
+
+            if ($locked->valid_until->isPast()) {
+                throw new DomainRuleException(
+                    'This quotation has expired and can no longer be accepted.',
+                    409,
+                );
             }
 
             $oldStatus = $locked->status->value;
@@ -44,7 +66,11 @@ final readonly class AcceptQuotationAction
                 auditable: $locked,
                 actor: $actor,
                 oldValues: ['status' => $oldStatus],
-                newValues: ['status' => QuotationStatus::Accepted->value, 'grand_total' => $locked->grand_total],
+                newValues: array_filter([
+                    'status' => QuotationStatus::Accepted->value,
+                    'grand_total' => $locked->grand_total,
+                    'accepted_by_name' => $acceptedByName,
+                ], fn ($value): bool => $value !== null),
                 teamId: $locked->team_id,
             );
 

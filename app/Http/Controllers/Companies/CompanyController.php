@@ -65,6 +65,7 @@ final class CompanyController extends Controller
             'activities.user',
             'tasks.assignee',
             'followUps.owner',
+            'attachments.uploader',
         ]);
 
         $openPipeline = (float) $company->deals->where('status', DealStatus::Open)->sum('value');

@@ -40,6 +40,8 @@ class Quotation extends Model
         'valid_until',
         'terms_and_conditions',
         'customer_notes',
+        'discount_approved_by_id',
+        'discount_approved_at',
         'sent_at',
         'accepted_at',
         'rejected_at',
@@ -57,6 +59,7 @@ class Quotation extends Model
             'grand_total' => 'decimal:2',
             'issue_date' => 'date',
             'valid_until' => 'date',
+            'discount_approved_at' => 'datetime',
             'sent_at' => 'datetime',
             'accepted_at' => 'datetime',
             'rejected_at' => 'datetime',
@@ -66,6 +69,30 @@ class Quotation extends Model
     public function isDraft(): bool
     {
         return $this->status === QuotationStatus::Draft;
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->status === QuotationStatus::Expired
+            || ($this->status === QuotationStatus::Sent && $this->valid_until->isPast());
+    }
+
+    public function canBeAccepted(): bool
+    {
+        return $this->status === QuotationStatus::Sent && ! $this->isExpired();
+    }
+
+    public function discountPercent(): float
+    {
+        $subtotal = (float) $this->subtotal;
+        $discount = (float) $this->discount_total;
+
+        return $subtotal > 0 ? round(($discount / $subtotal) * 100, 2) : 0.0;
+    }
+
+    public function requiresDiscountApproval(): bool
+    {
+        return $this->discountPercent() > (float) config('crm.quotations.discount_approval_threshold', 15.00);
     }
 
     public function team(): BelongsTo
@@ -91,6 +118,11 @@ class Quotation extends Model
     public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
+    }
+
+    public function discountApprover(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'discount_approved_by_id');
     }
 
     public function items(): HasMany

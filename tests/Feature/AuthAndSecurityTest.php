@@ -8,9 +8,11 @@ use App\Exceptions\ImmutableRecordException;
 use App\Models\AuditLog;
 use App\Models\Team;
 use App\Models\User;
+use App\Notifications\TwoFactorCodeNotification;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 final class AuthAndSecurityTest extends TestCase
@@ -113,5 +115,104 @@ final class AuthAndSecurityTest extends TestCase
 
         $this->expectException(ImmutableRecordException::class);
         $log->delete();
+    }
+
+    public function test_two_factor_login_requires_emailed_code_before_authenticating(): void
+    {
+        $team = Team::query()->create(['name' => 'Alpha', 'slug' => 'alpha']);
+        $user = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Secure User',
+            'email' => 'secure@salescrm.test',
+            'password' => Hash::make('Password@12345'),
+            'is_active' => true,
+            'two_factor_enabled' => true,
+        ]);
+        $user->assignRole('Sales Rep');
+
+        Notification::fake();
+
+        $this->post(route('login.store'), [
+            'email' => 'secure@salescrm.test',
+            'password' => 'Password@12345',
+        ])->assertRedirect(route('two-factor.challenge'));
+
+        $this->assertGuest();
+
+        $code = null;
+        Notification::assertSentTo(
+            $user,
+            TwoFactorCodeNotification::class,
+            function (TwoFactorCodeNotification $notification) use (&$code): bool {
+                $code = $notification->code;
+
+                return true;
+            },
+        );
+
+        $this->assertNotNull($code);
+        $this->assertNotSame('', (string) $user->fresh()->two_factor_code_hash);
+
+        $this->post(route('two-factor.store'), ['code' => $code])
+            ->assertRedirect(route('dashboard'));
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertNull($user->fresh()->two_factor_code_hash);
+    }
+
+    public function test_two_factor_rejects_invalid_code(): void
+    {
+        $team = Team::query()->create(['name' => 'Alpha', 'slug' => 'alpha']);
+        $user = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Secure User',
+            'email' => 'secure@salescrm.test',
+            'password' => Hash::make('Password@12345'),
+            'is_active' => true,
+            'two_factor_enabled' => true,
+        ]);
+        $user->assignRole('Sales Rep');
+
+        Notification::fake();
+
+        $this->post(route('login.store'), [
+            'email' => 'secure@salescrm.test',
+            'password' => 'Password@12345',
+        ])->assertRedirect(route('two-factor.challenge'));
+
+        $this->from(route('two-factor.challenge'))
+            ->post(route('two-factor.store'), ['code' => '000000'])
+            ->assertRedirect(route('two-factor.challenge'))
+            ->assertSessionHasErrors('code');
+
+        $this->assertGuest();
+    }
+
+    public function test_user_can_enable_two_factor_from_security_settings(): void
+    {
+        $team = Team::query()->create(['name' => 'Alpha', 'slug' => 'alpha']);
+        $user = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Rep',
+            'email' => 'rep@salescrm.test',
+            'password' => Hash::make('Password@12345'),
+            'is_active' => true,
+        ]);
+        $user->assignRole('Sales Rep');
+        $user->refresh();
+
+        $this->actingAs($user)->put(route('settings.security.update'), [
+            'two_factor_enabled' => 1,
+            'current_password' => 'wrong-password',
+        ])->assertSessionHasErrors('current_password');
+
+        $this->assertFalse($user->fresh()->two_factor_enabled);
+
+        $this->actingAs($user)->put(route('settings.security.update'), [
+            'two_factor_enabled' => 1,
+            'current_password' => 'Password@12345',
+        ])->assertRedirect();
+
+        $this->assertTrue($user->fresh()->two_factor_enabled);
     }
 }

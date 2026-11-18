@@ -15,7 +15,7 @@ final class CsvSanitizer
         }
 
         if (preg_match('/^[=+\-@\t\r]/', $string) === 1) {
-            return "'" . $string;
+            return "'".$string;
         }
 
         return $string;

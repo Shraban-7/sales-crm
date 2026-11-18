@@ -1,4 +1,4 @@
-<x-layouts.app title="Quotations — Sales CRM" header="Quotations &amp; Proposals">
+<x-layouts.app title="Quotations — Sales CRM" header="Quotations & Proposals">
     @can('create', \App\Models\Quotation::class)
         <div class="flex justify-end">
             <a href="{{ route('quotations.create') }}" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white">New Quotation</a>

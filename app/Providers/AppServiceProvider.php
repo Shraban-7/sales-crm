@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Enums\ActivityType;
 use App\Models\Activity;
+use App\Models\Attachment;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Deal;
@@ -14,6 +16,7 @@ use App\Models\Lead;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\Quotation;
+use App\Models\Reminder;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
@@ -44,7 +47,9 @@ class AppServiceProvider extends ServiceProvider
             'pipeline_stage' => PipelineStage::class,
             'deal' => Deal::class,
             'activity' => Activity::class,
+            'attachment' => Attachment::class,
             'task' => Task::class,
+            'reminder' => Reminder::class,
             'follow_up' => FollowUp::class,
             'quotation' => Quotation::class,
             'import_export_job' => ImportExportJob::class,
@@ -78,7 +83,16 @@ class AppServiceProvider extends ServiceProvider
                 isset($arguments[0])
                 && $arguments[0] instanceof Quotation
                 && ! $arguments[0]->isDraft()
-                && $ability === 'update'
+                && in_array($ability, ['update', 'delete'], true)
+            ) {
+                return false;
+            }
+
+            if (
+                isset($arguments[0])
+                && $arguments[0] instanceof Activity
+                && $arguments[0]->type === ActivityType::System
+                && in_array($ability, ['update', 'delete'], true)
             ) {
                 return false;
             }

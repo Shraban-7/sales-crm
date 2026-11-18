@@ -12,6 +12,7 @@ use App\Models\ImportExportJob;
 use App\Models\Lead;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\Audit\AuditLoggerService;
 use App\Support\CsvSanitizer;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -91,7 +92,7 @@ final class ReportsAndImportExportTest extends TestCase
             'file_disk' => 'private',
         ]);
 
-        (new GenerateExportFileJob($job->id))->handle(app(\App\Services\Audit\AuditLoggerService::class));
+        (new GenerateExportFileJob($job->id))->handle(app(AuditLoggerService::class));
 
         $job->refresh();
         $this->assertSame(ImportExportStatus::Completed, $job->status);

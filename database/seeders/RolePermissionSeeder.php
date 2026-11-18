@@ -74,6 +74,7 @@ class RolePermissionSeeder extends Seeder
             // Tasks
             'tasks.view.own',
             'tasks.view.team',
+            'tasks.view.all',
             'tasks.create',
             'tasks.assign.team',
             'tasks.update.own',
@@ -82,6 +83,7 @@ class RolePermissionSeeder extends Seeder
             // Follow-Ups
             'follow_ups.view.own',
             'follow_ups.view.team',
+            'follow_ups.view.all',
             'follow_ups.create',
             'follow_ups.update.own',
             'follow_ups.delete',
@@ -171,8 +173,8 @@ class RolePermissionSeeder extends Seeder
             'pipelines.view',
             'deals.view.own', 'deals.view.team', 'deals.view.all',
             'activities.view.own', 'activities.view.team', 'activities.view.all',
-            'tasks.view.own',
-            'follow_ups.view.own',
+            'tasks.view.own', 'tasks.view.team', 'tasks.view.all',
+            'follow_ups.view.own', 'follow_ups.view.team', 'follow_ups.view.all',
             'quotations.view.own', 'quotations.view.team', 'quotations.view.all',
             'reports.view.own', 'reports.view.team', 'reports.view.all',
             'exports.create.own', 'exports.create.all',

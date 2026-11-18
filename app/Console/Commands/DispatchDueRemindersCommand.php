@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Enums\FollowUpStatus;
 use App\Enums\TaskStatus;
+use App\Models\FollowUp;
 use App\Models\Reminder;
 use App\Models\Task;
 use App\Notifications\CrmAlertNotification;
@@ -39,19 +41,29 @@ final class DispatchDueRemindersCommand extends Command
                     continue;
                 }
 
-                if ($remindable instanceof Task && $remindable->status === TaskStatus::Completed) {
+                if ($remindable instanceof Task && in_array($remindable->status, [TaskStatus::Completed, TaskStatus::Cancelled], true)) {
                     continue;
                 }
 
-                $title = $remindable instanceof Task
-                    ? "Task Reminder: {$remindable->title}"
-                    : 'CRM Reminder';
+                if ($remindable instanceof FollowUp && $remindable->status !== FollowUpStatus::Scheduled) {
+                    continue;
+                }
+
+                $title = match (true) {
+                    $remindable instanceof Task => "Task Reminder: {$remindable->title}",
+                    $remindable instanceof FollowUp => "Follow-Up Reminder: {$remindable->objective}",
+                    default => 'CRM Reminder',
+                };
+
+                $actionUrl = $remindable instanceof FollowUp
+                    ? route('follow-ups.index')
+                    : route('tasks.index');
 
                 $user->notify(new CrmAlertNotification(
                     category: 'task_reminder',
                     title: $title,
                     message: 'You have a scheduled CRM reminder due now.',
-                    actionUrl: route('tasks.index'),
+                    actionUrl: $actionUrl,
                 ));
 
                 $dispatched++;

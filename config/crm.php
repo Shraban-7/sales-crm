@@ -11,6 +11,12 @@ return [
     'quotations' => [
         'discount_approval_threshold' => (float) env('CRM_QUOTE_DISCOUNT_THRESHOLD', 15.00),
         'number_prefix' => env('CRM_QUOTE_PREFIX', 'QT'),
+        'public_link_days' => (int) env('CRM_QUOTE_PUBLIC_LINK_DAYS', 30),
+    ],
+    'lead_capture' => [
+        'webhook_secret' => env('CRM_LEAD_WEBHOOK_SECRET'),
+        'default_team_id' => env('CRM_LEAD_CAPTURE_TEAM_ID'),
+        'round_robin' => (bool) env('CRM_LEAD_ROUND_ROBIN', true),
     ],
     'audit' => [
         'retention_days' => (int) env('CRM_AUDIT_RETENTION_DAYS', 365),

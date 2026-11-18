@@ -51,6 +51,15 @@ final class DealController extends Controller
 
         $user = $request->user();
         $data = $request->validated();
+
+        $company = Company::query()->findOrFail((int) $data['company_id']);
+        $this->authorize('view', $company);
+
+        if (! empty($data['primary_contact_id'])) {
+            $contact = Contact::query()->findOrFail((int) $data['primary_contact_id']);
+            $this->authorize('view', $contact);
+        }
+
         $stage = PipelineStage::query()->findOrFail((int) $data['pipeline_stage_id']);
 
         $deal = DB::transaction(function () use ($data, $user, $stage): Deal {
@@ -127,6 +136,7 @@ final class DealController extends Controller
             'activities.user',
             'tasks.assignee',
             'followUps.owner',
+            'attachments.uploader',
         ]);
 
         $companies = Company::query()->visibleTo($request->user())->orderBy('name')->get(['id', 'name']);

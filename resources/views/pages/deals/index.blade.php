@@ -1,4 +1,4 @@
-<x-layouts.app title="Deals — Sales CRM" header="Deals &amp; Opportunities">
+<x-layouts.app title="Deals — Sales CRM" header="Deals & Opportunities">
     <form method="GET" action="{{ route('deals.index') }}" class="flex flex-wrap gap-2">
         <input type="text" name="search" value="{{ $search }}" placeholder="Search deals..." class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">
         <select name="status" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">

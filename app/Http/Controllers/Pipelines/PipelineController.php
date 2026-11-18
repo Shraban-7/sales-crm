@@ -21,7 +21,7 @@ final class PipelineController extends Controller
         $this->authorize('viewAny', Pipeline::class);
 
         $pipelines = Pipeline::query()
-            ->with('stages')
+            ->with(['stages' => fn ($q) => $q->withCount('deals')])
             ->withCount('deals')
             ->orderByDesc('is_default')
             ->orderBy('name')

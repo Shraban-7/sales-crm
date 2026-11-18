@@ -14,7 +14,7 @@ final class TaskPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can('tasks.view.own') || $user->can('tasks.view.team');
+        return $user->can('tasks.view.own') || $user->can('tasks.view.team') || $user->can('tasks.view.all');
     }
 
     public function view(User $user, Task $task): bool

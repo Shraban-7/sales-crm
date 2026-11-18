@@ -17,6 +17,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     use HasRoles;
     use Notifiable;
     use SoftDeletes;
@@ -32,6 +33,10 @@ class User extends Authenticatable
         'job_title',
         'password',
         'is_active',
+        'two_factor_enabled',
+        'two_factor_code_hash',
+        'two_factor_expires_at',
+        'two_factor_last_sent_at',
         'last_login_at',
         'last_login_ip',
         'notification_preferences',
@@ -43,6 +48,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_code_hash',
     ];
 
     protected function casts(): array
@@ -51,6 +57,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'two_factor_enabled' => 'boolean',
+            'two_factor_expires_at' => 'datetime',
+            'two_factor_last_sent_at' => 'datetime',
             'last_login_at' => 'datetime',
             'notification_preferences' => 'array',
         ];

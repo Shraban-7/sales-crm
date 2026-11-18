@@ -31,8 +31,13 @@ final class UserController extends Controller
             ->paginate(20);
 
         $teams = Team::query()->orderBy('name')->get();
+        $activeUsers = User::query()
+            ->where('is_active', true)
+            ->when(! $actor->can('users.manage'), fn ($q) => $q->where('team_id', $actor->team_id))
+            ->orderBy('name')
+            ->get(['id', 'name', 'team_id']);
 
-        return view('pages.settings.users.index', compact('users', 'teams'));
+        return view('pages.settings.users.index', compact('users', 'teams', 'activeUsers'));
     }
 
     public function store(StoreUserRequest $request, AuditLoggerService $auditLogger): RedirectResponse
@@ -107,7 +112,7 @@ final class UserController extends Controller
         $this->authorize('update', $user);
 
         $validated = $request->validate([
-            'to_user_id' => ['required', 'integer', 'exists:users,id', 'different:' . $user->id],
+            'to_user_id' => ['required', 'integer', 'exists:users,id', 'different:'.$user->id],
         ]);
 
         $targetUser = User::query()->findOrFail((int) $validated['to_user_id']);

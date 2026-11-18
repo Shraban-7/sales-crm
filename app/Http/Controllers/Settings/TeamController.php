@@ -19,7 +19,7 @@ final class TeamController extends Controller
         $data = $request->validated();
         Team::query()->create([
             'name' => $data['name'],
-            'slug' => Str::slug($data['name']) . '-' . Str::lower(Str::random(4)),
+            'slug' => Str::slug($data['name']).'-'.Str::lower(Str::random(4)),
             'leader_id' => $data['leader_id'] ?? null,
             'monthly_revenue_target' => $data['monthly_revenue_target'],
             'is_active' => $request->boolean('is_active', true),

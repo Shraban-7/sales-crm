@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\LeadStatus;
 use App\Models\Lead;
 use App\Models\User;
 use App\Policies\Concerns\ResolvesTeamOwnership;
@@ -38,7 +39,7 @@ final class LeadPolicy
 
     public function convert(User $user, Lead $lead): bool
     {
-        if ($lead->isConverted()) {
+        if ($lead->isConverted() || $lead->status === LeadStatus::Disqualified) {
             return false;
         }
 

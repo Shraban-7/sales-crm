@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Activities\ActivityController;
+use App\Http\Controllers\Attachments\AttachmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Companies\CompanyController;
 use App\Http\Controllers\Contacts\ContactController;
 use App\Http\Controllers\DashboardController;
@@ -12,14 +14,17 @@ use App\Http\Controllers\Deals\MoveDealStageController;
 use App\Http\Controllers\FollowUps\FollowUpController;
 use App\Http\Controllers\Imports\ImportExportController;
 use App\Http\Controllers\Leads\ConvertLeadController;
+use App\Http\Controllers\Leads\LeadCaptureController;
 use App\Http\Controllers\Leads\LeadController;
 use App\Http\Controllers\Notifications\NotificationController;
 use App\Http\Controllers\Pipelines\PipelineController;
 use App\Http\Controllers\Pipelines\PipelineStageController;
+use App\Http\Controllers\Quotations\PublicQuotationController;
 use App\Http\Controllers\Quotations\QuotationController;
 use App\Http\Controllers\Quotations\QuotationWorkflowController;
 use App\Http\Controllers\Reports\ReportController;
 use App\Http\Controllers\Settings\AuditLogController;
+use App\Http\Controllers\Settings\SecurityController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Tasks\TaskController;
@@ -28,7 +33,32 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+
+    Route::get('/two-factor', [TwoFactorChallengeController::class, 'create'])->name('two-factor.challenge');
+    Route::post('/two-factor', [TwoFactorChallengeController::class, 'store'])->name('two-factor.store');
+    Route::post('/two-factor/resend', [TwoFactorChallengeController::class, 'resend'])
+        ->middleware('throttle:6,1')
+        ->name('two-factor.resend');
+    Route::post('/two-factor/cancel', [TwoFactorChallengeController::class, 'cancel'])->name('two-factor.cancel');
+
+    Route::get('/capture/lead', [LeadCaptureController::class, 'show'])
+        ->middleware('throttle:30,1')
+        ->name('leads.capture.show');
+    Route::post('/capture/lead', [LeadCaptureController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('leads.capture.store');
 });
+
+// Public, signed quotation links (no login required)
+Route::get('/q/{quotation:ulid}', [PublicQuotationController::class, 'show'])
+    ->middleware('signed')
+    ->name('quotations.public.show');
+Route::post('/q/{quotation:ulid}/accept', [PublicQuotationController::class, 'accept'])
+    ->middleware(['signed', 'throttle:10,1'])
+    ->name('quotations.public.accept');
+Route::post('/q/{quotation:ulid}/reject', [PublicQuotationController::class, 'reject'])
+    ->middleware(['signed', 'throttle:10,1'])
+    ->name('quotations.public.reject');
 
 Route::middleware('auth')->group(function (): void {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
@@ -38,6 +68,7 @@ Route::middleware('auth')->group(function (): void {
     // Leads
     Route::resource('leads', LeadController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::post('/leads/{lead}/convert', ConvertLeadController::class)->name('leads.convert');
+    Route::post('/leads/{lead}/merge', [LeadController::class, 'merge'])->name('leads.merge');
 
     // Companies & Contacts
     Route::resource('companies', CompanyController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
@@ -60,6 +91,11 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/activities', [ActivityController::class, 'store'])->name('activities.store');
     Route::delete('/activities/{activity}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 
+    // Attachments
+    Route::post('/attachments', [AttachmentController::class, 'store'])->name('attachments.store');
+    Route::get('/attachments/{attachment}', [AttachmentController::class, 'download'])->name('attachments.download');
+    Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
+
     // Tasks
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
@@ -78,6 +114,7 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/quotations/{quotation}/accept', [QuotationWorkflowController::class, 'accept'])->name('quotations.accept');
     Route::post('/quotations/{quotation}/reject', [QuotationWorkflowController::class, 'reject'])->name('quotations.reject');
     Route::post('/quotations/{quotation}/clone', [QuotationWorkflowController::class, 'cloneVersion'])->name('quotations.clone');
+    Route::post('/quotations/{quotation}/approve-discount', [QuotationWorkflowController::class, 'approveDiscount'])->name('quotations.approve-discount');
     Route::get('/quotations/{quotation}/print', [QuotationWorkflowController::class, 'print'])->name('quotations.print');
 
     // Reports
@@ -103,5 +140,7 @@ Route::middleware('auth')->group(function (): void {
         Route::post('/users/{user}/reassign', [UserController::class, 'reassign'])->name('users.reassign');
         Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
         Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+        Route::get('/security', [SecurityController::class, 'edit'])->name('security.edit');
+        Route::put('/security', [SecurityController::class, 'update'])->name('security.update');
     });
 });

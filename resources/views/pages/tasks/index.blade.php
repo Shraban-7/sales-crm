@@ -1,4 +1,4 @@
-<x-layouts.app title="Tasks — Sales CRM" header="Tasks &amp; Reminders">
+<x-layouts.app title="Tasks — Sales CRM" header="Tasks & Reminders">
     <div class="flex gap-2 text-sm">
         <a href="{{ route('tasks.index', ['filter' => 'open']) }}" class="rounded-lg px-3 py-1.5 {{ $filter === 'open' ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200' }}">Open</a>
         <a href="{{ route('tasks.index', ['filter' => 'overdue']) }}" class="rounded-lg px-3 py-1.5 {{ $filter === 'overdue' ? 'bg-rose-600 text-white' : 'bg-white border border-slate-200' }}">Overdue</a>

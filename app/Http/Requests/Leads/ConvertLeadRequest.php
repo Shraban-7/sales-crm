@@ -22,7 +22,13 @@ final class ConvertLeadRequest extends FormRequest
         return [
             'company_name' => ['required', 'string', 'max:191'],
             'deal_title' => ['required', 'string', 'max:191'],
-            'pipeline_id' => ['required', 'integer', 'exists:pipelines,id'],
+            'pipeline_id' => [
+                'required',
+                'integer',
+                Rule::exists('pipelines', 'id')->where(function ($query): void {
+                    $query->whereNull('team_id')->orWhere('team_id', $this->user()->team_id);
+                }),
+            ],
             'pipeline_stage_id' => [
                 'required',
                 'integer',

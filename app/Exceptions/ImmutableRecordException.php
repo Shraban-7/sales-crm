@@ -6,6 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-final class ImmutableRecordException extends RuntimeException
-{
-}
+final class ImmutableRecordException extends RuntimeException {}

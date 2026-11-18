@@ -13,6 +13,13 @@ final class LoginRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'email' => $this->filled('email') ? mb_strtolower(trim((string) $this->input('email'))) : null,
+        ]);
+    }
+
     /**
      * @return array<string, mixed>
      */

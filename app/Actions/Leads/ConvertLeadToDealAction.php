@@ -35,6 +35,10 @@ final readonly class ConvertLeadToDealAction
                 throw new DomainRuleException('This lead has already been converted.');
             }
 
+            if ($lockedLead->status === LeadStatus::Disqualified) {
+                throw new DomainRuleException('Disqualified leads cannot be converted. Re-qualify the lead first.', 422);
+            }
+
             $stage = PipelineStage::query()
                 ->where('pipeline_id', $data->pipelineId)
                 ->findOrFail($data->pipelineStageId);

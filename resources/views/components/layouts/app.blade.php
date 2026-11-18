@@ -9,7 +9,7 @@
 </head>
 <body class="h-full text-slate-900 antialiased">
 <div class="min-h-full flex">
-    <aside class="w-64 shrink-0 bg-slate-900 text-slate-100 flex flex-col justify-between hidden md:flex">
+    <aside class="w-64 shrink-0 bg-slate-900 text-slate-100 flex-col justify-between hidden md:flex">
         <div>
             <div class="px-6 py-5 border-b border-slate-800 flex items-center gap-2">
                 <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 font-bold text-white">S</span>
@@ -19,44 +19,8 @@
                 </div>
             </div>
 
-            <nav class="p-3 space-y-1 text-sm">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('dashboard') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Dashboard</a>
-                @can('viewAny', \App\Models\Lead::class)
-                    <a href="{{ route('leads.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('leads.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Leads</a>
-                @endcan
-                @can('viewAny', \App\Models\Company::class)
-                    <a href="{{ route('companies.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('companies.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Companies</a>
-                @endcan
-                @can('viewAny', \App\Models\Contact::class)
-                    <a href="{{ route('contacts.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('contacts.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Contacts</a>
-                @endcan
-                @can('viewAny', \App\Models\Pipeline::class)
-                    <a href="{{ route('pipelines.kanban') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('pipelines.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Pipeline Kanban</a>
-                @endcan
-                @can('viewAny', \App\Models\Deal::class)
-                    <a href="{{ route('deals.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('deals.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Deals</a>
-                @endcan
-                @can('viewAny', \App\Models\Task::class)
-                    <a href="{{ route('tasks.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('tasks.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Tasks</a>
-                @endcan
-                @can('viewAny', \App\Models\FollowUp::class)
-                    <a href="{{ route('follow-ups.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('follow-ups.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Follow-Ups</a>
-                @endcan
-                @can('viewAny', \App\Models\Quotation::class)
-                    <a href="{{ route('quotations.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('quotations.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Quotations</a>
-                @endcan
-                @if(auth()->user()->can('reports.view.own') || auth()->user()->can('reports.view.team') || auth()->user()->can('reports.view.all'))
-                    <a href="{{ route('reports.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('reports.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Reports</a>
-                @endif
-                @can('viewAny', \App\Models\ImportExportJob::class)
-                    <a href="{{ route('imports.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('imports.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Import / Export</a>
-                @endcan
-                @can('viewAny', \App\Models\User::class)
-                    <a href="{{ route('settings.users.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('settings.users.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Users &amp; Teams</a>
-                @endcan
-                @can('viewAny', \App\Models\AuditLog::class)
-                    <a href="{{ route('settings.audit-logs.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg {{ request()->routeIs('settings.audit-logs.*') ? 'bg-slate-800 text-white font-medium' : 'text-slate-300 hover:bg-slate-800/60' }}">Audit Logs</a>
-                @endcan
+            <nav class="p-3 space-y-1 text-sm" aria-label="Main navigation">
+                <x-layouts.nav-links />
             </nav>
         </div>
 
@@ -66,11 +30,45 @@
         </div>
     </aside>
 
-    <div class="flex-1 flex flex-col min-w-0">
-        <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
-            <h1 class="text-lg font-semibold text-slate-900">{{ $header ?? 'Sales CRM' }}</h1>
+    <!-- Mobile navigation drawer -->
+    <div data-mobile-nav-drawer class="fixed inset-0 z-50 hidden md:hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <div data-mobile-nav-close class="fixed inset-0 bg-slate-900/60"></div>
+        <aside class="relative z-10 w-72 max-w-[85vw] h-full bg-slate-900 text-slate-100 flex flex-col justify-between overflow-y-auto">
+            <div>
+                <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 font-bold text-white">S</span>
+                        <span class="text-sm font-semibold">Sales CRM</span>
+                    </div>
+                    <button type="button" data-mobile-nav-close aria-label="Close navigation" class="rounded-lg p-1.5 text-slate-300 hover:bg-slate-800">
+                        &times;
+                    </button>
+                </div>
 
-            <div class="flex items-center gap-4">
+                <nav class="p-3 space-y-1 text-sm" aria-label="Mobile main navigation">
+                    <x-layouts.nav-links />
+                </nav>
+            </div>
+
+            <div class="p-4 border-t border-slate-800 text-xs text-slate-400">
+                <p class="font-medium text-slate-200">{{ auth()->user()->name }}</p>
+                <p>{{ auth()->user()->getRoleNames()->first() ?? 'User' }} &middot; {{ auth()->user()->team?->name ?? 'No Team' }}</p>
+            </div>
+        </aside>
+    </div>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header class="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <button type="button" data-mobile-nav-open aria-label="Open navigation" aria-expanded="false" class="md:hidden inline-flex items-center justify-center rounded-lg border border-slate-200 p-2 text-slate-700 hover:bg-slate-100">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h1 class="text-lg font-semibold text-slate-900 truncate">{{ $header ?? 'Sales CRM' }}</h1>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0">
                 <x-crm.notification-bell />
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -79,7 +77,7 @@
             </div>
         </header>
 
-        <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+        <main class="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
             @if (session('status'))
                 <div class="rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800">
                     {{ session('status') }}

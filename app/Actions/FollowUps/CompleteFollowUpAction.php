@@ -50,6 +50,8 @@ final readonly class CompleteFollowUpAction
                 'next_follow_up_id' => $nextFollowUp?->id,
             ]);
 
+            $followUp->reminders()->whereNull('sent_at')->delete();
+
             $subject = $followUp->subject;
             if ($subject !== null) {
                 $activityType = match ($followUp->channel->value) {

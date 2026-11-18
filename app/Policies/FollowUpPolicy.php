@@ -14,7 +14,7 @@ final class FollowUpPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can('follow_ups.view.own') || $user->can('follow_ups.view.team');
+        return $user->can('follow_ups.view.own') || $user->can('follow_ups.view.team') || $user->can('follow_ups.view.all');
     }
 
     public function view(User $user, FollowUp $followUp): bool

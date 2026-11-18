@@ -1,4 +1,4 @@
-<x-layouts.app title="Import / Export — Sales CRM" header="Data Import &amp; Export Center">
+<x-layouts.app title="Import / Export — Sales CRM" header="Data Import & Export Center">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         @can('createImport', \App\Models\ImportExportJob::class)
             <form method="POST" action="{{ route('imports.store') }}" enctype="multipart/form-data" class="bg-white rounded-xl border border-slate-200 p-5 space-y-3">

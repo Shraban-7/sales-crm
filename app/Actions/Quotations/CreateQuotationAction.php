@@ -30,18 +30,20 @@ final readonly class CreateQuotationAction
 
             $year = now()->format('Y');
             $prefix = (string) config('crm.quotations.number_prefix', 'QT');
-            $latestNumber = Quotation::withTrashed()
+            $existingNumbers = Quotation::withTrashed()
                 ->where('quote_number', 'like', "{$prefix}-{$year}-%")
                 ->lockForUpdate()
-                ->orderByDesc('id')
-                ->value('quote_number');
+                ->pluck('quote_number');
 
-            $nextSeq = 1;
-            if (is_string($latestNumber) && preg_match('/(\d+)$/', $latestNumber, $matches) === 1) {
-                $nextSeq = ((int) $matches[1]) + 1;
+            $maxSeq = 0;
+            $pattern = '/^'.preg_quote($prefix, '/').'-'.preg_quote($year, '/').'-(\d+)/';
+            foreach ($existingNumbers as $number) {
+                if (is_string($number) && preg_match($pattern, $number, $matches) === 1) {
+                    $maxSeq = max($maxSeq, (int) $matches[1]);
+                }
             }
 
-            $quoteNumber = sprintf('%s-%s-%05d', $prefix, $year, $nextSeq);
+            $quoteNumber = sprintf('%s-%s-%05d', $prefix, $year, $maxSeq + 1);
 
             /** @var Quotation $quotation */
             $quotation = Quotation::query()->create([

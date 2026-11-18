@@ -1,20 +1,20 @@
 # Sales CRM — Engineering Documentation & Architecture Blueprint
 
-**Last Updated:** 2026-11-17  
-**Project Status:** `Greenfield Specification (0% Implemented / 100% Proposed)`  
+**Last Updated:** 2026-11-18  
+**Project Status:** `Implemented (Core Modules, MySQL 8.0, Blade + Tailwind v4, Pint + PHPUnit Verified — see PROJECT_STATUS.md)`  
 **Primary Development Environment:** Google Gemini Antigravity IDE
 
 ## 1. Overview
 
-**Sales CRM** is a modular B2B/B2C Customer Relationship Management platform engineered on [Laravel 12](https://laravel.com/framework/docs/12.x/configuration), MySQL 8.0+, Laravel Blade, [Tailwind CSS v4](https://tailwindcss.com/docs/upgrade-guide), and Vanilla JavaScript. It is designed to manage the complete revenue lifecycle—from lead capture and qualification to multi-stage pipeline tracking, quotations, customer follow-up cadences, and executive forecasting.
+**Sales CRM** is a modular B2B/B2C Customer Relationship Management platform engineered on Laravel 13.x (PHP 8.3+), MySQL 8.0+, Laravel Blade, [Tailwind CSS v4](https://tailwindcss.com/docs/upgrade-guide), and Vanilla JavaScript. It manages the complete revenue lifecycle—from public/webhook lead capture and qualification to multi-stage pipeline tracking, versioned quotations with signed public acceptance and PDF delivery, customer follow-up cadences, and multi-currency analytics.
 
-> **Important Status Notice:** As documented in `project-discovery-report.md` and `PROJECT_STATUS.md`, this repository currently contains the complete **engineering specification and AI development prompt system** prior to source code scaffolding. No features are implemented yet; all schemas, modules, and endpoints are marked as **Proposed**.
+> **Status Notice:** See `PROJECT_STATUS.md` for the module readiness matrix and `CHANGELOG.md` for recent implementation milestones.
 
 ## 2. Technology Stack
 
 | Category | Technology | Architectural Role |
 | :--- | :--- | :--- |
-| **Backend Framework** | PHP 8.3+ / [Laravel 12.x](https://laravel.com/framework/docs/12.x/configuration) | HTTP routing, FormRequest validation, Domain Services, Actions, Policies, Jobs |
+| **Backend Framework** | PHP 8.3+ / Laravel 13.x | HTTP routing, FormRequest validation, Domain Services, Actions, Policies, Jobs |
 | **Database & ORM** | MySQL 8.0+ / [Eloquent ORM](https://api.laravel.com/docs/12.x/index.html) | Relational persistence, foreign-key integrity, composite indexing, transactions |
 | **Frontend Templating** | Laravel Blade | Server-side rendered layouts, reusable anonymous & class-based UI components |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/docs/upgrade-guide) | CSS-first `@theme` design tokens compiled via `@tailwindcss/vite` |
@@ -127,9 +127,8 @@ flowchart TB
 ### Gemini Antigravity Prompt Library (`docs/prompts/`)
 - 12 specialized, copy-ready prompt templates (`master-development-prompt.md`, `feature-development-prompt.md`, `code-review-prompt.md`, `debugging-prompt.md`, `security-audit-prompt.md`, `testing-prompt.md`, `database-review-prompt.md`, `refactoring-prompt.md`, `documentation-update-prompt.md`, `feature-planning-prompt.md`, `performance-optimization-prompt.md`, `pre-release-audit-prompt.md`)
 
-## 5. Quick Start for Future Scaffolding (Phase 1 Implementation)
+## 5. Local Development & Verification
 
-When ready to begin coding in **Google Gemini Antigravity IDE**:
-1. Read `GEMINI.md` and `PROJECT_STATUS.md`.
-2. Load `docs/prompts/feature-planning-prompt.md` or `docs/prompts/master-development-prompt.md`.
-3. Initialize Laravel 12, Tailwind CSS v4, and MySQL migrations strictly following `docs/database/migrations-and-indexes.md`.
+1. Configure MySQL 8.0+ in `.env` and run `php artisan migrate:fresh --seed`.
+2. Build assets via `npm install && npm run build` (or `npm run dev`).
+3. Verify code style (`vendor/bin/pint --test`) and automated tests (`php artisan test --compact`).

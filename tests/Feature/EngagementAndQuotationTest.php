@@ -12,6 +12,7 @@ use App\Enums\LeadStatus;
 use App\Enums\QuotationStatus;
 use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
+use App\Mail\QuotationDeliveryMail;
 use App\Models\Activity;
 use App\Models\Company;
 use App\Models\Contact;
@@ -26,7 +27,11 @@ use App\Models\Team;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 final class EngagementAndQuotationTest extends TestCase
@@ -157,6 +162,14 @@ final class EngagementAndQuotationTest extends TestCase
         $pipeline = Pipeline::query()->create(['name' => 'Default', 'is_default' => true]);
         $stage = PipelineStage::query()->create(['pipeline_id' => $pipeline->id, 'name' => 'Proposal', 'slug' => 'proposal', 'position' => 1]);
         $company = Company::query()->create(['team_id' => $team->id, 'owner_id' => $rep->id, 'name' => 'Acme', 'country' => 'BD']);
+        $contact = Contact::query()->create([
+            'team_id' => $team->id,
+            'owner_id' => $rep->id,
+            'company_id' => $company->id,
+            'first_name' => 'Acme',
+            'last_name' => 'Buyer',
+            'email' => 'buyer@acme.test',
+        ]);
         $deal = Deal::query()->create([
             'team_id' => $team->id,
             'owner_id' => $rep->id,
@@ -172,6 +185,7 @@ final class EngagementAndQuotationTest extends TestCase
 
         $this->actingAs($rep)->post(route('quotations.store'), [
             'deal_id' => $deal->id,
+            'contact_id' => $contact->id,
             'currency' => 'BDT',
             'issue_date' => now()->toDateString(),
             'valid_until' => now()->addDays(15)->toDateString(),
@@ -192,8 +206,140 @@ final class EngagementAndQuotationTest extends TestCase
         // Gross: 2000, Discount 10%: 200, Taxable: 1800, Tax 15%: 270, Grand: 2070.00
         $this->assertSame('2070.00', (string) $quote->grand_total);
 
+        $this->actingAs($rep)->post(route('quotations.accept', $quote))->assertRedirect()->assertSessionHas('error');
+
+        Mail::fake();
+        $this->actingAs($rep)->post(route('quotations.send', $quote))->assertRedirect();
+        $this->assertSame(QuotationStatus::Sent, $quote->fresh()->status);
+        Mail::assertQueued(QuotationDeliveryMail::class);
+
         $this->actingAs($rep)->post(route('quotations.accept', $quote))->assertRedirect();
         $this->assertSame(QuotationStatus::Accepted, $quote->fresh()->status);
         $this->assertSame('2070.00', (string) $deal->fresh()->value);
+    }
+
+    public function test_expired_quotation_cannot_be_accepted_and_is_marked_expired(): void
+    {
+        [$rep, $quote] = $this->quotationFixture(QuotationStatus::Sent, now()->subDay());
+
+        $this->actingAs($rep)
+            ->post(route('quotations.accept', $quote))
+            ->assertRedirect()
+            ->assertSessionHas('error');
+
+        $this->assertSame(QuotationStatus::Expired, $quote->fresh()->status);
+    }
+
+    public function test_public_signed_link_accepts_quotation_and_rejects_unsigned_access(): void
+    {
+        [$rep, $quote] = $this->quotationFixture(QuotationStatus::Sent, now()->addDays(10));
+
+        $this->get(route('quotations.public.show', $quote))->assertForbidden();
+
+        $url = URL::temporarySignedRoute('quotations.public.accept', now()->addDays(1), ['quotation' => $quote->ulid]);
+
+        $this->post($url, [
+            'acceptance_name' => 'Jane Buyer',
+            'acceptance_email' => 'jane@acme.test',
+        ])->assertRedirect();
+
+        $this->assertSame(QuotationStatus::Accepted, $quote->fresh()->status);
+    }
+
+    public function test_high_discount_quotation_requires_manager_approval_before_sending(): void
+    {
+        $team = Team::query()->create(['name' => 'Alpha', 'slug' => 'alpha']);
+        $manager = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Manager',
+            'email' => 'manager@salescrm.test',
+            'password' => Hash::make('Password@12345'),
+            'is_active' => true,
+        ]);
+        $manager->assignRole('Sales Manager');
+
+        [$rep, $quote] = $this->quotationFixture(QuotationStatus::Draft, now()->addDays(10), $team);
+        $quote->update([
+            'subtotal' => 1000.00,
+            'discount_total' => 250.00,
+            'grand_total' => 750.00,
+        ]);
+
+        Mail::fake();
+
+        $this->actingAs($rep)->post(route('quotations.send', $quote))->assertRedirect()->assertSessionHas('error');
+
+        $this->actingAs($rep)->post(route('quotations.approve-discount', $quote))->assertForbidden();
+
+        $this->actingAs($manager)->post(route('quotations.approve-discount', $quote))->assertRedirect();
+        $this->assertNotNull($quote->fresh()->discount_approved_at);
+
+        $this->actingAs($rep)->post(route('quotations.send', $quote))->assertRedirect();
+        $this->assertSame(QuotationStatus::Sent, $quote->fresh()->status);
+    }
+
+    /**
+     * @return array{0: User, 1: Quotation}
+     */
+    private function quotationFixture(
+        QuotationStatus $status,
+        Carbon $validUntil,
+        ?Team $team = null,
+    ): array {
+        $team ??= Team::query()->create(['name' => 'Alpha', 'slug' => 'alpha-'.uniqid()]);
+        $rep = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Rep',
+            'email' => 'rep-'.uniqid().'@salescrm.test',
+            'password' => Hash::make('Password@12345'),
+            'is_active' => true,
+        ]);
+        $rep->assignRole('Sales Rep');
+
+        $pipeline = Pipeline::query()->create(['name' => 'Default '.uniqid(), 'is_default' => true]);
+        $stage = PipelineStage::query()->create(['pipeline_id' => $pipeline->id, 'name' => 'Proposal', 'slug' => 'proposal-'.uniqid(), 'position' => 1]);
+        $company = Company::query()->create(['team_id' => $team->id, 'owner_id' => $rep->id, 'name' => 'Acme '.uniqid(), 'country' => 'BD']);
+        $contact = Contact::query()->create([
+            'team_id' => $team->id,
+            'owner_id' => $rep->id,
+            'company_id' => $company->id,
+            'first_name' => 'Acme',
+            'last_name' => 'Buyer',
+            'email' => 'buyer-'.uniqid().'@acme.test',
+        ]);
+        $deal = Deal::query()->create([
+            'team_id' => $team->id,
+            'owner_id' => $rep->id,
+            'pipeline_id' => $pipeline->id,
+            'pipeline_stage_id' => $stage->id,
+            'company_id' => $company->id,
+            'title' => 'Acme Deal',
+            'value' => 1000.00,
+            'currency' => 'BDT',
+            'status' => DealStatus::Open,
+            'stage_changed_at' => now(),
+        ]);
+
+        $quote = Quotation::query()->create([
+            'ulid' => (string) Str::ulid(),
+            'team_id' => $team->id,
+            'owner_id' => $rep->id,
+            'deal_id' => $deal->id,
+            'company_id' => $company->id,
+            'contact_id' => $contact->id,
+            'quote_number' => 'QT-'.uniqid(),
+            'version' => 1,
+            'status' => $status,
+            'currency' => 'BDT',
+            'subtotal' => 1000.00,
+            'discount_total' => 0.00,
+            'tax_total' => 0.00,
+            'grand_total' => 1000.00,
+            'issue_date' => now()->subDays(2)->toDateString(),
+            'valid_until' => $validUntil->toDateString(),
+            'sent_at' => $status === QuotationStatus::Sent ? now()->subDay() : null,
+        ]);
+
+        return [$rep, $quote];
     }
 }

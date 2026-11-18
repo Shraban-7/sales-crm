@@ -33,11 +33,29 @@
                             </div>
                             <p class="text-xs text-slate-500">{{ $followUp->scheduled_at->toDayDateTimeString() }}</p>
                             @can('update', $followUp)
-                                <form method="POST" action="{{ route('follow-ups.complete', $followUp) }}" class="flex gap-2">
+                                <form method="POST" action="{{ route('follow-ups.complete', $followUp) }}" class="space-y-2">
                                     @csrf
                                     @method('PATCH')
-                                    <input type="text" name="outcome_notes" placeholder="Outcome notes *" required class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs">
-                                    <button type="submit" class="rounded bg-emerald-600 px-2.5 py-1 text-xs font-medium text-white">Done</button>
+                                    <div class="flex gap-2">
+                                        <input type="text" name="outcome_notes" placeholder="Outcome notes *" required class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs">
+                                        <button type="submit" class="rounded bg-emerald-600 px-2.5 py-1 text-xs font-medium text-white">Done</button>
+                                    </div>
+                                    <details class="text-xs text-slate-600">
+                                        <summary class="cursor-pointer text-brand-600">+ Schedule next follow-up</summary>
+                                        <div class="mt-2 space-y-1.5 border-t border-slate-100 pt-2">
+                                            <label class="flex items-center gap-1.5">
+                                                <input type="checkbox" name="schedule_next" value="1">
+                                                <span>Create next follow-up</span>
+                                            </label>
+                                            <select name="next_channel" class="w-full rounded border border-slate-300 px-2 py-1">
+                                                @foreach (\App\Enums\FollowUpChannel::cases() as $channel)
+                                                    <option value="{{ $channel->value }}">{{ $channel->label() }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="datetime-local" name="next_scheduled_at" value="{{ now()->addDays(2)->format('Y-m-d\TH:i') }}" class="w-full rounded border border-slate-300 px-2 py-1">
+                                            <input type="text" name="next_objective" placeholder="Next objective" class="w-full rounded border border-slate-300 px-2 py-1">
+                                        </div>
+                                    </details>
                                 </form>
                             @endcan
                         </div>

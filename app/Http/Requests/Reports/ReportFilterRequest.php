@@ -26,6 +26,10 @@ final class ReportFilterRequest extends FormRequest
             }
         }
 
+        if ($user->hasRole('Sales Manager') && $this->filled('team_id') && (int) $this->input('team_id') !== (int) $user->team_id) {
+            return false;
+        }
+
         return true;
     }
 

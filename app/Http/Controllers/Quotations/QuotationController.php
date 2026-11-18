@@ -48,6 +48,9 @@ final class QuotationController extends Controller
     {
         $this->authorize('create', Quotation::class);
 
+        $deal = Deal::query()->findOrFail((int) $request->validated('deal_id'));
+        $this->authorize('update', $deal);
+
         $quotation = $createAction->handle($request->validated(), $request->user());
 
         return redirect()->route('quotations.show', $quotation)->with('status', "Quotation {$quotation->quote_number} created.");
@@ -57,7 +60,7 @@ final class QuotationController extends Controller
     {
         $this->authorize('view', $quotation);
 
-        $quotation->load(['deal', 'company', 'contact', 'owner', 'items']);
+        $quotation->load(['deal', 'company', 'contact', 'owner', 'items', 'discountApprover']);
         $contacts = Contact::query()->visibleTo($request->user())->orderBy('first_name')->get(['id', 'first_name', 'last_name']);
 
         return view('pages.quotations.show', compact('quotation', 'contacts'));
@@ -89,6 +92,8 @@ final class QuotationController extends Controller
                 'valid_until' => $data['valid_until'],
                 'terms_and_conditions' => $data['terms_and_conditions'] ?? null,
                 'customer_notes' => $data['customer_notes'] ?? null,
+                'discount_approved_by_id' => null,
+                'discount_approved_at' => null,
             ]);
 
             $quotation->items()->delete();

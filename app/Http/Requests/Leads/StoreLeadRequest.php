@@ -6,6 +6,7 @@ namespace App\Http\Requests\Leads;
 
 use App\Enums\LeadSource;
 use App\Enums\LeadStatus;
+use App\Support\PhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,6 +15,14 @@ final class StoreLeadRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'email' => $this->filled('email') ? mb_strtolower(trim((string) $this->input('email'))) : null,
+            'phone' => PhoneNumber::normalize($this->input('phone')),
+        ]);
     }
 
     /**
@@ -34,6 +43,13 @@ final class StoreLeadRequest extends FormRequest
             'score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'estimated_value' => ['nullable', 'numeric', 'min:0', 'max:9999999999999.99'],
             'disqualified_reason' => ['nullable', 'required_if:status,disqualified', 'string', 'max:255'],
+            'owner_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')
+                    ->where('team_id', $this->user()->team_id)
+                    ->where('is_active', true),
+            ],
         ];
     }
 }
