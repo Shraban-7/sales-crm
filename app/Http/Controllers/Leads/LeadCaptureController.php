@@ -23,13 +23,7 @@ final class LeadCaptureController extends Controller
     public function show(): View
     {
         return view('pages.leads.capture', [
-            'sources' => [
-                LeadSource::Website,
-                LeadSource::Referral,
-                LeadSource::LinkedIn,
-                LeadSource::Event,
-                LeadSource::ColdCall,
-            ],
+            'sources' => LeadSource::publicOptions(),
         ]);
     }
 

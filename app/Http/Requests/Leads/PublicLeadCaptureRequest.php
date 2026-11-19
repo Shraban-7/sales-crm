@@ -37,13 +37,10 @@ final class PublicLeadCaptureRequest extends FormRequest
             'email' => ['nullable', 'email:rfc', 'max:191', 'required_without:phone'],
             'phone' => ['nullable', 'string', 'max:30', 'required_without:email'],
             'website' => ['nullable', 'url', 'max:255'],
-            'source' => ['required', Rule::in([
-                LeadSource::Website->value,
-                LeadSource::Referral->value,
-                LeadSource::ColdCall->value,
-                LeadSource::LinkedIn->value,
-                LeadSource::Event->value,
-            ])],
+            'source' => ['required', Rule::in(array_map(
+                static fn (LeadSource $source): string => $source->value,
+                LeadSource::publicOptions(),
+            ))],
             'message' => ['nullable', 'string', 'max:2000'],
             'consent' => ['accepted'],
             'company_website' => ['nullable', 'string', 'max:255'],
