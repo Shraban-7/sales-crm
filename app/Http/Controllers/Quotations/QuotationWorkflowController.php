@@ -11,12 +11,14 @@ use App\Actions\Quotations\RejectQuotationAction;
 use App\Enums\ActivityDirection;
 use App\Enums\ActivityType;
 use App\Enums\QuotationStatus;
+use App\Enums\WebhookEvent;
 use App\Exceptions\DomainRuleException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Quotations\RejectQuotationRequest;
 use App\Mail\QuotationDeliveryMail;
 use App\Models\Quotation;
 use App\Services\Audit\AuditLoggerService;
+use App\Services\Webhooks\WebhookDispatcherService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -30,6 +32,7 @@ final class QuotationWorkflowController extends Controller
         Quotation $quotation,
         AuditLoggerService $auditLogger,
         LogActivityAction $logActivity,
+        WebhookDispatcherService $webhooks,
     ): RedirectResponse {
         $this->authorize('send', $quotation);
 
@@ -86,6 +89,18 @@ final class QuotationWorkflowController extends Controller
             oldValues: ['status' => QuotationStatus::Draft->value],
             newValues: ['status' => QuotationStatus::Sent->value, 'recipient' => $recipient],
             teamId: $quotation->team_id,
+        );
+
+        $webhooks->dispatch(
+            WebhookEvent::QuotationSent,
+            [
+                'quotation_id' => $quotation->id,
+                'quote_number' => $quotation->quote_number,
+                'deal_id' => $quotation->deal_id,
+                'grand_total' => (float) $quotation->grand_total,
+                'currency' => $quotation->currency,
+            ],
+            $quotation->team_id,
         );
 
         return back()->with('status', "Quotation {$quotation->quote_number} sent to {$recipient}.");

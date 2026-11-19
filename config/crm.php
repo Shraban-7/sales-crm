@@ -25,4 +25,5 @@ return [
         'cache_ttl_seconds' => (int) env('CRM_REPORT_CACHE_TTL', 300),
         'max_date_range_days' => 366,
     ],
+    'demo_password' => env('CRM_DEMO_PASSWORD'),
 ];

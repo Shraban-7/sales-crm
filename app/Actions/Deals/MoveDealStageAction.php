@@ -6,18 +6,21 @@ namespace App\Actions\Deals;
 
 use App\Enums\DealStatus;
 use App\Enums\FollowUpStatus;
+use App\Enums\WebhookEvent;
 use App\Exceptions\DomainRuleException;
 use App\Models\Deal;
 use App\Models\DealStageHistory;
 use App\Models\PipelineStage;
 use App\Models\User;
 use App\Services\Audit\AuditLoggerService;
+use App\Services\Webhooks\WebhookDispatcherService;
 use Illuminate\Support\Facades\DB;
 
 final readonly class MoveDealStageAction
 {
     public function __construct(
         private AuditLoggerService $auditLogger,
+        private WebhookDispatcherService $webhooks,
     ) {}
 
     public function handle(
@@ -104,7 +107,30 @@ final readonly class MoveDealStageAction
                 teamId: $lockedDeal->team_id,
             );
 
-            return $lockedDeal->fresh(['stage', 'pipeline', 'company']);
+            $freshDeal = $lockedDeal->fresh(['stage', 'pipeline', 'company']);
+
+            DB::afterCommit(function () use ($freshDeal, $previousStageId, $targetStage, $status): void {
+                $payload = [
+                    'deal_id' => $freshDeal->id,
+                    'title' => $freshDeal->title,
+                    'from_stage_id' => $previousStageId,
+                    'to_stage_id' => $targetStage->id,
+                    'stage_name' => $targetStage->name,
+                    'status' => $status->value,
+                    'value' => (float) $freshDeal->value,
+                    'currency' => $freshDeal->currency,
+                ];
+
+                $this->webhooks->dispatch(WebhookEvent::DealStageMoved, $payload, $freshDeal->team_id);
+
+                if ($status === DealStatus::Won) {
+                    $this->webhooks->dispatch(WebhookEvent::DealWon, $payload, $freshDeal->team_id);
+                } elseif ($status === DealStatus::Lost) {
+                    $this->webhooks->dispatch(WebhookEvent::DealLost, $payload, $freshDeal->team_id);
+                }
+            });
+
+            return $freshDeal;
         });
     }
 }

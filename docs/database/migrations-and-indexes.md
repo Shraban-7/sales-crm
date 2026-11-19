@@ -1,7 +1,7 @@
 # Migrations Execution Order & Indexing Blueprint — Sale Fusion CRM
 
 **Last Updated:** 2026-11-19  
-**Implementation Status:** `Implemented (18 Migrations Verified)`  
+**Implementation Status:** `Implemented (19 Migrations + database/schema.sql Verified)`  
 **Related Docs:** `docs/database/database-design.md`, `docs/database/database-optimization.md`, `docs/database/data-integrity.md`
 
 ## 1. Ordered Migration Execution Sequence
@@ -28,6 +28,7 @@ Because MySQL `InnoDB` foreign key constraints require referenced parent tables 
 | 16 | `0001_01_02_000013_create_audit_logs_table.php` | `audit_logs` | `teams`, `users` |
 | 17 | `0001_01_02_000014_create_notifications_table.php` | `notifications` | `users` |
 | 18 | `2026_11_18_000001_add_security_and_quotation_approval_columns.php` | `users` (`two_factor_*`), `quotations` (discount approval columns) | `users`, `quotations` |
+| 19 | `2026_11_19_000001_create_webhooks_table.php` | `webhooks` | `teams`, `users` |
 
 ## 2. Composite Indexing Specification
 
@@ -53,6 +54,8 @@ Every index below is designed around the left-prefix rule to support team/owner 
 | `quotations` | `idx_quotes_deal_version` | `(deal_id, version)` | Deal quote history & latest quote lookup |
 | `audit_logs` | `idx_audit_morph_created` | `(auditable_type, auditable_id, created_at)` | Record-level security history |
 | `audit_logs` | `idx_audit_team_event_date` | `(team_id, event, created_at)` | Compliance log filtering |
+| `webhooks` | `idx_webhooks_team_active` | `(team_id, is_active)` | Active webhook fan-out by team scope |
+| `webhooks` | `idx_webhooks_created_by` | `(created_by_id)` | Admin creator lookup |
 
 ## 3. Reference Migration Example (`deals` Table)
 

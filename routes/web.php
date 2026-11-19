@@ -27,6 +27,7 @@ use App\Http\Controllers\Settings\AuditLogController;
 use App\Http\Controllers\Settings\SecurityController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\UserController;
+use App\Http\Controllers\Settings\WebhookController;
 use App\Http\Controllers\Tasks\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -132,13 +133,21 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/exports', [ImportExportController::class, 'storeExport'])->name('exports.store');
     Route::get('/imports/{job}/download', [ImportExportController::class, 'download'])->name('imports.download');
 
-    // Settings (Users, Teams, Audit Logs)
+    // Settings (Users, Teams, Webhooks, Audit Logs)
     Route::prefix('settings')->name('settings.')->group(function (): void {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-        Route::post('/users/{user}/reassign', [UserController::class, 'reassign'])->name('users.reassign');
-        Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+        Route::post('/users', [UserController::class, 'store'])->middleware('can:users.manage')->name('users.store');
+        Route::put('/users/{user}', [UserController::class, 'update'])->middleware('can:users.manage')->name('users.update');
+        Route::post('/users/{user}/reassign', [UserController::class, 'reassign'])->middleware('can:users.manage')->name('users.reassign');
+        Route::post('/teams', [TeamController::class, 'store'])->middleware('can:teams.manage')->name('teams.store');
+
+        Route::middleware('can:webhooks.manage')->group(function (): void {
+            Route::get('/webhooks', [WebhookController::class, 'index'])->name('webhooks.index');
+            Route::post('/webhooks', [WebhookController::class, 'store'])->name('webhooks.store');
+            Route::put('/webhooks/{webhook}', [WebhookController::class, 'update'])->name('webhooks.update');
+            Route::delete('/webhooks/{webhook}', [WebhookController::class, 'destroy'])->name('webhooks.destroy');
+        });
+
         Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
         Route::get('/security', [SecurityController::class, 'edit'])->name('security.edit');
         Route::put('/security', [SecurityController::class, 'update'])->name('security.update');

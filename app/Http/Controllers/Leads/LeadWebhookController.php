@@ -6,12 +6,14 @@ namespace App\Http\Controllers\Leads;
 
 use App\Enums\LeadSource;
 use App\Enums\LeadStatus;
+use App\Enums\WebhookEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
 use App\Models\Team;
 use App\Notifications\CrmAlertNotification;
 use App\Services\Leads\LeadAssignmentService;
 use App\Services\Leads\LeadDuplicateService;
+use App\Services\Webhooks\WebhookDispatcherService;
 use App\Support\PhoneNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,6 +26,7 @@ final class LeadWebhookController extends Controller
         Request $request,
         LeadDuplicateService $duplicates,
         LeadAssignmentService $assignment,
+        WebhookDispatcherService $webhooks,
     ): JsonResponse {
         $secret = (string) config('crm.lead_capture.webhook_secret', '');
 
@@ -97,6 +100,18 @@ final class LeadWebhookController extends Controller
             message: "Webhook intake assigned you lead: {$lead->full_name}.",
             actionUrl: route('leads.show', $lead),
         ));
+
+        $webhooks->dispatch(
+            WebhookEvent::LeadCreated,
+            [
+                'lead_id' => $lead->id,
+                'full_name' => $lead->full_name,
+                'email' => $lead->email,
+                'source' => $lead->source?->value,
+                'owner_id' => $lead->owner_id,
+            ],
+            $lead->team_id,
+        );
 
         return response()->json(['status' => 'created', 'lead_id' => $lead->id], 201);
     }

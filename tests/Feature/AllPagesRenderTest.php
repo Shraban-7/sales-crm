@@ -169,6 +169,7 @@ final class AllPagesRenderTest extends TestCase
             route('notifications.index'),
             route('imports.index'),
             route('settings.users.index'),
+            route('settings.webhooks.index'),
             route('settings.audit-logs.index'),
             route('settings.security.edit'),
         ];

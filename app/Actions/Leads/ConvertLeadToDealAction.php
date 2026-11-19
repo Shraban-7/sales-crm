@@ -7,6 +7,7 @@ namespace App\Actions\Leads;
 use App\Data\Leads\LeadConversionData;
 use App\Enums\DealStatus;
 use App\Enums\LeadStatus;
+use App\Enums\WebhookEvent;
 use App\Events\LeadConverted;
 use App\Exceptions\DomainRuleException;
 use App\Models\Company;
@@ -17,12 +18,14 @@ use App\Models\Lead;
 use App\Models\PipelineStage;
 use App\Models\User;
 use App\Services\Audit\AuditLoggerService;
+use App\Services\Webhooks\WebhookDispatcherService;
 use Illuminate\Support\Facades\DB;
 
 final readonly class ConvertLeadToDealAction
 {
     public function __construct(
         private AuditLoggerService $auditLogger,
+        private WebhookDispatcherService $webhooks,
     ) {}
 
     public function handle(Lead $lead, LeadConversionData $data, User $actor): Deal
@@ -157,6 +160,21 @@ final readonly class ConvertLeadToDealAction
             );
 
             event(new LeadConverted($lockedLead, $deal, $actor));
+
+            DB::afterCommit(function () use ($lockedLead, $deal): void {
+                $this->webhooks->dispatch(
+                    WebhookEvent::LeadConverted,
+                    [
+                        'lead_id' => $lockedLead->id,
+                        'deal_id' => $deal->id,
+                        'company_id' => $deal->company_id,
+                        'contact_id' => $deal->primary_contact_id,
+                        'value' => (float) $deal->value,
+                        'currency' => $deal->currency,
+                    ],
+                    $lockedLead->team_id,
+                );
+            });
 
             return $deal;
         });

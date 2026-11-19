@@ -2,7 +2,7 @@
 
 **Live / Production Domain:** [`https://sales-crm.devshraban.com`](https://sales-crm.devshraban.com)  
 **Built With:** PHP 8.3+ · Laravel 13 · MySQL 8.0 · Blade · Tailwind CSS v4 · Vanilla JS · mPDF  
-**Project Status:** Complete across all `14` CRM modules (`18` database migrations, automated PHPUnit suite & Laravel Pint style checks verified — see [PROJECT_STATUS.md](PROJECT_STATUS.md))
+**Project Status:** Complete across all `15` CRM modules (`19` database migrations, automated PHPUnit suite & Laravel Pint style checks verified — see [PROJECT_STATUS.md](PROJECT_STATUS.md) and [HowToSetup.md](HowToSetup.md))
 
 ![Sale Fusion CRM Executive Dashboard](docs/screenshots/03-dashboard.png)
 
@@ -17,17 +17,19 @@
 5. [How the Technology Works (Business & Technical View)](#5-how-the-technology-works-business--technical-view)
 6. [Hosting on `sales-crm.devshraban.com` & Local Setup](#6-hosting-on-sales-crmdevshrabancom--local-setup)
 7. [Complete Engineering Documentation Index](#7-complete-engineering-documentation-index)
+8. [Licence](#8-licence)
 
 ---
 
 ## 1. What Is Sale Fusion CRM? (Plain-English Overview)
 
-**Sale Fusion CRM** is an all-in-one web workspace where sales teams capture new customer enquiries, track every conversation and deal on a visual drag-and-drop board, send formal price quotes that buyers can approve online, and monitor real revenue in real time—without paying per-user monthly subscription fees.
+**Sale Fusion CRM** is an all-in-one web workspace built for **B2B sales teams and agencies** to capture new customer enquiries across 20 lead sources, track every conversation and deal on a visual drag-and-drop Kanban board, send formal price quotes that buyers can approve online, integrate with external tools via HMAC-signed inbound & outbound webhooks, and monitor real revenue in real time—without paying per-user monthly subscription fees.
 
 ### What Problems Does It Solve?
-- **No More Lost Enquiries:** Website forms and external landing pages send prospects straight into the CRM, automatically score their readiness (`0–100`), spot duplicate entries, and assign the right sales representative.
+- **No More Lost Enquiries:** Website forms, external landing pages, and HMAC-signed webhooks (`POST /api/leads/capture`) send prospects straight into the CRM across `20` structured lead sources, automatically score their readiness (`0–100`), spot duplicate entries, and assign the right sales representative.
 - **Instant Pipeline Visibility:** Managers and reps see every deal organized by stage (*Prospecting → Qualification → Demo → Quote Sent → Negotiation → Won/Lost*) and spot stalled ("rotting") deals before revenue slips away.
 - **Faster Quote Approvals & Online Sign-Off:** Sales reps build multi-line quotes with taxes and discounts. If a discount goes over your company limit (`15%` by default), a manager must approve it before the quote goes out. Buyers receive a secure private link where they can review and click **Accept** or **Decline** online.
+- **Admin-Gated Webhooks & Integrations:** Administrators manage outbound event webhooks under **Settings → Webhooks** (`/settings/webhooks`) with encrypted HMAC-SHA256 signing secrets and delivery status tracking for `lead.created`, `lead.converted`, `deal.stage_moved`, `deal.won`, `deal.lost`, and `quotation.sent`.
 - **Clear Accountability & Data Safety:** Each team member only sees what their role permits (e.g., Sales Reps see their own deals, Sales Managers see their team, Executives see everything), and every important change is permanently recorded in an uneditable audit history.
 
 ---
@@ -342,20 +344,25 @@ php artisan migrate:fresh --seed
 php artisan serve
 ```
 
-Verify formatting and run the full test suite (`31` feature tests covering every route, role boundary, and workflow):
+Verify formatting and run the full test suite (`40` feature tests covering every route, role boundary, webhook, and workflow):
 ```bash
 vendor/bin/pint --test
 php artisan test --compact
 ```
 
+> For complete **VPS (Nginx / Apache + MySQL 8)**, **Docker (`docker-compose.yml`)**, **SQL import (`database/schema.sql` & `database/seed.sql`)**, and **branding customization** instructions, see [HowToSetup.md](HowToSetup.md).
+
 ---
 
 ## 7. Complete Engineering Documentation Index
 
-### Project Governance & Status
+### Setup, AI Tooling & Governance
+- [HowToSetup.md](HowToSetup.md) — Full VPS & Docker installation, first admin login, and branding guide
+- [CLAUDE.md](CLAUDE.md) — Architecture, directory layout, conventions, and test commands for AI coding tools
 - [PROJECT_STATUS.md](PROJECT_STATUS.md) — Module readiness matrix across Phases 1–6
-- [CHANGELOG.md](CHANGELOG.md) — Milestone tracking and change history
+- [CHANGELOG.md](CHANGELOG.md) — Release history starting at `1.0.0`
 - [CONTRIBUTING.md](CONTRIBUTING.md) — Git workflow and contribution guidelines
+- [LICENSE-NOTE.md](LICENSE-NOTE.md) — Buyer usage and modification licence terms
 - [docs/deployment/vibe96-listing.md](docs/deployment/vibe96-listing.md) — Marketplace listing details
 
 ### Architecture (`docs/architecture/`)
@@ -371,3 +378,9 @@ php artisan test --compact
 - **Security (`docs/security/`):** [security-policy.md](docs/security/security-policy.md) · [authentication.md](docs/security/authentication.md) · [authorization.md](docs/security/authorization.md) · [role-permission-matrix.md](docs/security/role-permission-matrix.md) · [data-protection.md](docs/security/data-protection.md) · [input-validation.md](docs/security/input-validation.md) · [file-upload-security.md](docs/security/file-upload-security.md) · [security-checklist.md](docs/security/security-checklist.md)
 - **Testing & Debugging (`docs/testing/`, `docs/debugging/`):** [testing-strategy.md](docs/testing/testing-strategy.md) · [feature-testing.md](docs/testing/feature-testing.md) · [test-cases.md](docs/testing/test-cases.md) · [troubleshooting.md](docs/debugging/troubleshooting.md) · [error-handling.md](docs/debugging/error-handling.md)
 - **Deployment & ADRs (`docs/deployment/`, `docs/adr/`):** [deployment-guide.md](docs/deployment/deployment-guide.md) · [environment-variables.md](docs/deployment/environment-variables.md) · [production-checklist.md](docs/deployment/production-checklist.md) · [queue-and-scheduler.md](docs/deployment/queue-and-scheduler.md) · [backup-and-recovery.md](docs/deployment/backup-and-recovery.md) · [ADR-001](docs/adr/ADR-001-application-architecture.md)–[ADR-005](docs/adr/ADR-005-business-logic-organization.md)
+
+---
+
+## 8. Licence
+
+Commercial buyer usage, modification, and deployment rights are documented in [LICENSE-NOTE.md](LICENSE-NOTE.md). Underlying open-source framework and library packages retain their respective licences as pinned in `composer.lock` and `package-lock.json`.

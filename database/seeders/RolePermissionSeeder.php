@@ -109,11 +109,12 @@ class RolePermissionSeeder extends Seeder
             'exports.create.team',
             'exports.create.all',
 
-            // Users, Teams, Roles & Audit Logs
+            // Users, Teams, Roles, Webhooks & Audit Logs
             'users.view',
             'users.manage',
             'teams.manage',
             'roles.manage',
+            'webhooks.manage',
             'audit_logs.view.team',
             'audit_logs.view.all',
 

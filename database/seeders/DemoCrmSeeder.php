@@ -54,7 +54,11 @@ class DemoCrmSeeder extends Seeder
             ]
         );
 
-        $password = Hash::make('password');
+        // Local/demo default only; override via CRM_DEMO_PASSWORD in .env before seeding.
+        $rawDemoPassword = filled(config('crm.demo_password'))
+            ? (string) config('crm.demo_password')
+            : 'password';
+        $password = Hash::make($rawDemoPassword);
 
         $superAdmin = User::query()->firstOrCreate(
             ['email' => 'superadmin@salescrm.test'],
@@ -160,6 +164,7 @@ class DemoCrmSeeder extends Seeder
             return;
         }
 
+        // Companies
         $company1 = Company::query()->create([
             'team_id' => $enterpriseTeam->id,
             'owner_id' => $rep->id,
@@ -186,6 +191,46 @@ class DemoCrmSeeder extends Seeder
             'country' => 'BD',
         ]);
 
+        $company3 = Company::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $rep->id,
+            'name' => 'Meghna Health Systems',
+            'industry' => 'Healthcare & Diagnostics',
+            'company_size' => '100-200',
+            'annual_revenue' => 88000000.00,
+            'website' => 'https://meghnahealth.example.com',
+            'phone' => '+8801711000103',
+            'city' => 'Dhaka',
+            'country' => 'BD',
+        ]);
+
+        $company4 = Company::query()->create([
+            'team_id' => $smbTeam->id,
+            'owner_id' => $smbRep->id,
+            'name' => 'Sylhet Tea Exports Co.',
+            'industry' => 'Agriculture & Exports',
+            'company_size' => '50-100',
+            'annual_revenue' => 42000000.00,
+            'website' => 'https://sylhettea.example.com',
+            'phone' => '+8801711000104',
+            'city' => 'Sylhet',
+            'country' => 'BD',
+        ]);
+
+        $company5 = Company::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $manager->id,
+            'name' => 'Crescent Retail Networks',
+            'industry' => 'Retail & E-Commerce',
+            'company_size' => '200-500',
+            'annual_revenue' => 210000000.00,
+            'website' => 'https://crescentretail.example.com',
+            'phone' => '+8801711000105',
+            'city' => 'Dhaka',
+            'country' => 'BD',
+        ]);
+
+        // Contacts
         $contact1 = Contact::query()->create([
             'team_id' => $enterpriseTeam->id,
             'owner_id' => $rep->id,
@@ -214,6 +259,49 @@ class DemoCrmSeeder extends Seeder
             'lead_source' => LeadSource::LinkedIn->value,
         ]);
 
+        $contact3 = Contact::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $rep->id,
+            'company_id' => $company3->id,
+            'first_name' => 'Dr. Tanvir',
+            'last_name' => 'Ahmed',
+            'email' => 'tanvir.ahmed@meghnahealth.example.com',
+            'phone' => '+8801711000203',
+            'job_title' => 'Director of Digital Health',
+            'department' => 'IT & Operations',
+            'is_primary_decision_maker' => true,
+            'lead_source' => LeadSource::OrganicSearch->value,
+        ]);
+
+        $contact4 = Contact::query()->create([
+            'team_id' => $smbTeam->id,
+            'owner_id' => $smbRep->id,
+            'company_id' => $company4->id,
+            'first_name' => 'Rezaul',
+            'last_name' => 'Karim',
+            'email' => 'rezaul@sylhettea.example.com',
+            'phone' => '+8801711000204',
+            'job_title' => 'Managing Partner',
+            'department' => 'Executive',
+            'is_primary_decision_maker' => true,
+            'lead_source' => LeadSource::Partner->value,
+        ]);
+
+        $contact5 = Contact::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $manager->id,
+            'company_id' => $company5->id,
+            'first_name' => 'Nusrat',
+            'last_name' => 'Jahan',
+            'email' => 'nusrat.jahan@crescentretail.example.com',
+            'phone' => '+8801711000205',
+            'job_title' => 'VP of Commercial Operations',
+            'department' => 'Sales',
+            'is_primary_decision_maker' => true,
+            'lead_source' => LeadSource::TradeShow->value,
+        ]);
+
+        // Leads across diverse sources & statuses
         Lead::query()->create([
             'team_id' => $enterpriseTeam->id,
             'owner_id' => $rep->id,
@@ -244,6 +332,52 @@ class DemoCrmSeeder extends Seeder
             'estimated_value' => 280000.00,
         ]);
 
+        Lead::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $manager->id,
+            'first_name' => 'Shafiq',
+            'last_name' => 'Islam',
+            'company_name' => 'Orion Energy Solutions',
+            'job_title' => 'Commercial Director',
+            'email' => 'shafiq@orionenergy.example.com',
+            'phone' => '+8801811000303',
+            'source' => LeadSource::OrganicSearch,
+            'status' => LeadStatus::Contacted,
+            'score' => 68,
+            'estimated_value' => 720000.00,
+        ]);
+
+        Lead::query()->create([
+            'team_id' => $smbTeam->id,
+            'owner_id' => $smbRep->id,
+            'first_name' => 'Rasheda',
+            'last_name' => 'Begum',
+            'company_name' => 'Dhaka Print Studio',
+            'job_title' => 'Founder',
+            'email' => 'rasheda@dhakaprint.example.com',
+            'phone' => '+8801811000304',
+            'source' => LeadSource::WhatsApp,
+            'status' => LeadStatus::Qualified,
+            'score' => 74,
+            'estimated_value' => 185000.00,
+        ]);
+
+        Lead::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $rep->id,
+            'first_name' => 'Faisal',
+            'last_name' => 'Kabir',
+            'company_name' => 'Northstar Maritime',
+            'job_title' => 'Head of IT',
+            'email' => 'faisal@northstarmaritime.example.com',
+            'phone' => '+8801811000305',
+            'source' => LeadSource::Partner,
+            'status' => LeadStatus::New,
+            'score' => 61,
+            'estimated_value' => 540000.00,
+        ]);
+
+        // Deals spanning every Kanban stage so the board and reports look populated immediately
         $deal1 = Deal::query()->create([
             'team_id' => $enterpriseTeam->id,
             'owner_id' => $rep->id,
@@ -260,7 +394,6 @@ class DemoCrmSeeder extends Seeder
             'stage_changed_at' => now()->subDays(3),
             'last_activity_at' => now()->subDay(),
         ]);
-
         $deal1->contacts()->attach($contact1->id, ['role' => 'Economic Buyer', 'is_primary' => true]);
 
         DealStageHistory::query()->create([
@@ -291,7 +424,102 @@ class DemoCrmSeeder extends Seeder
             'stage_changed_at' => now()->subDays(2),
             'last_activity_at' => now()->subDays(2),
         ]);
+        $deal2->contacts()->attach($contact2->id, ['role' => 'Procurement Lead', 'is_primary' => true]);
 
+        $deal3 = Deal::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $rep->id,
+            'pipeline_id' => $pipeline->id,
+            'pipeline_stage_id' => $stages['prospecting']->id,
+            'company_id' => $company3->id,
+            'primary_contact_id' => $contact3->id,
+            'title' => 'Meghna Health Multi-Branch Patient CRM',
+            'value' => 480000.00,
+            'currency' => 'BDT',
+            'probability' => 10.00,
+            'status' => DealStatus::Open,
+            'expected_close_date' => now()->addDays(45)->toDateString(),
+            'stage_changed_at' => now()->subDays(2),
+            'last_activity_at' => now()->subDays(2),
+        ]);
+        $deal3->contacts()->attach($contact3->id, ['role' => 'Technical Evaluator', 'is_primary' => true]);
+
+        $deal4 = Deal::query()->create([
+            'team_id' => $smbTeam->id,
+            'owner_id' => $smbRep->id,
+            'pipeline_id' => $pipeline->id,
+            'pipeline_stage_id' => $stages['qualification']->id,
+            'company_id' => $company4->id,
+            'primary_contact_id' => $contact4->id,
+            'title' => 'Sylhet Tea Export Buyer Desk',
+            'value' => 240000.00,
+            'currency' => 'BDT',
+            'probability' => 25.00,
+            'status' => DealStatus::Open,
+            'expected_close_date' => now()->addDays(30)->toDateString(),
+            'stage_changed_at' => now()->subDays(4),
+            'last_activity_at' => now()->subDay(),
+        ]);
+        $deal4->contacts()->attach($contact4->id, ['role' => 'Decision Maker', 'is_primary' => true]);
+
+        $deal5 = Deal::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $manager->id,
+            'pipeline_id' => $pipeline->id,
+            'pipeline_stage_id' => $stages['solution-demo']->id,
+            'company_id' => $company5->id,
+            'primary_contact_id' => $contact5->id,
+            'title' => 'Crescent Retail Omnichannel Sales Hub',
+            'value' => 810000.00,
+            'currency' => 'BDT',
+            'probability' => 50.00,
+            'status' => DealStatus::Open,
+            'expected_close_date' => now()->addDays(25)->toDateString(),
+            'stage_changed_at' => now()->subDays(5),
+            'last_activity_at' => now()->subDays(1),
+        ]);
+        $deal5->contacts()->attach($contact5->id, ['role' => 'Executive Sponsor', 'is_primary' => true]);
+
+        $deal6 = Deal::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $rep->id,
+            'pipeline_id' => $pipeline->id,
+            'pipeline_stage_id' => $stages['negotiation']->id,
+            'company_id' => $company3->id,
+            'primary_contact_id' => $contact3->id,
+            'title' => 'Meghna Diagnostics B2B Referral Portal',
+            'value' => 390000.00,
+            'currency' => 'BDT',
+            'probability' => 90.00,
+            'status' => DealStatus::Open,
+            'expected_close_date' => now()->addDays(10)->toDateString(),
+            'stage_changed_at' => now()->subDays(1),
+            'last_activity_at' => now()->subHours(6),
+        ]);
+        $deal6->contacts()->attach($contact3->id, ['role' => 'Project Owner', 'is_primary' => true]);
+
+        $deal7 = Deal::query()->create([
+            'team_id' => $smbTeam->id,
+            'owner_id' => $smbRep->id,
+            'pipeline_id' => $pipeline->id,
+            'pipeline_stage_id' => $stages['closed-lost']->id,
+            'company_id' => $company4->id,
+            'primary_contact_id' => $contact4->id,
+            'title' => 'Sylhet Tea Legacy ERP Connector',
+            'value' => 160000.00,
+            'currency' => 'BDT',
+            'probability' => 0.00,
+            'status' => DealStatus::Lost,
+            'expected_close_date' => now()->subDays(5)->toDateString(),
+            'closed_at' => now()->subDays(5),
+            'lost_reason' => 'Deferred until Q3 ERP upgrade',
+            'lost_competitor' => 'In-house spreadsheet workflow',
+            'stage_changed_at' => now()->subDays(5),
+            'last_activity_at' => now()->subDays(5),
+        ]);
+        $deal7->contacts()->attach($contact4->id, ['role' => 'Decision Maker', 'is_primary' => true]);
+
+        // Activities
         Activity::query()->create([
             'team_id' => $enterpriseTeam->id,
             'user_id' => $rep->id,
@@ -305,6 +533,20 @@ class DemoCrmSeeder extends Seeder
             'occurred_at' => now()->subDay(),
         ]);
 
+        Activity::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'user_id' => $manager->id,
+            'subject_type' => 'deal',
+            'subject_id' => $deal5->id,
+            'type' => ActivityType::Meeting,
+            'direction' => ActivityDirection::Outbound,
+            'outcome' => 'Demo Scheduled',
+            'summary' => 'Walked Crescent Retail ops team through Kanban & quotation approvals',
+            'duration_minutes' => 45,
+            'occurred_at' => now()->subDays(1),
+        ]);
+
+        // Tasks
         Task::query()->create([
             'team_id' => $enterpriseTeam->id,
             'assigned_to_id' => $rep->id,
@@ -317,6 +559,31 @@ class DemoCrmSeeder extends Seeder
             'due_at' => now()->addDay(),
         ]);
 
+        Task::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'assigned_to_id' => $rep->id,
+            'created_by_id' => $rep->id,
+            'taskable_type' => 'deal',
+            'taskable_id' => $deal6->id,
+            'title' => 'Finalize legal redlines with Meghna Health',
+            'priority' => TaskPriority::Urgent,
+            'status' => TaskStatus::Pending,
+            'due_at' => now()->addDays(2),
+        ]);
+
+        Task::query()->create([
+            'team_id' => $smbTeam->id,
+            'assigned_to_id' => $smbRep->id,
+            'created_by_id' => $smbRep->id,
+            'taskable_type' => 'deal',
+            'taskable_id' => $deal4->id,
+            'title' => 'Prepare discovery questionnaire for Sylhet Tea Exports',
+            'priority' => TaskPriority::Medium,
+            'status' => TaskStatus::Pending,
+            'due_at' => now()->addDays(3),
+        ]);
+
+        // Follow-ups
         FollowUp::query()->create([
             'team_id' => $enterpriseTeam->id,
             'owner_id' => $rep->id,
@@ -328,6 +595,18 @@ class DemoCrmSeeder extends Seeder
             'objective' => 'Confirm quotation sign-off timeline',
         ]);
 
+        FollowUp::query()->create([
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $manager->id,
+            'subject_type' => 'deal',
+            'subject_id' => $deal5->id,
+            'channel' => FollowUpChannel::Meeting,
+            'status' => FollowUpStatus::Scheduled,
+            'scheduled_at' => now()->addDays(3),
+            'objective' => 'Review technical architecture with Crescent Retail IT',
+        ]);
+
+        // Quotations
         $quotation = Quotation::query()->create([
             'ulid' => (string) Str::ulid(),
             'team_id' => $enterpriseTeam->id,
@@ -370,6 +649,39 @@ class DemoCrmSeeder extends Seeder
             'discount_percent' => 0.00,
             'tax_percent' => 0.00,
             'line_total' => 150000.00,
+        ]);
+
+        $acceptedQuotation = Quotation::query()->create([
+            'ulid' => (string) Str::ulid(),
+            'team_id' => $enterpriseTeam->id,
+            'owner_id' => $manager->id,
+            'deal_id' => $deal2->id,
+            'company_id' => $company2->id,
+            'contact_id' => $contact2->id,
+            'quote_number' => sprintf('QT-%s-00002', now()->format('Y')),
+            'version' => 1,
+            'status' => QuotationStatus::Accepted,
+            'currency' => 'BDT',
+            'subtotal' => 920000.00,
+            'discount_total' => 0.00,
+            'tax_total' => 0.00,
+            'grand_total' => 920000.00,
+            'issue_date' => now()->subDays(10)->toDateString(),
+            'valid_until' => now()->addDays(20)->toDateString(),
+            'sent_at' => now()->subDays(8),
+            'accepted_at' => now()->subDays(2),
+        ]);
+
+        QuotationItem::query()->create([
+            'quotation_id' => $acceptedQuotation->id,
+            'position' => 1,
+            'item_name' => 'Fleet Portal Enterprise Subscription (100 Seats)',
+            'quantity' => 1,
+            'unit' => 'year',
+            'unit_price' => 920000.00,
+            'discount_percent' => 0.00,
+            'tax_percent' => 0.00,
+            'line_total' => 920000.00,
         ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Actions\Activities\LogActivityAction;
 use App\Enums\ActivityType;
 use App\Enums\LeadSource;
 use App\Enums\LeadStatus;
+use App\Enums\WebhookEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Leads\PublicLeadCaptureRequest;
 use App\Models\Lead;
@@ -15,6 +16,7 @@ use App\Models\Team;
 use App\Notifications\CrmAlertNotification;
 use App\Services\Leads\LeadAssignmentService;
 use App\Services\Leads\LeadDuplicateService;
+use App\Services\Webhooks\WebhookDispatcherService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -32,6 +34,7 @@ final class LeadCaptureController extends Controller
         LeadDuplicateService $duplicates,
         LeadAssignmentService $assignment,
         LogActivityAction $logActivity,
+        WebhookDispatcherService $webhooks,
     ): RedirectResponse {
         if ($request->filled('company_website')) {
             return back()->with('status', 'Thanks — your enquiry has been received.');
@@ -85,6 +88,18 @@ final class LeadCaptureController extends Controller
             message: "Public capture assigned you lead: {$lead->full_name}.",
             actionUrl: route('leads.show', $lead),
         ));
+
+        $webhooks->dispatch(
+            WebhookEvent::LeadCreated,
+            [
+                'lead_id' => $lead->id,
+                'full_name' => $lead->full_name,
+                'email' => $lead->email,
+                'source' => $lead->source?->value,
+                'owner_id' => $lead->owner_id,
+            ],
+            $lead->team_id,
+        );
 
         return back()->with('status', 'Thanks — your enquiry has been received.');
     }

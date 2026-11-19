@@ -109,6 +109,14 @@
                 <span>Users &amp; Teams</span>
             </a>
         @endcan
+        @can('viewAny', \App\Models\Webhook::class)
+            <a href="{{ route('settings.webhooks.index') }}" class="{{ $linkClass(request()->routeIs('settings.webhooks.*')) }}">
+                <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                </svg>
+                <span>Webhooks</span>
+            </a>
+        @endcan
         @can('viewAny', \App\Models\AuditLog::class)
             <a href="{{ route('settings.audit-logs.index') }}" class="{{ $linkClass(request()->routeIs('settings.audit-logs.*')) }}">
                 <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">

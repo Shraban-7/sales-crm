@@ -20,6 +20,7 @@ use App\Models\Reminder;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Webhook;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
@@ -53,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
             'follow_up' => FollowUp::class,
             'quotation' => Quotation::class,
             'import_export_job' => ImportExportJob::class,
+            'webhook' => Webhook::class,
         ]);
 
         Password::defaults(function (): Password {
