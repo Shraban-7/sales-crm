@@ -1,0 +1,502 @@
+-- ============================================================================
+-- Sale Fusion CRM — Demo Seed Data (MySQL 8.0+)
+-- Import AFTER database/schema.sql to populate roles, permissions, demo users,
+-- B2B Enterprise Pipeline (all 7 Kanban stages), companies, contacts, leads,
+-- deals, activities, tasks, follow-ups, and quotations.
+-- Demo password for all seeded *.salescrm.test accounts: password
+-- ============================================================================
+
+SET NAMES utf8mb4;
+SET TIME_ZONE = '+00:00';
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Seed data for `migrations` (19 rows)
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('1', '0001_01_01_000000_create_users_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('2', '0001_01_01_000001_create_cache_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('3', '0001_01_01_000002_create_jobs_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('4', '0001_01_02_000001_create_permission_tables', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('5', '0001_01_02_000002_create_companies_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('6', '0001_01_02_000003_create_contacts_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('7', '0001_01_02_000004_create_pipelines_and_stages_tables', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('8', '0001_01_02_000005_create_deals_and_pivots_tables', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('9', '0001_01_02_000006_create_leads_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('10', '0001_01_02_000007_create_activities_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('11', '0001_01_02_000008_create_tasks_and_reminders_tables', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('12', '0001_01_02_000009_create_follow_ups_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('13', '0001_01_02_000010_create_quotations_and_items_tables', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('14', '0001_01_02_000011_create_attachments_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('15', '0001_01_02_000012_create_import_export_jobs_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('16', '0001_01_02_000013_create_audit_logs_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('17', '0001_01_02_000014_create_notifications_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('18', '2026_11_18_000001_add_security_and_quotation_approval_columns', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('19', '2026_11_19_000001_create_webhooks_table', '1');
+
+-- Seed data for `teams` (2 rows)
+INSERT INTO `teams` (`id`, `name`, `slug`, `leader_id`, `monthly_revenue_target`, `is_active`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', 'Enterprise Sales', 'enterprise-sales', '3', '2500000.00', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `teams` (`id`, `name`, `slug`, `leader_id`, `monthly_revenue_target`, `is_active`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', 'SMB Inbound', 'smb-inbound', NULL, '1000000.00', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `users` (6 rows)
+INSERT INTO `users` (`id`, `team_id`, `name`, `email`, `email_verified_at`, `phone`, `job_title`, `password`, `is_active`, `two_factor_enabled`, `two_factor_code_hash`, `two_factor_expires_at`, `two_factor_last_sent_at`, `last_login_at`, `last_login_ip`, `notification_preferences`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', 'Super Admin', 'superadmin@salescrm.test', NULL, NULL, 'System Administrator', '$2y$12$kNXOI93kuRnavitl0aa.iOepJJUY2P9PpSbjNrS8UZ/Ae9tWHgzYe', '1', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `users` (`id`, `team_id`, `name`, `email`, `email_verified_at`, `phone`, `job_title`, `password`, `is_active`, `two_factor_enabled`, `two_factor_code_hash`, `two_factor_expires_at`, `two_factor_last_sent_at`, `last_login_at`, `last_login_ip`, `notification_preferences`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', 'Org Admin', 'admin@salescrm.test', NULL, NULL, 'VP of Revenue Operations', '$2y$12$kNXOI93kuRnavitl0aa.iOepJJUY2P9PpSbjNrS8UZ/Ae9tWHgzYe', '1', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `users` (`id`, `team_id`, `name`, `email`, `email_verified_at`, `phone`, `job_title`, `password`, `is_active`, `two_factor_enabled`, `two_factor_code_hash`, `two_factor_expires_at`, `two_factor_last_sent_at`, `last_login_at`, `last_login_ip`, `notification_preferences`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES ('3', '1', 'Tariq Rahman', 'manager@salescrm.test', NULL, NULL, 'Enterprise Sales Manager', '$2y$12$kNXOI93kuRnavitl0aa.iOepJJUY2P9PpSbjNrS8UZ/Ae9tWHgzYe', '1', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `users` (`id`, `team_id`, `name`, `email`, `email_verified_at`, `phone`, `job_title`, `password`, `is_active`, `two_factor_enabled`, `two_factor_code_hash`, `two_factor_expires_at`, `two_factor_last_sent_at`, `last_login_at`, `last_login_ip`, `notification_preferences`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES ('4', '1', 'Nadia Karim', 'rep@salescrm.test', NULL, NULL, 'Account Executive', '$2y$12$kNXOI93kuRnavitl0aa.iOepJJUY2P9PpSbjNrS8UZ/Ae9tWHgzYe', '1', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `users` (`id`, `team_id`, `name`, `email`, `email_verified_at`, `phone`, `job_title`, `password`, `is_active`, `two_factor_enabled`, `two_factor_code_hash`, `two_factor_expires_at`, `two_factor_last_sent_at`, `last_login_at`, `last_login_ip`, `notification_preferences`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES ('5', '2', 'Imran Hossain', 'smbrep@salescrm.test', NULL, NULL, 'SMB Account Executive', '$2y$12$kNXOI93kuRnavitl0aa.iOepJJUY2P9PpSbjNrS8UZ/Ae9tWHgzYe', '1', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `users` (`id`, `team_id`, `name`, `email`, `email_verified_at`, `phone`, `job_title`, `password`, `is_active`, `two_factor_enabled`, `two_factor_code_hash`, `two_factor_expires_at`, `two_factor_last_sent_at`, `last_login_at`, `last_login_ip`, `notification_preferences`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES ('6', '1', 'Farhana Yasmin', 'analyst@salescrm.test', NULL, NULL, 'Revenue Analyst', '$2y$12$kNXOI93kuRnavitl0aa.iOepJJUY2P9PpSbjNrS8UZ/Ae9tWHgzYe', '1', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `permissions` (80 rows)
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('1', 'leads.view.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('2', 'leads.view.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('3', 'leads.view.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('4', 'leads.create', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('5', 'leads.update.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('6', 'leads.update.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('7', 'leads.update.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('8', 'leads.convert', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('9', 'leads.delete', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('10', 'contacts.view.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('11', 'contacts.view.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('12', 'contacts.view.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('13', 'contacts.create', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('14', 'contacts.update.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('15', 'contacts.update.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('16', 'contacts.update.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('17', 'contacts.delete', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('18', 'companies.view.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('19', 'companies.view.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('20', 'companies.view.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('21', 'companies.create', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('22', 'companies.update.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('23', 'companies.update.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('24', 'companies.update.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('25', 'companies.delete', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('26', 'pipelines.view', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('27', 'pipelines.manage', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('28', 'deals.view.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('29', 'deals.view.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('30', 'deals.view.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('31', 'deals.create', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('32', 'deals.update.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('33', 'deals.update.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('34', 'deals.update.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('35', 'deals.move_stage.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('36', 'deals.reassign', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('37', 'deals.delete', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('38', 'activities.view.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('39', 'activities.view.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('40', 'activities.view.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('41', 'activities.create', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('42', 'activities.update.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('43', 'activities.delete', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('44', 'tasks.view.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('45', 'tasks.view.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('46', 'tasks.view.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('47', 'tasks.create', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('48', 'tasks.assign.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('49', 'tasks.update.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('50', 'tasks.delete', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('51', 'follow_ups.view.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('52', 'follow_ups.view.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('53', 'follow_ups.view.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('54', 'follow_ups.create', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('55', 'follow_ups.update.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('56', 'follow_ups.delete', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('57', 'quotations.view.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('58', 'quotations.view.team', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('59', 'quotations.view.all', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('60', 'quotations.create', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('61', 'quotations.update.own', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('62', 'quotations.send', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('63', 'quotations.approve_discount', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('64', 'quotations.delete', 'web', '2026-11-19 14:56:19', '2026-11-19 14:56:19');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('65', 'reports.view.own', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('66', 'reports.view.team', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('67', 'reports.view.all', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('68', 'imports.create', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('69', 'exports.create.own', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('70', 'exports.create.team', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('71', 'exports.create.all', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('72', 'users.view', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('73', 'users.manage', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('74', 'teams.manage', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('75', 'roles.manage', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('76', 'webhooks.manage', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('77', 'audit_logs.view.team', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('78', 'audit_logs.view.all', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('79', 'notifications.view.own', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('80', 'notifications.manage_preferences.own', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+
+-- Seed data for `roles` (5 rows)
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('1', 'Super Admin', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('2', 'Org Admin', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('3', 'Sales Manager', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('4', 'Sales Rep', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES ('5', 'Read-Only Analyst', 'web', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+
+-- Seed data for `role_has_permissions` (281 rows)
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('1', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('2', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('3', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('4', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('5', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('6', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('7', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('8', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('9', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('10', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('11', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('12', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('13', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('14', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('15', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('16', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('17', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('18', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('19', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('20', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('21', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('22', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('23', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('24', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('25', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('26', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('27', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('28', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('29', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('30', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('31', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('32', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('33', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('34', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('35', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('36', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('37', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('38', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('39', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('40', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('41', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('42', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('43', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('44', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('45', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('46', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('47', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('48', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('49', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('50', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('51', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('52', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('53', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('54', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('55', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('56', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('57', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('58', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('59', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('60', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('61', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('62', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('63', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('64', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('65', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('66', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('67', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('68', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('69', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('70', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('71', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('72', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('73', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('74', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('75', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('76', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('77', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('78', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('79', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('80', '1');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('1', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('2', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('3', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('4', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('5', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('6', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('7', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('8', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('9', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('10', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('11', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('12', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('13', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('14', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('15', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('16', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('17', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('18', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('19', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('20', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('21', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('22', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('23', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('24', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('25', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('26', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('27', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('28', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('29', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('30', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('31', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('32', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('33', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('34', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('35', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('36', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('37', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('38', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('39', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('40', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('41', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('42', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('43', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('44', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('45', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('46', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('47', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('48', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('49', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('50', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('51', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('52', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('53', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('54', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('55', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('56', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('57', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('58', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('59', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('60', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('61', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('62', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('63', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('64', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('65', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('66', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('67', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('68', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('69', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('70', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('71', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('72', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('73', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('74', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('76', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('77', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('79', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('80', '2');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('1', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('2', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('4', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('5', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('6', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('8', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('9', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('10', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('11', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('13', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('14', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('15', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('17', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('18', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('19', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('21', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('22', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('23', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('25', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('26', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('28', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('29', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('31', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('32', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('33', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('35', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('36', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('37', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('38', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('39', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('41', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('42', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('43', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('44', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('45', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('47', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('48', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('49', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('50', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('51', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('52', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('54', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('55', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('56', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('57', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('58', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('60', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('61', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('62', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('63', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('64', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('65', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('66', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('68', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('69', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('70', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('72', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('79', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('80', '3');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('1', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('4', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('5', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('8', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('10', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('13', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('14', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('18', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('21', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('22', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('26', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('28', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('31', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('32', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('35', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('38', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('41', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('42', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('44', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('47', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('49', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('51', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('54', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('55', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('57', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('60', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('61', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('62', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('65', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('69', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('79', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('80', '4');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('1', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('2', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('3', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('10', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('11', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('12', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('18', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('19', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('20', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('26', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('28', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('29', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('30', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('38', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('39', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('40', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('44', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('45', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('46', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('51', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('52', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('53', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('57', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('58', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('59', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('65', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('66', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('67', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('69', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('71', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('79', '5');
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES ('80', '5');
+
+-- Seed data for `model_has_roles` (6 rows)
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES ('1', 'user', '1');
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES ('2', 'user', '2');
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES ('3', 'user', '3');
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES ('4', 'user', '4');
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES ('4', 'user', '5');
+INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES ('5', 'user', '6');
+
+-- Seed data for `pipelines` (1 rows)
+INSERT INTO `pipelines` (`id`, `team_id`, `name`, `is_default`, `is_active`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', NULL, 'B2B Enterprise Pipeline', '1', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `pipeline_stages` (7 rows)
+INSERT INTO `pipeline_stages` (`id`, `pipeline_id`, `name`, `slug`, `position`, `default_probability`, `rotting_days`, `is_won_stage`, `is_lost_stage`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', 'Prospecting', 'prospecting', '1', '10.00', '14', '0', '0', 'slate', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `pipeline_stages` (`id`, `pipeline_id`, `name`, `slug`, `position`, `default_probability`, `rotting_days`, `is_won_stage`, `is_lost_stage`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', 'Qualification', 'qualification', '2', '25.00', '14', '0', '0', 'blue', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `pipeline_stages` (`id`, `pipeline_id`, `name`, `slug`, `position`, `default_probability`, `rotting_days`, `is_won_stage`, `is_lost_stage`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES ('3', '1', 'Solution Demo', 'solution-demo', '3', '50.00', '10', '0', '0', 'cyan', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `pipeline_stages` (`id`, `pipeline_id`, `name`, `slug`, `position`, `default_probability`, `rotting_days`, `is_won_stage`, `is_lost_stage`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES ('4', '1', 'Proposal / Quote Sent', 'proposal-sent', '4', '75.00', '10', '0', '0', 'amber', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `pipeline_stages` (`id`, `pipeline_id`, `name`, `slug`, `position`, `default_probability`, `rotting_days`, `is_won_stage`, `is_lost_stage`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES ('5', '1', 'Negotiation', 'negotiation', '5', '90.00', '7', '0', '0', 'indigo', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `pipeline_stages` (`id`, `pipeline_id`, `name`, `slug`, `position`, `default_probability`, `rotting_days`, `is_won_stage`, `is_lost_stage`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES ('6', '1', 'Closed Won', 'closed-won', '6', '100.00', '365', '1', '0', 'emerald', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `pipeline_stages` (`id`, `pipeline_id`, `name`, `slug`, `position`, `default_probability`, `rotting_days`, `is_won_stage`, `is_lost_stage`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES ('7', '1', 'Closed Lost', 'closed-lost', '7', '0.00', '365', '0', '1', 'rose', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `companies` (5 rows)
+INSERT INTO `companies` (`id`, `team_id`, `owner_id`, `parent_company_id`, `name`, `registration_number`, `industry`, `company_size`, `annual_revenue`, `website`, `phone`, `billing_address`, `shipping_address`, `city`, `country`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', '4', NULL, 'Bengal Tech Holdings Ltd.', NULL, 'Software & Cloud', '200-500', '150000000.00', 'https://bengaltech.example.com', '+8801711000101', NULL, NULL, 'Dhaka', 'BD', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `companies` (`id`, `team_id`, `owner_id`, `parent_company_id`, `name`, `registration_number`, `industry`, `company_size`, `annual_revenue`, `website`, `phone`, `billing_address`, `shipping_address`, `city`, `country`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', '3', NULL, 'Padma Logistics Group', NULL, 'Supply Chain & Logistics', '500+', '420000000.00', 'https://padmalogistics.example.com', '+8801711000102', NULL, NULL, 'Chattogram', 'BD', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `companies` (`id`, `team_id`, `owner_id`, `parent_company_id`, `name`, `registration_number`, `industry`, `company_size`, `annual_revenue`, `website`, `phone`, `billing_address`, `shipping_address`, `city`, `country`, `created_at`, `updated_at`, `deleted_at`) VALUES ('3', '1', '4', NULL, 'Meghna Health Systems', NULL, 'Healthcare & Diagnostics', '100-200', '88000000.00', 'https://meghnahealth.example.com', '+8801711000103', NULL, NULL, 'Dhaka', 'BD', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `companies` (`id`, `team_id`, `owner_id`, `parent_company_id`, `name`, `registration_number`, `industry`, `company_size`, `annual_revenue`, `website`, `phone`, `billing_address`, `shipping_address`, `city`, `country`, `created_at`, `updated_at`, `deleted_at`) VALUES ('4', '2', '5', NULL, 'Sylhet Tea Exports Co.', NULL, 'Agriculture & Exports', '50-100', '42000000.00', 'https://sylhettea.example.com', '+8801711000104', NULL, NULL, 'Sylhet', 'BD', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `companies` (`id`, `team_id`, `owner_id`, `parent_company_id`, `name`, `registration_number`, `industry`, `company_size`, `annual_revenue`, `website`, `phone`, `billing_address`, `shipping_address`, `city`, `country`, `created_at`, `updated_at`, `deleted_at`) VALUES ('5', '1', '3', NULL, 'Crescent Retail Networks', NULL, 'Retail & E-Commerce', '200-500', '210000000.00', 'https://crescentretail.example.com', '+8801711000105', NULL, NULL, 'Dhaka', 'BD', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `contacts` (5 rows)
+INSERT INTO `contacts` (`id`, `team_id`, `owner_id`, `company_id`, `first_name`, `last_name`, `email`, `phone`, `mobile`, `job_title`, `department`, `is_primary_decision_maker`, `do_not_contact`, `lead_source`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', '4', '1', 'Arif', 'Mahmud', 'arif.mahmud@bengaltech.example.com', '+8801711000201', NULL, 'CTO', 'Engineering', '1', '0', 'referral', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `contacts` (`id`, `team_id`, `owner_id`, `company_id`, `first_name`, `last_name`, `email`, `phone`, `mobile`, `job_title`, `department`, `is_primary_decision_maker`, `do_not_contact`, `lead_source`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', '3', '2', 'Sadia', 'Afrin', 'sadia.afrin@padmalogistics.example.com', '+8801711000202', NULL, 'Head of Procurement', 'Operations', '1', '0', 'linkedin', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `contacts` (`id`, `team_id`, `owner_id`, `company_id`, `first_name`, `last_name`, `email`, `phone`, `mobile`, `job_title`, `department`, `is_primary_decision_maker`, `do_not_contact`, `lead_source`, `created_at`, `updated_at`, `deleted_at`) VALUES ('3', '1', '4', '3', 'Dr. Tanvir', 'Ahmed', 'tanvir.ahmed@meghnahealth.example.com', '+8801711000203', NULL, 'Director of Digital Health', 'IT & Operations', '1', '0', 'organic_search', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `contacts` (`id`, `team_id`, `owner_id`, `company_id`, `first_name`, `last_name`, `email`, `phone`, `mobile`, `job_title`, `department`, `is_primary_decision_maker`, `do_not_contact`, `lead_source`, `created_at`, `updated_at`, `deleted_at`) VALUES ('4', '2', '5', '4', 'Rezaul', 'Karim', 'rezaul@sylhettea.example.com', '+8801711000204', NULL, 'Managing Partner', 'Executive', '1', '0', 'partner', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `contacts` (`id`, `team_id`, `owner_id`, `company_id`, `first_name`, `last_name`, `email`, `phone`, `mobile`, `job_title`, `department`, `is_primary_decision_maker`, `do_not_contact`, `lead_source`, `created_at`, `updated_at`, `deleted_at`) VALUES ('5', '1', '3', '5', 'Nusrat', 'Jahan', 'nusrat.jahan@crescentretail.example.com', '+8801711000205', NULL, 'VP of Commercial Operations', 'Sales', '1', '0', 'trade_show', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `leads` (5 rows)
+INSERT INTO `leads` (`id`, `team_id`, `owner_id`, `first_name`, `last_name`, `company_name`, `job_title`, `email`, `phone`, `website`, `source`, `status`, `score`, `estimated_value`, `disqualified_reason`, `converted_at`, `converted_by_id`, `converted_company_id`, `converted_contact_id`, `converted_deal_id`, `last_contacted_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', '4', 'Kamrul', 'Hasan', 'Apex Textiles BD', 'IT Director', 'kamrul@apextextiles.example.com', '+8801811000301', NULL, 'website', 'qualified', '82', '450000.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `leads` (`id`, `team_id`, `owner_id`, `first_name`, `last_name`, `company_name`, `job_title`, `email`, `phone`, `website`, `source`, `status`, `score`, `estimated_value`, `disqualified_reason`, `converted_at`, `converted_by_id`, `converted_company_id`, `converted_contact_id`, `converted_deal_id`, `last_contacted_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', '4', 'Mehnaz', 'Chowdhury', 'Delta FinServe', 'Operations Lead', 'mehnaz@deltafinserve.example.com', '+8801811000302', NULL, 'linkedin', 'new', '55', '280000.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `leads` (`id`, `team_id`, `owner_id`, `first_name`, `last_name`, `company_name`, `job_title`, `email`, `phone`, `website`, `source`, `status`, `score`, `estimated_value`, `disqualified_reason`, `converted_at`, `converted_by_id`, `converted_company_id`, `converted_contact_id`, `converted_deal_id`, `last_contacted_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('3', '1', '3', 'Shafiq', 'Islam', 'Orion Energy Solutions', 'Commercial Director', 'shafiq@orionenergy.example.com', '+8801811000303', NULL, 'organic_search', 'contacted', '68', '720000.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `leads` (`id`, `team_id`, `owner_id`, `first_name`, `last_name`, `company_name`, `job_title`, `email`, `phone`, `website`, `source`, `status`, `score`, `estimated_value`, `disqualified_reason`, `converted_at`, `converted_by_id`, `converted_company_id`, `converted_contact_id`, `converted_deal_id`, `last_contacted_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('4', '2', '5', 'Rasheda', 'Begum', 'Dhaka Print Studio', 'Founder', 'rasheda@dhakaprint.example.com', '+8801811000304', NULL, 'whatsapp', 'qualified', '74', '185000.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `leads` (`id`, `team_id`, `owner_id`, `first_name`, `last_name`, `company_name`, `job_title`, `email`, `phone`, `website`, `source`, `status`, `score`, `estimated_value`, `disqualified_reason`, `converted_at`, `converted_by_id`, `converted_company_id`, `converted_contact_id`, `converted_deal_id`, `last_contacted_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('5', '1', '4', 'Faisal', 'Kabir', 'Northstar Maritime', 'Head of IT', 'faisal@northstarmaritime.example.com', '+8801811000305', NULL, 'partner', 'new', '61', '540000.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `deals` (7 rows)
+INSERT INTO `deals` (`id`, `team_id`, `owner_id`, `pipeline_id`, `pipeline_stage_id`, `company_id`, `primary_contact_id`, `title`, `value`, `currency`, `probability`, `status`, `expected_close_date`, `closed_at`, `won_notes`, `lost_reason`, `lost_competitor`, `stage_changed_at`, `last_activity_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', '4', '1', '4', '1', '1', 'Bengal Tech Enterprise CRM Rollout', '650000.00', 'BDT', '75.00', 'open', '2026-12-09', NULL, NULL, NULL, NULL, '2026-11-16 14:56:20', '2026-11-18 14:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `deals` (`id`, `team_id`, `owner_id`, `pipeline_id`, `pipeline_stage_id`, `company_id`, `primary_contact_id`, `title`, `value`, `currency`, `probability`, `status`, `expected_close_date`, `closed_at`, `won_notes`, `lost_reason`, `lost_competitor`, `stage_changed_at`, `last_activity_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', '3', '1', '6', '2', '2', 'Padma Logistics Fleet Portal', '920000.00', 'BDT', '100.00', 'won', '2026-11-17', '2026-11-17 14:56:20', 'Signed annual enterprise agreement.', NULL, NULL, '2026-11-17 14:56:20', '2026-11-17 14:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `deals` (`id`, `team_id`, `owner_id`, `pipeline_id`, `pipeline_stage_id`, `company_id`, `primary_contact_id`, `title`, `value`, `currency`, `probability`, `status`, `expected_close_date`, `closed_at`, `won_notes`, `lost_reason`, `lost_competitor`, `stage_changed_at`, `last_activity_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('3', '1', '4', '1', '1', '3', '3', 'Meghna Health Multi-Branch Patient CRM', '480000.00', 'BDT', '10.00', 'open', '2027-01-03', NULL, NULL, NULL, NULL, '2026-11-17 14:56:20', '2026-11-17 14:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `deals` (`id`, `team_id`, `owner_id`, `pipeline_id`, `pipeline_stage_id`, `company_id`, `primary_contact_id`, `title`, `value`, `currency`, `probability`, `status`, `expected_close_date`, `closed_at`, `won_notes`, `lost_reason`, `lost_competitor`, `stage_changed_at`, `last_activity_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('4', '2', '5', '1', '2', '4', '4', 'Sylhet Tea Export Buyer Desk', '240000.00', 'BDT', '25.00', 'open', '2026-12-19', NULL, NULL, NULL, NULL, '2026-11-15 14:56:20', '2026-11-18 14:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `deals` (`id`, `team_id`, `owner_id`, `pipeline_id`, `pipeline_stage_id`, `company_id`, `primary_contact_id`, `title`, `value`, `currency`, `probability`, `status`, `expected_close_date`, `closed_at`, `won_notes`, `lost_reason`, `lost_competitor`, `stage_changed_at`, `last_activity_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('5', '1', '3', '1', '3', '5', '5', 'Crescent Retail Omnichannel Sales Hub', '810000.00', 'BDT', '50.00', 'open', '2026-12-14', NULL, NULL, NULL, NULL, '2026-11-14 14:56:20', '2026-11-18 14:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `deals` (`id`, `team_id`, `owner_id`, `pipeline_id`, `pipeline_stage_id`, `company_id`, `primary_contact_id`, `title`, `value`, `currency`, `probability`, `status`, `expected_close_date`, `closed_at`, `won_notes`, `lost_reason`, `lost_competitor`, `stage_changed_at`, `last_activity_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('6', '1', '4', '1', '5', '3', '3', 'Meghna Diagnostics B2B Referral Portal', '390000.00', 'BDT', '90.00', 'open', '2026-11-29', NULL, NULL, NULL, NULL, '2026-11-18 14:56:20', '2026-11-19 08:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `deals` (`id`, `team_id`, `owner_id`, `pipeline_id`, `pipeline_stage_id`, `company_id`, `primary_contact_id`, `title`, `value`, `currency`, `probability`, `status`, `expected_close_date`, `closed_at`, `won_notes`, `lost_reason`, `lost_competitor`, `stage_changed_at`, `last_activity_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('7', '2', '5', '1', '7', '4', '4', 'Sylhet Tea Legacy ERP Connector', '160000.00', 'BDT', '0.00', 'lost', '2026-11-14', '2026-11-14 14:56:20', NULL, 'Deferred until Q3 ERP upgrade', 'In-house spreadsheet workflow', '2026-11-14 14:56:20', '2026-11-14 14:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `deal_contact` (7 rows)
+INSERT INTO `deal_contact` (`id`, `deal_id`, `contact_id`, `role`, `is_primary`, `created_at`, `updated_at`) VALUES ('1', '1', '1', 'Economic Buyer', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `deal_contact` (`id`, `deal_id`, `contact_id`, `role`, `is_primary`, `created_at`, `updated_at`) VALUES ('2', '2', '2', 'Procurement Lead', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `deal_contact` (`id`, `deal_id`, `contact_id`, `role`, `is_primary`, `created_at`, `updated_at`) VALUES ('3', '3', '3', 'Technical Evaluator', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `deal_contact` (`id`, `deal_id`, `contact_id`, `role`, `is_primary`, `created_at`, `updated_at`) VALUES ('4', '4', '4', 'Decision Maker', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `deal_contact` (`id`, `deal_id`, `contact_id`, `role`, `is_primary`, `created_at`, `updated_at`) VALUES ('5', '5', '5', 'Executive Sponsor', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `deal_contact` (`id`, `deal_id`, `contact_id`, `role`, `is_primary`, `created_at`, `updated_at`) VALUES ('6', '6', '3', 'Project Owner', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `deal_contact` (`id`, `deal_id`, `contact_id`, `role`, `is_primary`, `created_at`, `updated_at`) VALUES ('7', '7', '4', 'Decision Maker', '1', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+
+-- Seed data for `deal_stage_histories` (1 rows)
+INSERT INTO `deal_stage_histories` (`id`, `deal_id`, `from_stage_id`, `to_stage_id`, `moved_by_id`, `duration_in_previous_stage_seconds`, `notes`, `created_at`) VALUES ('1', '1', NULL, '4', '4', '0', 'Initial deal creation', '2026-11-16 14:56:20');
+
+-- Seed data for `activities` (2 rows)
+INSERT INTO `activities` (`id`, `team_id`, `user_id`, `subject_type`, `subject_id`, `type`, `direction`, `outcome`, `summary`, `body`, `duration_minutes`, `occurred_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', '4', 'deal', '1', 'call', 'outbound', 'Connected', 'Reviewed security & deployment checklist with CTO', NULL, '25', '2026-11-18 14:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `activities` (`id`, `team_id`, `user_id`, `subject_type`, `subject_id`, `type`, `direction`, `outcome`, `summary`, `body`, `duration_minutes`, `occurred_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', '3', 'deal', '5', 'meeting', 'outbound', 'Demo Scheduled', 'Walked Crescent Retail ops team through Kanban & quotation approvals', NULL, '45', '2026-11-18 14:56:20', '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `tasks` (3 rows)
+INSERT INTO `tasks` (`id`, `team_id`, `assigned_to_id`, `created_by_id`, `taskable_type`, `taskable_id`, `title`, `description`, `priority`, `status`, `due_at`, `completed_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', '4', '3', 'deal', '1', 'Send revised SLA addendum to Bengal Tech', NULL, 'high', 'pending', '2026-11-20 14:56:20', NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `tasks` (`id`, `team_id`, `assigned_to_id`, `created_by_id`, `taskable_type`, `taskable_id`, `title`, `description`, `priority`, `status`, `due_at`, `completed_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', '4', '4', 'deal', '6', 'Finalize legal redlines with Meghna Health', NULL, 'urgent', 'pending', '2026-11-21 14:56:20', NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `tasks` (`id`, `team_id`, `assigned_to_id`, `created_by_id`, `taskable_type`, `taskable_id`, `title`, `description`, `priority`, `status`, `due_at`, `completed_at`, `created_at`, `updated_at`, `deleted_at`) VALUES ('3', '2', '5', '5', 'deal', '4', 'Prepare discovery questionnaire for Sylhet Tea Exports', NULL, 'medium', 'pending', '2026-11-22 14:56:20', NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `follow_ups` (2 rows)
+INSERT INTO `follow_ups` (`id`, `team_id`, `owner_id`, `subject_type`, `subject_id`, `channel`, `status`, `scheduled_at`, `completed_at`, `objective`, `outcome_notes`, `next_follow_up_id`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '1', '4', 'deal', '1', 'call', 'scheduled', '2026-11-21 14:56:20', NULL, 'Confirm quotation sign-off timeline', NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `follow_ups` (`id`, `team_id`, `owner_id`, `subject_type`, `subject_id`, `channel`, `status`, `scheduled_at`, `completed_at`, `objective`, `outcome_notes`, `next_follow_up_id`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '1', '3', 'deal', '5', 'meeting', 'scheduled', '2026-11-22 14:56:20', NULL, 'Review technical architecture with Crescent Retail IT', NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `quotations` (2 rows)
+INSERT INTO `quotations` (`id`, `ulid`, `team_id`, `owner_id`, `deal_id`, `company_id`, `contact_id`, `quote_number`, `version`, `status`, `currency`, `subtotal`, `discount_total`, `tax_total`, `grand_total`, `issue_date`, `valid_until`, `terms_and_conditions`, `customer_notes`, `discount_approved_by_id`, `discount_approved_at`, `sent_at`, `accepted_at`, `rejected_at`, `rejection_reason`, `created_at`, `updated_at`, `deleted_at`) VALUES ('1', '01M7T4Y021G77GBTVZQPDVGFB0', '1', '4', '1', '1', '1', 'QT-2026-00001', '1', 'sent', 'BDT', '650000.00', '0.00', '0.00', '650000.00', '2026-11-19', '2026-12-19', NULL, NULL, NULL, NULL, '2026-11-18 14:56:20', NULL, NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+INSERT INTO `quotations` (`id`, `ulid`, `team_id`, `owner_id`, `deal_id`, `company_id`, `contact_id`, `quote_number`, `version`, `status`, `currency`, `subtotal`, `discount_total`, `tax_total`, `grand_total`, `issue_date`, `valid_until`, `terms_and_conditions`, `customer_notes`, `discount_approved_by_id`, `discount_approved_at`, `sent_at`, `accepted_at`, `rejected_at`, `rejection_reason`, `created_at`, `updated_at`, `deleted_at`) VALUES ('2', '01M7T4Y027NR88N5F1DHRRDVCQ', '1', '3', '2', '2', '2', 'QT-2026-00002', '1', 'accepted', 'BDT', '920000.00', '0.00', '0.00', '920000.00', '2026-11-09', '2026-12-09', NULL, NULL, NULL, NULL, '2026-11-11 14:56:20', '2026-11-17 14:56:20', NULL, NULL, '2026-11-19 14:56:20', '2026-11-19 14:56:20', NULL);
+
+-- Seed data for `quotation_items` (3 rows)
+INSERT INTO `quotation_items` (`id`, `quotation_id`, `position`, `item_name`, `description`, `quantity`, `unit`, `unit_price`, `discount_percent`, `tax_percent`, `line_total`, `created_at`, `updated_at`) VALUES ('1', '1', '1', 'Enterprise CRM Annual License (50 Seats)', NULL, '1.00', 'year', '500000.00', '0.00', '0.00', '500000.00', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `quotation_items` (`id`, `quotation_id`, `position`, `item_name`, `description`, `quantity`, `unit`, `unit_price`, `discount_percent`, `tax_percent`, `line_total`, `created_at`, `updated_at`) VALUES ('2', '1', '2', 'Onboarding & Data Migration Package', NULL, '1.00', 'package', '150000.00', '0.00', '0.00', '150000.00', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+INSERT INTO `quotation_items` (`id`, `quotation_id`, `position`, `item_name`, `description`, `quantity`, `unit`, `unit_price`, `discount_percent`, `tax_percent`, `line_total`, `created_at`, `updated_at`) VALUES ('3', '2', '1', 'Fleet Portal Enterprise Subscription (100 Seats)', NULL, '1.00', 'year', '920000.00', '0.00', '0.00', '920000.00', '2026-11-19 14:56:20', '2026-11-19 14:56:20');
+
+SET FOREIGN_KEY_CHECKS = 1;
