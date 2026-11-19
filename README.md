@@ -2,7 +2,8 @@
 
 **Live / Production Domain:** [`https://sales-crm.devshraban.com`](https://sales-crm.devshraban.com)  
 **Built With:** PHP 8.3+ · Laravel 13 · MySQL 8.0 · Blade · Tailwind CSS v4 · Vanilla JS · mPDF  
-**Project Status:** Complete across all `15` CRM modules (`19` database migrations, automated PHPUnit suite & Laravel Pint style checks verified — see [PROJECT_STATUS.md](PROJECT_STATUS.md) and [HowToSetup.md](HowToSetup.md))
+**Project Status:** Complete across all `15` CRM modules (`19` database migrations, automated PHPUnit suite & Laravel Pint style checks verified — see [PROJECT_STATUS.md](PROJECT_STATUS.md) and [HowToSetup.md](HowToSetup.md))  
+**Walkthrough Video:** 30-Second 1080p Voiceover Demo available at [`docs/screenshots/sale-fusion-crm-demo.mp4`](docs/screenshots/sale-fusion-crm-demo.mp4)
 
 ![Sale Fusion CRM Executive Dashboard](docs/screenshots/03-dashboard.png)
 

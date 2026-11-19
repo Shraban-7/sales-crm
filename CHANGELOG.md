@@ -22,5 +22,6 @@ All notable changes to **Sale Fusion CRM** are documented in this file. This pro
   - `docker-compose.yml`, `docker/php/Dockerfile`, and `docker/nginx/default.conf` using placeholder environment variables only.
   - `database/schema.sql` (clean MySQL 8 schema from empty) and `database/seed.sql` (populated demo dataset across all 7 Kanban stages).
   - `CLAUDE.md` AI-tool architecture guide, `LICENSE-NOTE.md`, and `README.md` with 28 live UI screenshots and non-technical walkthrough.
+  - 30-second 1080p demo walkthrough video with synchronized voiceover narration (`docs/screenshots/sale-fusion-crm-demo.mp4`).
 - **Verification:**
   - Automated PHPUnit Feature test suite covering authentication, 2FA, RBAC/IDOR boundaries, lead conversion, Kanban stage moves, quotations, webhooks, reports, CSV imports/exports, error pages, and all rendered views.
