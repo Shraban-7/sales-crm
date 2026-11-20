@@ -119,7 +119,9 @@
         </div>
 
         <div class="relative z-10 flex items-center justify-between text-xs text-slate-400 border-t border-white/10 pt-5">
-            <span>Role-Based Access Control &middot; Immutable Audit Trail</span>
+            <a href="{{ route('home') }}" class="font-medium text-slate-300 hover:text-white transition">
+                &larr; Back to Landing Page
+            </a>
             <a href="{{ route('leads.capture.show') }}" class="font-medium text-brand-100 hover:text-white transition">
                 Public Enquiry Form &rarr;
             </a>
@@ -197,7 +199,7 @@
                                 name="email"
                                 type="email"
                                 autocomplete="email"
-                                value="{{ old('email') }}"
+                                value="{{ old('email', request('email')) }}"
                                 required
                                 autofocus
                                 placeholder="name@company.com"
@@ -217,6 +219,7 @@
                                 name="password"
                                 type="password"
                                 autocomplete="current-password"
+                                value="{{ old('password', request('email') ? 'password' : '') }}"
                                 required
                                 placeholder="Enter your password"
                                 class="crm-input py-2.5 pl-10 pr-10"

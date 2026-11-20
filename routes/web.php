@@ -72,10 +72,23 @@ Route::post('/q/{quotation:ulid}/reject', [PublicQuotationController::class, 're
     ->middleware(['signed', 'throttle:10,1'])
     ->name('quotations.public.reject');
 
+// Public Landing Page (Root `/`)
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return view('pages.landing');
+})->name('home');
+
+Route::get('/welcome', function () {
+    return view('pages.landing');
+})->name('landing');
+
 Route::middleware('auth')->group(function (): void {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    Route::get('/', DashboardController::class)->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     // Leads
     Route::get('/leads/check-duplicates', [LeadController::class, 'checkDuplicates'])->name('leads.check-duplicates');
