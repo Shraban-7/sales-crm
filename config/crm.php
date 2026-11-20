@@ -26,4 +26,6 @@ return [
         'max_date_range_days' => 366,
     ],
     'demo_password' => env('CRM_DEMO_PASSWORD'),
+    'demo_mode' => (bool) env('CRM_DEMO_MODE', false),
+    'owner_email' => env('CRM_OWNER_EMAIL'),
 ];

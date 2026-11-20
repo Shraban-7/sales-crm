@@ -21,6 +21,7 @@ All notable changes to **Sale Fusion CRM** are documented in this file. This pro
 - **Bulk Spreadsheet Import (`/imports/bulk`):** Format specification card and duplicate handling for bulk CSV/Excel data.
 
 ### Security & Hardening
+- **Demo Mode Protection Middleware (`EnsureNotDemoMode`):** Protects public demo environments (`CRM_DEMO_MODE=true`) by preventing demo credentials from modifying site settings, user accounts, passwords, SMTP configurations, or deleting sample CRM records, while allowing visitors to explore all features freely via safe HTTP methods. Designates verified site owner (`CRM_OWNER_EMAIL`) with exclusive in-app administrative write permissions.
 - **Production Guard on Demo Seeder:** `DemoCrmSeeder` now aborts with an explicit safety exception if executed in a production environment (`APP_ENV=production`) unless a secure `CRM_DEMO_PASSWORD` is supplied.
 - **Webhook Replay Protection:** Added 300-second timestamp validation (`X-CRM-Timestamp`) to the HMAC-signed lead capture endpoint (`POST /api/leads/capture`).
 - **Credential Sanitization in Docs:** Replaced hardcoded demo password references in `README.md` with references to the configurable `CRM_DEMO_PASSWORD` environment variable.

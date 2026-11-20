@@ -96,4 +96,26 @@ class User extends Authenticatable
 
         return (bool) ($prefs[$category][$channel] ?? true);
     }
+
+    public function isOwner(): bool
+    {
+        $ownerEmail = config('crm.owner_email');
+
+        return filled($ownerEmail) && strcasecmp($this->email, (string) $ownerEmail) === 0;
+    }
+
+    public function isDemoUser(): bool
+    {
+        $demoEmails = [
+            'admin@demo.yourproduct.com',
+            'superadmin@salescrm.test',
+            'admin@salescrm.test',
+            'manager@salescrm.test',
+            'rep@salescrm.test',
+            'smbrep@salescrm.test',
+            'analyst@salescrm.test',
+        ];
+
+        return in_array(strtolower($this->email), $demoEmails, true);
+    }
 }

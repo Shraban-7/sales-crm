@@ -118,12 +118,41 @@
         </header>
 
         <main class="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
+            @if (config('crm.demo_mode'))
+                @if (auth()->user()?->isOwner())
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs text-emerald-800 flex items-center justify-between shadow-2xs">
+                        <span class="flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <strong class="font-semibold">Demo Mode (Owner Session):</strong> You are authenticated as the verified site owner ({{ auth()->user()->email }}) with full administrative write access.
+                        </span>
+                        <span class="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">Write Mode</span>
+                    </div>
+                @else
+                    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-800 flex items-center justify-between shadow-2xs">
+                        <span class="flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full bg-amber-500"></span>
+                            <strong class="font-semibold">Live Demo Mode:</strong> You are exploring with demo credentials. Full navigation is unlocked; site settings &amp; sample records are protected.
+                        </span>
+                        <span class="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">Explore Mode</span>
+                    </div>
+                @endif
+            @endif
+
             @if (session('status'))
                 <div class="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2.5 shadow-2xs">
                     <svg class="h-4 w-4 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                     <span>{{ session('status') }}</span>
+                </div>
+            @endif
+
+            @if (session('warning'))
+                <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 flex items-center gap-2.5 shadow-2xs">
+                    <svg class="h-4 w-4 shrink-0 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                    </svg>
+                    <span>{{ session('warning') }}</span>
                 </div>
             @endif
 

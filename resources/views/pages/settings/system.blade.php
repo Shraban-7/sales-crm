@@ -1,5 +1,19 @@
 <x-layouts.app title="System Settings — Sale Fusion CRM" header="System & Site Settings">
     <div class="max-w-4xl space-y-6">
+        @if (config('crm.demo_mode') && ! auth()->user()?->isOwner())
+            <div class="rounded-2xl border border-amber-200 bg-amber-50/90 p-4 shadow-2xs flex items-start gap-3">
+                <svg class="h-5 w-5 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+                <div class="space-y-1">
+                    <p class="text-sm font-semibold text-amber-900">Live Demo Mode &mdash; Read &amp; Explore Mode</p>
+                    <p class="text-xs text-amber-800 leading-relaxed">
+                        You can inspect all system options, defaults, and field configurations. Saving changes is disabled for demo accounts to preserve this demonstration for other evaluators. Only the verified site owner has write permissions.
+                    </p>
+                </div>
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('settings.system.update') }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
@@ -192,6 +206,14 @@
 
             <!-- Save Button -->
             <div class="flex items-center justify-end gap-3 pt-2">
+                @if (config('crm.demo_mode') && ! auth()->user()?->isOwner())
+                    <span class="inline-flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
+                        <svg class="h-3.5 w-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                        </svg>
+                        Protected in Demo Mode (Only verified site owner can save changes)
+                    </span>
+                @endif
                 <button type="submit" class="crm-btn-primary px-6 py-2.5">
                     Save System Settings
                 </button>

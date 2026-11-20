@@ -32,6 +32,19 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+/**
+ * Demo CRM Seeder
+ *
+ * Seeded Demo Accounts:
+ * - Super Admin:        admin@demo.yourproduct.com (and superadmin@salescrm.test)
+ * - Org Admin:          admin@salescrm.test
+ * - Sales Manager:      manager@salescrm.test
+ * - Sales Executive:    rep@salescrm.test
+ * - SMB Executive:      smbrep@salescrm.test
+ * - Read-Only Analyst:  analyst@salescrm.test
+ *
+ * Password: Value of CRM_DEMO_PASSWORD in .env (defaults to 'password')
+ */
 class DemoCrmSeeder extends Seeder
 {
     public function run(): void
@@ -62,9 +75,10 @@ class DemoCrmSeeder extends Seeder
         );
 
         // Local/demo default only; override via CRM_DEMO_PASSWORD in .env before seeding.
-        $rawDemoPassword = filled(config('crm.demo_password'))
-            ? (string) config('crm.demo_password')
-            : 'password';
+        // Local/demo default only; override via CRM_DEMO_PASSWORD in .env before seeding (always 'password' in testing).
+        $rawDemoPassword = app()->environment('testing')
+            ? 'password'
+            : (filled(config('crm.demo_password')) ? (string) config('crm.demo_password') : 'password');
         $password = Hash::make($rawDemoPassword);
 
         $superAdmin = User::query()->firstOrCreate(
@@ -78,6 +92,18 @@ class DemoCrmSeeder extends Seeder
             ]
         );
         $superAdmin->syncRoles(['Super Admin']);
+
+        $marketplaceAdmin = User::query()->firstOrCreate(
+            ['email' => 'admin@demo.yourproduct.com'],
+            [
+                'team_id' => $enterpriseTeam->id,
+                'name' => 'Demo Super Admin',
+                'job_title' => 'System Administrator',
+                'password' => $password,
+                'is_active' => true,
+            ]
+        );
+        $marketplaceAdmin->syncRoles(['Super Admin']);
 
         $orgAdmin = User::query()->firstOrCreate(
             ['email' => 'admin@salescrm.test'],
