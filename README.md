@@ -43,17 +43,17 @@ When seeded with the sample company dataset (`DemoCrmSeeder`), you can sign in u
 
 | Job Role | Who Uses This | Email Address | Password | What They Can See & Do |
 | :--- | :--- | :--- | :--- | :--- |
-| **Super Admin** | System Owner / IT Head | `superadmin@salescrm.test` | `password` | Full access to every record, pipeline configuration, user provisioning, audit logs, and system settings. |
-| **Org Admin** | Operations / RevOps Lead | `admin@salescrm.test` | `password` | Organization-wide access across all teams, users, companies, deals, quotations, imports, and audit logs. |
-| **Sales Manager** | Enterprise Team Lead (*Tariq Rahman*) | `manager@salescrm.test` | `password` | Sees and manages all leads, deals, tasks, follow-ups, and high-discount quote approvals for the **Enterprise Sales** team. |
-| **Sales Rep** | Enterprise Rep (*Nadia Karim*) | `rep@salescrm.test` | `password` | Works on her own assigned leads, companies, contacts, deals, tasks, follow-ups, and draft quotes (cannot view other teams' data). |
-| **Sales Rep (Team B)** | SMB Rep (*Imran Hossain*) | `smbrep@salescrm.test` | `password` | Works exclusively inside the **SMB Inbound** team (useful to verify team data isolation). |
-| **Read-Only Analyst** | Finance / BI Analyst (*Farhana Yasmin*) | `analyst@salescrm.test` | `password` | Views dashboards, reports, pipelines, and records without permission to create, edit, or delete business data. |
+| **Super Admin** | System Owner / IT Head | `superadmin@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Full access to every record, pipeline configuration, user provisioning, audit logs, and system settings. |
+| **Org Admin** | Operations / RevOps Lead | `admin@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Organization-wide access across all teams, users, companies, deals, quotations, imports, and audit logs. |
+| **Sales Manager** | Enterprise Team Lead (*Tariq Rahman*) | `manager@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Sees and manages all leads, deals, tasks, follow-ups, and high-discount quote approvals for the **Enterprise Sales** team. |
+| **Sales Rep** | Enterprise Rep (*Nadia Karim*) | `rep@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Works on her own assigned leads, companies, contacts, deals, tasks, follow-ups, and draft quotes (cannot view other teams' data). |
+| **Sales Rep (Team B)** | SMB Rep (*Imran Hossain*) | `smbrep@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Works exclusively inside the **SMB Inbound** team (useful to verify team data isolation). |
+| **Read-Only Analyst** | Finance / BI Analyst (*Farhana Yasmin*) | `analyst@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Views dashboards, reports, pipelines, and records without permission to create, edit, or delete business data. |
 
-> **Security Reminder for Live Production:** Demo accounts exist only when you choose to run `DemoCrmSeeder` for testing or evaluation. Before opening `https://sales-crm.devshraban.com` to real customers, replace demo passwords or omit running `DemoCrmSeeder` and create real administrator accounts instead.
+> **Security Reminder for Live Production:** Demo accounts exist only when you choose to run `DemoCrmSeeder` for testing or evaluation. All demo accounts share the password defined in the `CRM_DEMO_PASSWORD` environment variable (defaults to `password` in development). Before opening `https://sales-crm.devshraban.com` to real customers, set a strong `CRM_DEMO_PASSWORD` value or omit running `DemoCrmSeeder` entirely and create real administrator accounts instead. See [HowToSetup.md](HowToSetup.md) for the complete production checklist.
 
 ### Quick 3-Minute Guided Demo (Try It Yourself)
-1. Go to **`/login`** and sign in as **`manager@salescrm.test`** (password: `password`) so you can see team oversight + discount approvals.
+1. Go to **`/login`** and sign in as **`manager@salescrm.test`** (password: the value of `CRM_DEMO_PASSWORD`, default `password` in dev) so you can see team oversight + discount approvals.
 2. Open **Leads** in the left menu and click **`Kamrul Hasan`** (*Apex Textiles BD*, score `82/100`).
 3. Click **Convert to Deal** to turn him into a live Company, Contact, and Opportunity in one click.
 4. Open **Pipeline Kanban** and drag a deal card between columns—notice totals and stage counts update automatically.

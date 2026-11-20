@@ -30,3 +30,8 @@
 | Reports & Analytics | `docs/modules/reports-and-analytics.md` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
 | Import & Export | `docs/modules/import-and-export.md` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
 | Webhooks & Integrations | `CLAUDE.md` / `HowToSetup.md` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
+| Proposals & Document Storage | `CLAUDE.md` / `routes/web.php` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
+| Targets & Commission Tracking | `CLAUDE.md` / `routes/web.php` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
+| Urgent Attention & Rotting Deals | `CLAUDE.md` / `routes/web.php` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
+| Mobile PWA & Offline Event Capture | `public/manifest.json` / `public/sw.js` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
+| SMTP & Pipeline Settings | `CLAUDE.md` / `routes/web.php` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |

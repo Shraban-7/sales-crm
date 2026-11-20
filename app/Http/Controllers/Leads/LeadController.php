@@ -15,10 +15,13 @@ use App\Models\User;
 use App\Notifications\CrmAlertNotification;
 use App\Services\Audit\AuditLoggerService;
 use App\Services\Leads\LeadDuplicateService;
+use App\Support\CsvSanitizer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class LeadController extends Controller
 {
@@ -206,5 +209,92 @@ final class LeadController extends Controller
         $lead->delete();
 
         return redirect()->route('leads.index')->with('status', 'Lead deleted.');
+    }
+
+    public function checkDuplicates(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', Lead::class);
+
+        $user = $request->user();
+        $email = $request->query('email');
+        $companyName = $request->query('company_name');
+        $phone = $request->query('phone');
+
+        $duplicates = Lead::query()
+            ->visibleTo($user)
+            ->where(function ($q) use ($email, $companyName, $phone): void {
+                if ($email) {
+                    $q->orWhere('email', $email);
+                }
+                if ($companyName) {
+                    $q->orWhere('company_name', 'like', "%{$companyName}%");
+                }
+                if ($phone) {
+                    $q->orWhere('phone', $phone);
+                }
+            })
+            ->limit(10)
+            ->get(['id', 'first_name', 'last_name', 'company_name', 'email', 'phone', 'status']);
+
+        return response()->json([
+            'count' => $duplicates->count(),
+            'duplicates' => $duplicates,
+        ]);
+    }
+
+    public function export(Request $request): StreamedResponse
+    {
+        $this->authorize('viewAny', Lead::class);
+
+        $user = $request->user();
+        $status = $request->query('status');
+        $source = $request->query('source');
+        $search = trim((string) $request->query('search', ''));
+
+        $query = Lead::query()
+            ->with(['owner', 'team'])
+            ->visibleTo($user)
+            ->when(is_string($status) && $status !== '', fn ($q) => $q->where('status', $status))
+            ->when(is_string($source) && $source !== '', fn ($q) => $q->where('source', $source))
+            ->when($search !== '', function ($q) use ($search): void {
+                $q->where(function ($sub) use ($search): void {
+                    $sub->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('company_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->latest();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="leads-export-'.now()->format('Y-m-d').'.csv"',
+        ];
+
+        return response()->stream(function () use ($query): void {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['ID', 'First Name', 'Last Name', 'Company', 'Job Title', 'Email', 'Phone', 'Source', 'Status', 'Score', 'Owner', 'Created At']);
+
+            $query->chunk(250, function ($leads) use ($handle): void {
+                foreach ($leads as $lead) {
+                    fputcsv($handle, [
+                        (string) $lead->id,
+                        CsvSanitizer::sanitizeCell($lead->first_name),
+                        CsvSanitizer::sanitizeCell($lead->last_name),
+                        CsvSanitizer::sanitizeCell($lead->company_name),
+                        CsvSanitizer::sanitizeCell($lead->job_title),
+                        CsvSanitizer::sanitizeCell($lead->email),
+                        CsvSanitizer::sanitizeCell($lead->phone),
+                        CsvSanitizer::sanitizeCell($lead->source?->value ?? (string) $lead->source),
+                        CsvSanitizer::sanitizeCell($lead->status?->value ?? (string) $lead->status),
+                        (string) $lead->score,
+                        CsvSanitizer::sanitizeCell($lead->owner?->name),
+                        $lead->created_at?->toIso8601String() ?? '',
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, 200, $headers);
     }
 }

@@ -115,6 +115,7 @@ class RolePermissionSeeder extends Seeder
             'teams.manage',
             'roles.manage',
             'webhooks.manage',
+            'settings.manage',
             'audit_logs.view.team',
             'audit_logs.view.all',
 
@@ -181,5 +182,15 @@ class RolePermissionSeeder extends Seeder
             'exports.create.own', 'exports.create.all',
             'notifications.view.own', 'notifications.manage_preferences.own',
         ]);
+
+        // Role aliases matching 4-role enterprise specifications
+        $headOfSales = Role::findOrCreate('Head of Sales', 'web');
+        $headOfSales->syncPermissions($orgAdmin->permissions);
+
+        $salesExecutive = Role::findOrCreate('Sales Executive', 'web');
+        $salesExecutive->syncPermissions($salesRep->permissions);
+
+        $viewer = Role::findOrCreate('Viewer', 'web');
+        $viewer->syncPermissions($analyst->permissions);
     }
 }

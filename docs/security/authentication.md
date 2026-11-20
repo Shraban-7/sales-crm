@@ -6,7 +6,7 @@
 
 ## 1. Authentication Architecture
 
-Authentication uses Laravel's stateful `web` session guard backed by the `database` (or `redis`) session driver as configured in [Laravel 12 Configuration](https://laravel.com/framework/docs/12.x/configuration).
+Authentication uses Laravel's stateful `web` session guard backed by the `database` (or `redis`) session driver as configured in [Laravel 13 Configuration](https://laravel.com/docs/13.x/configuration).
 
 ```mermaid
 sequenceDiagram
@@ -50,10 +50,12 @@ sequenceDiagram
 - **Session Protection (`config/session.php`):**
   - `SESSION_DRIVER=database`
   - `SESSION_LIFETIME=120` (2 hours idle timeout)
-  - `SESSION_ENCRYPT=true`
+  - `SESSION_ENCRYPT=false` (default; set `SESSION_ENCRYPT=true` in production `.env` for encrypted session payloads)
   - `SESSION_HTTP_ONLY=true` (`http_only => true` prevents JS `document.cookie` theft)
   - `SESSION_SAME_SITE=lax`
   - `SESSION_SECURE_COOKIE=true` (in production HTTPS)
+
+> **Production Recommendation:** Set `APP_ENV=production`, `APP_DEBUG=false`, and `SESSION_ENCRYPT=true` in your production `.env` file. See the production checklist in `HowToSetup.md`.
 
 ## 3. Immediate Deactivation Enforcement (`EnsureUserIsActive`)
 

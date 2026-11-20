@@ -6,6 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name', 'Sale Fusion CRM') }}</title>
     <x-crm.favicons />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-full text-slate-900 antialiased">
@@ -148,5 +150,12 @@
         </main>
     </div>
 </div>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+    }
+</script>
 </body>
 </html>

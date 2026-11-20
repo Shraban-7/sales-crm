@@ -11,23 +11,33 @@ use App\Http\Controllers\Contacts\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Deals\DealController;
 use App\Http\Controllers\Deals\MoveDealStageController;
+use App\Http\Controllers\Deals\UrgentAttentionController;
 use App\Http\Controllers\FollowUps\FollowUpController;
+use App\Http\Controllers\Imports\BulkImportController;
 use App\Http\Controllers\Imports\ImportExportController;
 use App\Http\Controllers\Leads\ConvertLeadController;
 use App\Http\Controllers\Leads\LeadCaptureController;
 use App\Http\Controllers\Leads\LeadController;
+use App\Http\Controllers\Mobile\CaptureController as MobileCaptureController;
+use App\Http\Controllers\Mobile\EventController as MobileEventController;
 use App\Http\Controllers\Notifications\NotificationController;
 use App\Http\Controllers\Pipelines\PipelineController;
 use App\Http\Controllers\Pipelines\PipelineStageController;
+use App\Http\Controllers\Proposals\ProposalController;
+use App\Http\Controllers\Proposals\ProposalDocumentController;
 use App\Http\Controllers\Quotations\PublicQuotationController;
 use App\Http\Controllers\Quotations\QuotationController;
 use App\Http\Controllers\Quotations\QuotationWorkflowController;
 use App\Http\Controllers\Reports\ReportController;
 use App\Http\Controllers\Settings\AuditLogController;
+use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
+use App\Http\Controllers\Settings\SmtpController;
+use App\Http\Controllers\Settings\StagesController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Settings\WebhookController;
+use App\Http\Controllers\Targets\TargetController;
 use App\Http\Controllers\Tasks\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +77,8 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/', DashboardController::class)->name('dashboard');
 
     // Leads
+    Route::get('/leads/check-duplicates', [LeadController::class, 'checkDuplicates'])->name('leads.check-duplicates');
+    Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export');
     Route::resource('leads', LeadController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::post('/leads/{lead}/convert', ConvertLeadController::class)->name('leads.convert');
     Route::post('/leads/{lead}/merge', [LeadController::class, 'merge'])->name('leads.merge');
@@ -85,10 +97,12 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/pipelines/{pipeline}/stages/{stage}', [PipelineStageController::class, 'destroy'])->name('pipelines.stages.destroy');
 
     // Deals
+    Route::get('/urgent-attention', UrgentAttentionController::class)->name('urgent-attention.index');
     Route::resource('deals', DealController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::patch('/deals/{deal}/stage', MoveDealStageController::class)->name('deals.move-stage');
 
     // Activities
+    Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
     Route::post('/activities', [ActivityController::class, 'store'])->name('activities.store');
     Route::delete('/activities/{activity}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 
@@ -118,6 +132,23 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/quotations/{quotation}/approve-discount', [QuotationWorkflowController::class, 'approveDiscount'])->name('quotations.approve-discount');
     Route::get('/quotations/{quotation}/print', [QuotationWorkflowController::class, 'print'])->name('quotations.print');
 
+    // Proposals
+    Route::resource('proposals', ProposalController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+    Route::post('/proposals/{proposal}/documents', [ProposalDocumentController::class, 'store'])->name('proposals.documents.store');
+    Route::get('/proposals/documents/{document}/download', [ProposalDocumentController::class, 'download'])->name('proposals.documents.download');
+    Route::delete('/proposals/documents/{document}', [ProposalDocumentController::class, 'destroy'])->name('proposals.documents.destroy');
+
+    // Targets & Commissions
+    Route::get('/targets', [TargetController::class, 'index'])->name('targets.index');
+    Route::post('/targets', [TargetController::class, 'store'])->name('targets.store');
+    Route::post('/targets/commissions', [TargetController::class, 'storeCommission'])->name('targets.commissions.store');
+
+    // Mobile & Event Capture
+    Route::get('/mobile/capture', [MobileCaptureController::class, 'show'])->name('mobile.capture');
+    Route::post('/mobile/capture', [MobileCaptureController::class, 'store'])->name('mobile.capture.store');
+    Route::get('/mobile/events', [MobileEventController::class, 'index'])->name('mobile.events.index');
+    Route::post('/mobile/events', [MobileEventController::class, 'store'])->name('mobile.events.store');
+
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
@@ -129,6 +160,8 @@ Route::middleware('auth')->group(function (): void {
 
     // Imports & Exports
     Route::get('/imports', [ImportExportController::class, 'index'])->name('imports.index');
+    Route::get('/imports/bulk', [BulkImportController::class, 'index'])->name('imports.bulk');
+    Route::post('/imports/bulk', [BulkImportController::class, 'store'])->name('imports.bulk.store');
     Route::post('/imports', [ImportExportController::class, 'storeImport'])->name('imports.store');
     Route::post('/exports', [ImportExportController::class, 'storeExport'])->name('exports.store');
     Route::get('/imports/{job}/download', [ImportExportController::class, 'download'])->name('imports.download');
@@ -140,6 +173,16 @@ Route::middleware('auth')->group(function (): void {
         Route::put('/users/{user}', [UserController::class, 'update'])->middleware('can:users.manage')->name('users.update');
         Route::post('/users/{user}/reassign', [UserController::class, 'reassign'])->middleware('can:users.manage')->name('users.reassign');
         Route::post('/teams', [TeamController::class, 'store'])->middleware('can:teams.manage')->name('teams.store');
+
+        Route::get('/stages', [StagesController::class, 'index'])->middleware('can:pipelines.manage')->name('stages.index');
+        Route::post('/stages', [StagesController::class, 'store'])->middleware('can:pipelines.manage')->name('stages.store');
+
+        Route::get('/smtp', [SmtpController::class, 'index'])->middleware('can:settings.manage')->name('smtp.index');
+        Route::post('/smtp', [SmtpController::class, 'store'])->middleware('can:settings.manage')->name('smtp.store');
+        Route::post('/smtp/test', [SmtpController::class, 'testEmail'])->middleware('can:settings.manage')->name('smtp.test');
+
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
         Route::middleware('can:webhooks.manage')->group(function (): void {
             Route::get('/webhooks', [WebhookController::class, 'index'])->name('webhooks.index');

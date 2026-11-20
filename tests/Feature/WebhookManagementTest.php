@@ -228,4 +228,47 @@ final class WebhookManagementTest extends TestCase
             'consent' => '1',
         ])->assertSessionHasErrors(['source']);
     }
+
+    public function test_inbound_lead_webhook_validates_signature_and_rejects_expired_timestamp(): void
+    {
+        config(['crm.lead_capture.webhook_secret' => 'webhook-secret-key-12345']);
+
+        $payload = json_encode([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john.webhook@example.com',
+        ], JSON_THROW_ON_ERROR);
+
+        $signature = hash_hmac('sha256', $payload, 'webhook-secret-key-12345');
+
+        // Expired timestamp (> 300s old)
+        $this->call(
+            'POST',
+            '/api/leads/capture',
+            [],
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CRM_SIGNATURE' => $signature,
+                'HTTP_X_CRM_TIMESTAMP' => (string) (now()->timestamp - 400),
+            ],
+            $payload
+        )->assertStatus(401);
+
+        // Valid recent timestamp
+        $this->call(
+            'POST',
+            '/api/leads/capture',
+            [],
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CRM_SIGNATURE' => $signature,
+                'HTTP_X_CRM_TIMESTAMP' => (string) now()->timestamp,
+            ],
+            $payload
+        )->assertStatus(201);
+    }
 }

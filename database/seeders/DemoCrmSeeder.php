@@ -36,6 +36,13 @@ class DemoCrmSeeder extends Seeder
 {
     public function run(): void
     {
+        // Block seeding with the default weak password in production.
+        if (app()->isProduction() && ! filled(config('crm.demo_password'))) {
+            $this->command?->error('CRM_DEMO_PASSWORD must be set in .env before seeding in production. Aborting.');
+
+            return;
+        }
+
         $enterpriseTeam = Team::query()->firstOrCreate(
             ['slug' => 'enterprise-sales'],
             [

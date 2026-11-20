@@ -10,13 +10,16 @@ use App\Models\Attachment;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Deal;
+use App\Models\Event;
 use App\Models\FollowUp;
 use App\Models\ImportExportJob;
 use App\Models\Lead;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
+use App\Models\Proposal;
 use App\Models\Quotation;
 use App\Models\Reminder;
+use App\Models\Target;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
@@ -53,6 +56,12 @@ class AppServiceProvider extends ServiceProvider
             'reminder' => Reminder::class,
             'follow_up' => FollowUp::class,
             'quotation' => Quotation::class,
+            'proposal' => Proposal::class,
+            'event' => Event::class,
+            'target' => Target::class,
+            'proposal' => \App\Models\Proposal::class,
+            'event' => \App\Models\Event::class,
+            'target' => \App\Models\Target::class,
             'import_export_job' => ImportExportJob::class,
             'webhook' => Webhook::class,
         ]);

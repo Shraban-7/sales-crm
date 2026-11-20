@@ -234,6 +234,8 @@ Visit **http://localhost:8080/login** in your browser.
 
 When seeded via `DemoCrmSeeder` or `database/seed.sql`, the following accounts are available immediately (default demo password: `password`, or your `CRM_DEMO_PASSWORD` override):
 
+> **⚠️ Warning:** The seeder refuses to run in a `production` environment unless `CRM_DEMO_PASSWORD` is explicitly set in `.env` to a strong value. Never deploy with the default `password` credential.
+
 | Role | Email | Default Scope |
 | :--- | :--- | :--- |
 | **Super Admin** | `superadmin@salescrm.test` | Full system access, roles, users, webhooks, audit logs |
@@ -248,6 +250,37 @@ When seeded via `DemoCrmSeeder` or `database/seed.sql`, the following accounts a
 2. Deactivate or change passwords on all `*.salescrm.test` demo accounts.
 3. Enable Email Two-Factor Authentication under **Settings → Security** (`/settings/security`).
 4. Set a strong `CRM_LEAD_WEBHOOK_SECRET` in `.env` and configure outbound endpoints under **Settings → Webhooks** (`/settings/webhooks`).
+
+### Production Environment Checklist
+
+Before going live, ensure the following values are set in your production `.env`:
+
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+SESSION_ENCRYPT=true
+CRM_DEMO_PASSWORD=replace-with-a-strong-random-password
+```
+
+#### Prerequisites Summary
+
+| Dependency | Minimum Version |
+| :--- | :--- |
+| **PHP** | 8.3+ (extensions: `mbstring`, `xml`, `curl`, `zip`, `gd`, `bcmath`, `intl`, `fileinfo`) |
+| **Composer** | 2.x |
+| **Node.js** | 20+ |
+| **MySQL** | 8.0+ (`InnoDB`, `utf8mb4_unicode_ci`) |
+
+#### Setup Order for a Clean Machine
+
+1. `cp .env.example .env`
+2. Set `DB_PASSWORD` and `DB_ROOT_PASSWORD` (required before Docker Compose)
+3. `php artisan key:generate`
+4. Create the MySQL database and user (see Section 4 above)
+5. `php artisan migrate --force --seed`
+6. `npm ci && npm run build`
+7. `php artisan storage:link`
+8. `php artisan config:cache && php artisan route:cache && php artisan view:cache`
 
 ---
 
