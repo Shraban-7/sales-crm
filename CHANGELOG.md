@@ -7,6 +7,7 @@ All notable changes to **Sale Fusion CRM** are documented in this file. This pro
 ## [1.0.1] - 2026-11-20
 
 ### Added — Enterprise CRM Suite Extensions
+- **Changeable System & Site Settings (`/settings/system`):** Admin-configurable general branding (company name, tagline, logo upload/preview, support email, phone, address, tax ID), localization (default currency, currency position before/after, country, timezone, date format), and sales policies (quotation/proposal prefixes, discount approval threshold, quote validity days, deal rotting days, lead auto-assignment toggle, pagination rows). Dynamic runtime config override via `SystemSettingService::applyToConfig()`, cached database storage (`system_settings`), and audit logging.
 - **Proposals & Private Document Storage (`/proposals`):** Auto-numbered proposals (`PR-YYYY-XXXXX`), status management, validity periods, access-controlled private document uploads (`ProposalDocumentController`), and daily expiration scan (`crm:check-proposal-expiry`).
 - **Revenue Targets & Commission Tracking (`/targets`):** Monthly revenue targets across company, teams, and individual reps with commission recording on closed-won deals.
 - **Urgent Attention & Stalled Deals (`/urgent-attention`):** Velocity tracking identifying deals rotting in stage past thresholds, overdue follow-ups, and pending tasks.

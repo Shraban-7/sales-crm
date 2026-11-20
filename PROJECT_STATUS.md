@@ -35,3 +35,4 @@
 | Urgent Attention & Rotting Deals | `CLAUDE.md` / `routes/web.php` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
 | Mobile PWA & Offline Event Capture | `public/manifest.json` / `public/sw.js` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
 | SMTP & Pipeline Settings | `CLAUDE.md` / `routes/web.php` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |
+| System & Site Settings | `routes/web.php` / `app/Services/Settings/` | `Implemented` | `Implemented` | `Implemented` | `Implemented` | Phase 6 |

@@ -34,6 +34,7 @@ use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use App\Http\Controllers\Settings\SmtpController;
 use App\Http\Controllers\Settings\StagesController;
+use App\Http\Controllers\Settings\SystemSettingController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Settings\WebhookController;
@@ -180,6 +181,9 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/smtp', [SmtpController::class, 'index'])->middleware('can:settings.manage')->name('smtp.index');
         Route::post('/smtp', [SmtpController::class, 'store'])->middleware('can:settings.manage')->name('smtp.store');
         Route::post('/smtp/test', [SmtpController::class, 'testEmail'])->middleware('can:settings.manage')->name('smtp.test');
+
+        Route::get('/system', [SystemSettingController::class, 'edit'])->middleware('can:settings.manage')->name('system.edit');
+        Route::put('/system', [SystemSettingController::class, 'update'])->middleware('can:settings.manage')->name('system.update');
 
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

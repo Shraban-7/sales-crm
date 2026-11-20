@@ -24,6 +24,7 @@ use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Webhook;
+use App\Services\Settings\SystemSettingService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
@@ -59,9 +60,9 @@ class AppServiceProvider extends ServiceProvider
             'proposal' => Proposal::class,
             'event' => Event::class,
             'target' => Target::class,
-            'proposal' => \App\Models\Proposal::class,
-            'event' => \App\Models\Event::class,
-            'target' => \App\Models\Target::class,
+            'proposal' => Proposal::class,
+            'event' => Event::class,
+            'target' => Target::class,
             'import_export_job' => ImportExportJob::class,
             'webhook' => Webhook::class,
         ]);
@@ -110,5 +111,11 @@ class AppServiceProvider extends ServiceProvider
 
             return true;
         });
+
+        try {
+            app(SystemSettingService::class)->applyToConfig();
+        } catch (\Throwable) {
+            // Ignore during migrations / early bootstrap
+        }
     }
 }

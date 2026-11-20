@@ -127,6 +127,13 @@ final class RouteSecurityTest extends TestCase
                     "Route {$uri} must have can:settings.manage middleware."
                 );
                 $checkedRoutes++;
+            } elseif (str_starts_with($uri, 'settings/system')) {
+                $this->assertContains(
+                    'can:settings.manage',
+                    $middleware,
+                    "Route {$uri} must have can:settings.manage middleware."
+                );
+                $checkedRoutes++;
             }
         }
 
