@@ -38,6 +38,8 @@ try {
         'docs/api-reference.md',
         'routes/web.php',
         'routes/api.php',
+        'app/Http/Middleware/VerifyWebhookSignature.php',
+        'tests/Feature/DatabaseAccessRulesTest.php',
         'CHANGELOG.md',
         'CLAUDE.md',
         'docker-compose.yml',

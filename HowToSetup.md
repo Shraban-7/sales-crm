@@ -203,7 +203,7 @@ DB_PASSWORD=replace-with-strong-db-password
 DB_ROOT_PASSWORD=replace-with-strong-root-password
 ```
 
-### 2. Start PHP-FPM, Nginx & MySQL 8
+### 2. Start PHP-FPM, Nginx, Background Queue Worker & MySQL 8
 
 ```bash
 docker compose up -d --build
@@ -239,7 +239,7 @@ When seeded via `DemoCrmSeeder` or `database/seed.sql`, the following accounts a
 | :--- | :--- | :--- | :--- |
 | **Super Admin (Main)** | `superadmin@salescrm.test` | *(Set via `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted system access, roles, users, webhooks, audit logs (no demo restrictions or banners). |
 
-### 2. Demo Sandbox Accounts (Default demo password: `password`, or your `CRM_DEMO_PASSWORD` override)
+### 2. Demo Sandbox Accounts (Set via `CRM_DEMO_PASSWORD` in `.env`; randomly generated on seeding if left unset)
 | Role | Email | Default Scope |
 | :--- | :--- | :--- |
 | **Demo Super Admin** | `demosuperadmin@salescrm.test` | Full system access, roles, users, webhooks, audit logs (demo sandbox). |

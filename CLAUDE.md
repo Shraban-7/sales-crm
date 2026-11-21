@@ -25,6 +25,23 @@ Route (auth + middleware)
         -> Eloquent Model (explicit $fillable, backed Enum casts, scopeVisibleTo())
 ```
 
+### Authorization Stack (5-Layer Defense-in-Depth)
+
+1. **Authentication Layer:** `auth` middleware verifies valid session cookie; guest endpoints (`/login`, `/capture/lead`, `/q/{ulid}`) strictly bounded.
+2. **Account Status & Demo Gate:** `EnsureUserIsActive` blocks deactivated accounts; `EnsureNotDemoMode` restricts demo account write mutations in live demo mode.
+3. **Role & Permission Boundary:** `role:Super Admin|Org Admin` gates `/settings/*`; fine-grained `can:*` permissions gate resource actions.
+4. **Policy Layer (Ownership & Team):** Eloquent Policies (`LeadPolicy`, `DealPolicy`, `QuotationPolicy`, etc.) ensure users cannot edit or delete records outside their team/ownership scope.
+5. **Multi-Tenant Query Scope:** `HasVisibilityScope` trait (`visibleTo($user)`) applied automatically on all index/search queries, preventing cross-tenant IDOR leakage.
+
+### Database Access Rules (Strict Integrity Protocol)
+
+1. **Strict Mode Enabled:** `Model::shouldBeStrict(! app()->isProduction())` in `AppServiceProvider` blocks N+1 lazy loading (`preventLazyLoading`) and silently discarded attributes.
+2. **Soft Deletion on All Business Entities:** All 16 core models implement `SoftDeletes` (`leads`, `contacts`, `companies`, `deals`, `quotations`, `tasks`, `follow_ups`, `activities`, `attachments`, `events`, `proposals`, `pipelines`, `pipeline_stages`, `teams`, `users`, `webhooks`).
+3. **Explicit Mass-Assignment Protection:** Every model declares an explicit `$fillable` array. `protected $guarded = []` is strictly forbidden.
+4. **Foreign Key Integrity:** Foreign keys use `ON DELETE RESTRICT` (or `CASCADE` for tightly-coupled dependents like quotation items) to prevent accidental cascading data loss.
+5. **Atomic Multi-Table Transactions:** Any operation touching 2+ tables is wrapped in `DB::transaction(...)`.
+6. **Zero Unescaped Raw SQL:** All database operations utilize Eloquent builders or parameterized bindings (`?`). Zero unescaped string interpolation.
+
 ### Key Directories & File Locations
 
 | Area | Primary Files |

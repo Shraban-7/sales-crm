@@ -53,6 +53,27 @@ services:
     networks:
       - crm_network
 
+  worker:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: sale-fusion-crm-worker
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+    depends_on:
+      db:
+        condition: service_healthy
+    command: php artisan queue:work database --sleep=3 --tries=3 --max-time=3600
+    networks:
+      - crm_network
+
 networks:
   crm_network:
     driver: bridge

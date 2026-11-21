@@ -35,11 +35,11 @@
     },
     "scripts": {
         "setup": [
-            "composer install",
+            "composer install --no-interaction",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
             "@php artisan migrate --force",
-            "npm install --ignore-scripts",
+            "npm ci",
             "npm run build"
         ],
         "dev": [

@@ -44,7 +44,7 @@ use Illuminate\Support\Str;
  * - SMB Executive:      demosmbrep@salescrm.test (and smbrep@salescrm.test)
  * - Read-Only Analyst:  demoanalyst@salescrm.test (and analyst@salescrm.test)
  *
- * Password: Value of CRM_DEMO_PASSWORD in .env (defaults to 'password')
+ * Password: Value of CRM_DEMO_PASSWORD in .env (auto-generates a secure 16-character secret if left blank)
  */
 class DemoCrmSeeder extends Seeder
 {
@@ -75,11 +75,15 @@ class DemoCrmSeeder extends Seeder
             ]
         );
 
-        // Local/demo default only; override via CRM_DEMO_PASSWORD in .env before seeding (always 'password' in testing).
+        // Local/demo default: generate 16-char secure secret if unset; override via CRM_DEMO_PASSWORD in .env (always 'password' in testing).
         $rawDemoPassword = app()->environment('testing')
             ? 'password'
-            : (filled(config('crm.demo_password')) ? (string) config('crm.demo_password') : 'password');
+            : (filled(config('crm.demo_password')) ? (string) config('crm.demo_password') : Str::password(16));
         $password = Hash::make($rawDemoPassword);
+
+        if (! filled(config('crm.demo_password')) && ! app()->environment('testing')) {
+            $this->command?->warn("Notice: CRM_DEMO_PASSWORD was not set in .env. Generated temporary demo account password: {$rawDemoPassword}");
+        }
 
         // Main administrator password; override via CRM_ADMIN_PASSWORD in .env before seeding (always 'password' in testing).
         $rawAdminPassword = app()->environment('testing')

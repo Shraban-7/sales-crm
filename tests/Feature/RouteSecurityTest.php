@@ -232,4 +232,94 @@ final class RouteSecurityTest extends TestCase
         $this->assertContains($lead2->id, $user2Leads);
         $this->assertNotContains($lead1->id, $user2Leads);
     }
+
+    public function test_settings_read_routes_require_admin_role(): void
+    {
+        $team = Team::query()->create(['name' => 'Sales Team', 'slug' => 'sales-team']);
+        $rep = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Regular Rep',
+            'email' => 'regularrep@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $rep->assignRole('Sales Rep');
+
+        $manager = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Team Manager',
+            'email' => 'manager@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $manager->assignRole('Sales Manager');
+
+        $analyst = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Data Analyst',
+            'email' => 'analyst@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $analyst->assignRole('Read-Only Analyst');
+
+        $adminGetRoutes = [
+            'settings.users.index',
+            'settings.stages.index',
+            'settings.smtp.index',
+            'settings.system.edit',
+            'settings.webhooks.index',
+            'settings.audit-logs.index',
+        ];
+
+        foreach ([$rep, $manager, $analyst] as $unauthorizedUser) {
+            foreach ($adminGetRoutes as $routeName) {
+                $this->actingAs($unauthorizedUser)
+                    ->get(route($routeName))
+                    ->assertForbidden();
+            }
+        }
+    }
+
+    public function test_api_webhook_capture_route_has_signature_middleware(): void
+    {
+        $routes = RouteFacade::getRoutes();
+        $webhookRoute = $routes->getByName('leads.capture.webhook');
+
+        $this->assertNotNull($webhookRoute, 'Route [leads.capture.webhook] must exist.');
+
+        $middleware = $webhookRoute->gatherMiddleware();
+        $this->assertContains(
+            'App\\Http\\Middleware\\VerifyWebhookSignature',
+            $middleware,
+            'Route [POST /api/leads/capture] must enforce VerifyWebhookSignature middleware.'
+        );
+        $this->assertContains(
+            'throttle:60,1',
+            $middleware,
+            'Route [POST /api/leads/capture] must enforce rate limiting middleware.'
+        );
+    }
+
+    public function test_public_quotation_routes_enforce_signed_middleware(): void
+    {
+        $routes = RouteFacade::getRoutes();
+        $signedRoutes = [
+            'quotations.public.show',
+            'quotations.public.accept',
+            'quotations.public.reject',
+        ];
+
+        foreach ($signedRoutes as $routeName) {
+            $route = $routes->getByName($routeName);
+            $this->assertNotNull($route, "Route [{$routeName}] must exist.");
+
+            $middleware = $route->gatherMiddleware();
+            $this->assertContains(
+                'signed',
+                $middleware,
+                "Route [{$routeName}] must enforce cryptographic signed URL middleware."
+            );
+        }
+    }
 }
