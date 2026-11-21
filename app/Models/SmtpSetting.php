@@ -6,7 +6,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Crypt;
 
 class SmtpSetting extends Model
 {
@@ -35,27 +34,12 @@ class SmtpSetting extends Model
         return [
             'mail_port' => 'integer',
             'is_active' => 'boolean',
+            'mail_password' => 'encrypted',
         ];
-    }
-
-    public function setMailPasswordAttribute(?string $value): void
-    {
-        $this->attributes['mail_password'] = ($value !== null && $value !== '')
-            ? Crypt::encryptString($value)
-            : null;
     }
 
     public function getDecryptedPasswordAttribute(): ?string
     {
-        $raw = $this->attributes['mail_password'] ?? null;
-        if ($raw === null || $raw === '') {
-            return null;
-        }
-
-        try {
-            return Crypt::decryptString($raw);
-        } catch (\Throwable) {
-            return null;
-        }
+        return $this->mail_password;
     }
 }

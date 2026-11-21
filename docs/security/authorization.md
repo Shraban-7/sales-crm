@@ -101,3 +101,17 @@ final class DealPolicy
     }
 }
 ```
+
+## 4. Route-Level Role Guards (`app/Http/Middleware/Ensure*`)
+
+In addition to controller-level Policy checks, **Sale Fusion CRM** enforces dedicated route middleware guards at the HTTP routing boundary (`routes/web.php`) so that unauthorized role types are rejected before controller invocation:
+
+| Role Guard Middleware | Alias | Permitted Roles | Protected Endpoints |
+| :--- | :--- | :--- | :--- |
+| `EnsureSuperAdmin` | `role.super_admin` | `Super Admin` | System super-administration, cross-tenant overrides |
+| `EnsureOrgAdmin` | `role.admin` | `Super Admin`, `Org Admin`, `Head of Sales` | `/settings/users`, `/settings/teams`, `/settings/stages`, `/settings/smtp`, `/settings/system`, `/settings/webhooks`, `/settings/audit-logs`, `/pipelines` schema mutations |
+| `EnsureSalesManager` | `role.manager` | `Super Admin`, `Org Admin`, `Head of Sales`, `Sales Manager` | `/quotations/{quotation}/approve-discount`, `/imports/bulk`, `/targets` configuration |
+| `EnsureSalesRep` | `role.rep` | `Super Admin`, `Org Admin`, `Head of Sales`, `Sales Manager`, `Sales Rep`, `Sales Executive` | Commercial mutation routes (`leads.*`, `companies.*`, `contacts.*`, `deals.*`, `tasks.*`, `quotations.*`, `proposals.*`, `mobile.*`) |
+| `EnsureNotReadOnly` | `role.not_read_only` | Any non-read-only role | Rejects `Read-Only Analyst` and `Viewer` from all data-mutating routes (`POST`, `PUT`, `PATCH`, `DELETE`) with HTTP 403 Forbidden |
+| `EnsureReadOnlyAnalyst`| `role.analyst` | All authenticated roles | Executive analytics dashboards and read-only reports |
+

@@ -29,6 +29,7 @@ use App\Models\SystemSetting;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\SecuritySecret;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -75,25 +76,17 @@ class DemoCrmSeeder extends Seeder
             ]
         );
 
+        $this->call(AdminAccountSeeder::class);
+
         // Local/demo default: generate 16-char secure secret if unset; override via CRM_DEMO_PASSWORD in .env (always 'password' in testing).
-        $rawDemoPassword = app()->environment('testing')
-            ? 'password'
-            : (filled(config('crm.demo_password')) ? (string) config('crm.demo_password') : Str::password(16));
+        $rawDemoPassword = SecuritySecret::resolveDemoPassword();
         $password = Hash::make($rawDemoPassword);
 
         if (! filled(config('crm.demo_password')) && ! app()->environment('testing')) {
             $this->command?->warn("Notice: CRM_DEMO_PASSWORD was not set in .env. Generated temporary demo account password: {$rawDemoPassword}");
         }
 
-        // Main administrator password; override via CRM_ADMIN_PASSWORD in .env before seeding (always 'password' in testing).
-        $rawAdminPassword = app()->environment('testing')
-            ? 'password'
-            : (filled(config('crm.admin_password')) ? (string) config('crm.admin_password') : Str::password(16));
-        $adminPassword = Hash::make($rawAdminPassword);
-
-        if (! filled(config('crm.admin_password')) && ! app()->environment('testing')) {
-            $this->command?->warn("Notice: CRM_ADMIN_PASSWORD was not set in .env. Generated temporary administrator password: {$rawAdminPassword}");
-        }
+        $rawAdminPassword = SecuritySecret::resolveAdminPassword();
 
         $superAdmin = User::query()->firstOrCreate(
             ['email' => 'demosuperadmin@salescrm.test'],
@@ -107,20 +100,6 @@ class DemoCrmSeeder extends Seeder
         );
         $superAdmin->update(['password' => $password]);
         $superAdmin->syncRoles(['Super Admin']);
-
-        // Main Administrator Account
-        $mainAdmin = User::query()->firstOrCreate(
-            ['email' => 'superadmin@salescrm.test'],
-            [
-                'team_id' => $enterpriseTeam->id,
-                'name' => 'Super Admin',
-                'job_title' => 'System Administrator',
-                'password' => $adminPassword,
-                'is_active' => true,
-            ]
-        );
-        $mainAdmin->update(['password' => $adminPassword]);
-        $mainAdmin->syncRoles(['Super Admin']);
 
         $orgAdmin = User::query()->firstOrCreate(
             ['email' => 'demoadmin@salescrm.test'],

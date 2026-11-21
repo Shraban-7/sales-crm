@@ -58,6 +58,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
             'two_factor_enabled' => 'boolean',
+            'two_factor_code' => 'encrypted',
             'two_factor_expires_at' => 'datetime',
             'two_factor_last_sent_at' => 'datetime',
             'last_login_at' => 'datetime',
@@ -99,9 +100,15 @@ class User extends Authenticatable
 
     public function isOwner(): bool
     {
-        $ownerEmail = config('crm.owner_email');
+        $ownerEmail = trim((string) config('crm.owner_email'));
 
-        return filled($ownerEmail) && strcasecmp($this->email, (string) $ownerEmail) === 0;
+        // Fail closed: unset, blank, or placeholder defaults grant nothing.
+        if ($ownerEmail === '' || in_array(strtolower($ownerEmail), ['owner@yourdomain.com', 'owner@example.com'], true)) {
+            return false;
+        }
+
+        // Must match owner email AND hold the Super Admin role.
+        return strcasecmp($this->email, $ownerEmail) === 0 && $this->hasRole('Super Admin');
     }
 
     public function isDemoUser(): bool

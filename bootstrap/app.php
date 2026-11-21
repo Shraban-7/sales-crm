@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\EnsureNotDemoMode;
+use App\Http\Middleware\EnsureNotReadOnly;
+use App\Http\Middleware\EnsureOrgAdmin;
+use App\Http\Middleware\EnsureReadOnlyAnalyst;
+use App\Http\Middleware\EnsureSalesManager;
+use App\Http\Middleware\EnsureSalesRep;
+use App\Http\Middleware\EnsureSuperAdmin;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\VerifyWebhookSignature;
 use Illuminate\Foundation\Application;
@@ -11,6 +17,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -28,9 +35,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
             'demo.protect' => EnsureNotDemoMode::class,
             'webhook.hmac' => VerifyWebhookSignature::class,
-            'webhook.hmac' => \App\Http\Middleware\VerifyWebhookSignature::class,
+            'active' => EnsureUserIsActive::class,
+
+            // Dedicated Role Guards for every role type
+            'role.super_admin' => EnsureSuperAdmin::class,
+            'role.admin' => EnsureOrgAdmin::class,
+            'role.manager' => EnsureSalesManager::class,
+            'role.rep' => EnsureSalesRep::class,
+            'role.not_read_only' => EnsureNotReadOnly::class,
+            'role.analyst' => EnsureReadOnlyAnalyst::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

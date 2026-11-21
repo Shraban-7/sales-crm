@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Models\Attachment;
+use App\Models\Event;
 use App\Models\Lead;
 use App\Models\Team;
 use App\Models\User;
@@ -295,10 +297,127 @@ final class RouteSecurityTest extends TestCase
             'Route [POST /api/leads/capture] must enforce VerifyWebhookSignature middleware.'
         );
         $this->assertContains(
-            'throttle:60,1',
+            'throttle:lead-webhook',
             $middleware,
-            'Route [POST /api/leads/capture] must enforce rate limiting middleware.'
+            'Route [POST /api/leads/capture] must enforce named rate limiting middleware.'
         );
+    }
+
+    public function test_attachment_download_and_delete_enforce_cross_team_idor_protection(): void
+    {
+        $team1 = Team::query()->create(['name' => 'Team Alpha', 'slug' => 'team-alpha']);
+        $team2 = Team::query()->create(['name' => 'Team Beta', 'slug' => 'team-beta']);
+
+        $user1 = User::query()->create([
+            'team_id' => $team1->id,
+            'name' => 'Rep Alpha',
+            'email' => 'rep_alpha@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $user1->assignRole('Sales Rep');
+
+        $user2 = User::query()->create([
+            'team_id' => $team2->id,
+            'name' => 'Rep Beta',
+            'email' => 'rep_beta@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $user2->assignRole('Sales Rep');
+
+        $lead = Lead::query()->create([
+            'team_id' => $team1->id,
+            'owner_id' => $user1->id,
+            'first_name' => 'Confidential',
+            'last_name' => 'Lead',
+            'score' => 50,
+        ]);
+
+        $attachment = Attachment::query()->create([
+            'team_id' => $team1->id,
+            'uploaded_by_id' => $user1->id,
+            'attachable_type' => $lead->getMorphClass(),
+            'attachable_id' => $lead->id,
+            'original_name' => 'secret_contract.pdf',
+            'storage_disk' => 'private',
+            'storage_path' => 'attachments/secret_contract.pdf',
+            'mime_type' => 'application/pdf',
+            'size_bytes' => 1024,
+            'sha256_checksum' => hash('sha256', 'dummy'),
+        ]);
+
+        // User 2 from Team 2 cannot download attachment from Team 1
+        $this->actingAs($user2)
+            ->get(route('attachments.download', $attachment))
+            ->assertForbidden();
+
+        // User 2 from Team 2 cannot delete attachment from Team 1
+        $this->actingAs($user2)
+            ->delete(route('attachments.destroy', $attachment))
+            ->assertForbidden();
+    }
+
+    public function test_mobile_capture_rejects_cross_team_event_idor(): void
+    {
+        $team1 = Team::query()->create(['name' => 'Team Alpha', 'slug' => 'team-alpha']);
+        $team2 = Team::query()->create(['name' => 'Team Beta', 'slug' => 'team-beta']);
+
+        $user2 = User::query()->create([
+            'team_id' => $team2->id,
+            'name' => 'Rep Beta',
+            'email' => 'rep_beta2@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $user2->assignRole('Sales Rep');
+
+        $eventTeam1 = Event::query()->create([
+            'team_id' => $team1->id,
+            'created_by_id' => 1,
+            'name' => 'Team 1 Exclusive Trade Show',
+        ]);
+
+        // Rep from Team 2 cannot capture a lead into Team 1's event
+        $this->actingAs($user2)
+            ->post(route('mobile.capture.store'), [
+                'first_name' => 'Hijacked',
+                'last_name' => 'Lead',
+                'event_id' => $eventTeam1->id,
+            ])
+            ->assertForbidden();
+    }
+
+    public function test_owner_check_fails_closed_on_default_email_and_requires_super_admin(): void
+    {
+        config(['crm.owner_email' => 'owner@yourdomain.com']);
+
+        $regularUser = User::query()->create([
+            'name' => 'Default Owner',
+            'email' => 'owner@yourdomain.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $regularUser->assignRole('Sales Rep');
+
+        // Shipped placeholder email must fail closed
+        $this->assertFalse($regularUser->isOwner());
+
+        config(['crm.owner_email' => 'realowner@company.com']);
+        $realUser = User::query()->create([
+            'name' => 'Real Owner',
+            'email' => 'realowner@company.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $realUser->assignRole('Sales Rep');
+
+        // Email matches but lacking Super Admin role must fail closed
+        $this->assertFalse($realUser->isOwner());
+
+        // Email matches AND has Super Admin role succeeds
+        $realUser->assignRole('Super Admin');
+        $this->assertTrue($realUser->isOwner());
     }
 
     public function test_public_quotation_routes_enforce_signed_middleware(): void
@@ -321,5 +440,108 @@ final class RouteSecurityTest extends TestCase
                 "Route [{$routeName}] must enforce cryptographic signed URL middleware."
             );
         }
+    }
+
+    public function test_read_only_analyst_and_viewer_are_blocked_from_mutating_crm_routes(): void
+    {
+        $team = Team::query()->create(['name' => 'Analytics Team', 'slug' => 'analytics-team']);
+
+        $analyst = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Data Analyst',
+            'email' => 'analyst.guard@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $analyst->assignRole('Read-Only Analyst');
+
+        $viewer = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'CRM Viewer',
+            'email' => 'viewer.guard@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $viewer->assignRole('Viewer');
+
+        foreach ([$analyst, $viewer] as $readOnlyUser) {
+            // Blocked from creating leads at the route guard level
+            $this->actingAs($readOnlyUser)
+                ->post(route('leads.store'), [
+                    'first_name' => 'Blocked',
+                    'last_name' => 'Lead',
+                ])
+                ->assertForbidden();
+
+            // Blocked from creating deals
+            $this->actingAs($readOnlyUser)
+                ->post(route('deals.store'), [
+                    'title' => 'Blocked Deal',
+                ])
+                ->assertForbidden();
+
+            // Blocked from creating quotations
+            $this->actingAs($readOnlyUser)
+                ->post(route('quotations.store'), [
+                    'title' => 'Blocked Quote',
+                ])
+                ->assertForbidden();
+        }
+    }
+
+    public function test_sales_rep_is_blocked_from_manager_and_admin_guards(): void
+    {
+        $team = Team::query()->create(['name' => 'Rep Team', 'slug' => 'rep-team']);
+
+        $rep = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Sales Representative',
+            'email' => 'rep.guard@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $rep->assignRole('Sales Rep');
+
+        // Blocked by manager guard
+        $this->actingAs($rep)
+            ->get(route('imports.bulk'))
+            ->assertForbidden();
+
+        // Blocked by admin guard
+        $this->actingAs($rep)
+            ->get(route('settings.users.index'))
+            ->assertForbidden();
+
+        $this->actingAs($rep)
+            ->post(route('pipelines.store'), ['name' => 'Hacked Pipeline'])
+            ->assertForbidden();
+    }
+
+    public function test_sales_manager_is_permitted_on_manager_routes_but_blocked_from_admin_settings(): void
+    {
+        $team = Team::query()->create(['name' => 'Manager Team', 'slug' => 'manager-team']);
+
+        $manager = User::query()->create([
+            'team_id' => $team->id,
+            'name' => 'Sales Manager User',
+            'email' => 'manager.guard@example.com',
+            'password' => bcrypt('Password@12345'),
+            'is_active' => true,
+        ]);
+        $manager->assignRole('Sales Manager');
+
+        // Permitted on manager imports
+        $this->actingAs($manager)
+            ->get(route('imports.bulk'))
+            ->assertOk();
+
+        // Blocked from admin settings
+        $this->actingAs($manager)
+            ->get(route('settings.users.index'))
+            ->assertForbidden();
+
+        $this->actingAs($manager)
+            ->get(route('settings.smtp.index'))
+            ->assertForbidden();
     }
 }

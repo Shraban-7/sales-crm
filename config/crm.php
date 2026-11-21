@@ -25,8 +25,15 @@ return [
         'cache_ttl_seconds' => (int) env('CRM_REPORT_CACHE_TTL', 300),
         'max_date_range_days' => 366,
     ],
-    'demo_password' => env('CRM_DEMO_PASSWORD'),
-    'admin_password' => env('CRM_ADMIN_PASSWORD'),
+    'auth' => [
+        'max_login_attempts' => (int) env('CRM_LOGIN_MAX_ATTEMPTS', 5),
+        'login_decay_seconds' => (int) env('CRM_LOGIN_DECAY_SECONDS', 60),
+    ],
+    'rate_limiting' => [
+        'lead_webhook_per_minute' => (int) env('CRM_LEAD_WEBHOOK_RATE_LIMIT', 60),
+    ],
+    'demo_password' => env('CRM_DEMO_PASSWORD', 'password'),
+    'admin_password' => env('CRM_ADMIN_PASSWORD', 'Admin@Fusion2026!'),
     'demo_mode' => (bool) env('CRM_DEMO_MODE', false),
     'owner_email' => env('CRM_OWNER_EMAIL'),
 ];

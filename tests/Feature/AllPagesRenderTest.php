@@ -12,6 +12,7 @@ use App\Models\Lead;
 use App\Models\Pipeline;
 use App\Models\Quotation;
 use App\Models\User;
+use App\Support\SecuritySecret;
 use Database\Seeders\DemoCrmSeeder;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -78,7 +79,7 @@ final class AllPagesRenderTest extends TestCase
 
         $this->post(route('login.store'), [
             'email' => $user->email,
-            'password' => 'password',
+            'password' => SecuritySecret::resolveAdminPassword(),
         ])->assertRedirect(route('two-factor.challenge'));
 
         $this->get(route('two-factor.challenge'))
@@ -196,7 +197,7 @@ final class AllPagesRenderTest extends TestCase
             ->assertSee('favicon.svg', false)
             ->assertDontSee('&amp;amp;', false);
 
-        // Verify password remains hashed as expected for demo logins
-        $this->assertTrue(Hash::check('password', $superAdmin->password));
+        // Verify password remains hashed as expected for primary administrator
+        $this->assertTrue(Hash::check(SecuritySecret::resolveAdminPassword(), $superAdmin->password));
     }
 }

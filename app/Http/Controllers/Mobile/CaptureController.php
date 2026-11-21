@@ -44,6 +44,13 @@ final class CaptureController extends Controller
         $user = $request->user();
         $cardPhotoPath = null;
 
+        if (! empty($data['event_id'])) {
+            $event = Event::query()->visibleTo($user)->find((int) $data['event_id']);
+            if ($event === null) {
+                abort(403, 'Unauthorized event selection: event does not belong to your team.');
+            }
+        }
+
         if ($request->hasFile('card_photo')) {
             $file = $request->file('card_photo');
             $storedName = Str::uuid()->toString().'.'.$file->getClientOriginalExtension();

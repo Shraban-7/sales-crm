@@ -41,6 +41,12 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+> **Security Notice:** `.env.example` ships with safe production defaults (`APP_ENV=production`, `APP_DEBUG=false`). Before running database migrations or seeders, configure your environment secrets:
+> 1. `APP_KEY` (generated via `php artisan key:generate`)
+> 2. `DB_PASSWORD` & `DB_ROOT_PASSWORD` (strong database passwords)
+> 3. `CRM_ADMIN_PASSWORD` (password for primary administrator: `superadmin@salescrm.test`)
+> 4. `CRM_DEMO_PASSWORD` (optional demo account password; auto-generated with 16 characters if blank)
+
 Edit `.env` with your production values:
 
 ```dotenv
@@ -205,17 +211,22 @@ DB_ROOT_PASSWORD=replace-with-strong-root-password
 
 ### 2. Start PHP-FPM, Nginx, Background Queue Worker & MySQL 8
 
-```bash
-docker compose up -d --build
-```
-
-### 3. Initialize Application Inside the `app` Container
+Run the initial Docker Compose build and application bootstrap:
 
 ```bash
-docker compose exec app composer install --optimize-autoloader
-docker compose exec app npm ci
-docker compose exec app npm run build
-docker compose exec app php artisan key:generate
+# 1. Build Docker images with multi-stage entrypoint
+docker compose build
+
+# 2. Install dependencies & build frontend assets
+docker compose run --rm app composer install --optimize-autoloader
+docker compose run --rm app npm ci
+docker compose run --rm app npm run build
+docker compose run --rm app php artisan key:generate
+
+# 3. Start all services (app, nginx, worker, db)
+docker compose up -d
+
+# 4. Run database migrations and seeders
 docker compose exec app php artisan migrate --force --seed
 docker compose exec app php artisan storage:link
 ```
@@ -237,17 +248,17 @@ When seeded via `DemoCrmSeeder` or `database/seed.sql`, the following accounts a
 ### 1. Main Production Account
 | Role | Email | Password | Default Scope |
 | :--- | :--- | :--- | :--- |
-| **Super Admin (Main)** | `superadmin@salescrm.test` | *(Set via `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted system access, roles, users, webhooks, audit logs (no demo restrictions or banners). |
+| **Super Admin (Main)** | `superadmin@salescrm.test` | `Admin@Fusion2026!` *(or `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted system access, roles, users, webhooks, audit logs (no demo restrictions or banners). |
 
-### 2. Demo Sandbox Accounts (Set via `CRM_DEMO_PASSWORD` in `.env`; randomly generated on seeding if left unset)
-| Role | Email | Default Scope |
-| :--- | :--- | :--- |
-| **Demo Super Admin** | `demosuperadmin@salescrm.test` | Full system access, roles, users, webhooks, audit logs (demo sandbox). |
-| **Demo Org Admin** | `demoadmin@salescrm.test` | Organization-wide CRM, users, teams, webhooks (demo sandbox). |
-| **Demo Sales Manager** | `demomanager@salescrm.test` | Enterprise Sales team records, discount approvals. |
-| **Demo Sales Rep** | `demorep@salescrm.test` | Own leads, deals, quotations & tasks (Enterprise Sales). |
-| **Demo SMB Rep** | `demosmbrep@salescrm.test` | Own records (SMB Inbound — isolated from Enterprise Sales). |
-| **Demo Analyst** | `demoanalyst@salescrm.test` | Read-only dashboards, pipelines & reports. |
+### 2. Demo Sandbox Accounts (Password: `password` or `CRM_DEMO_PASSWORD` in `.env`)
+| Role | Email | Password | Default Scope |
+| :--- | :--- | :--- | :--- |
+| **Demo Super Admin** | `demosuperadmin@salescrm.test` | `password` | Full system access, roles, users, webhooks, audit logs (demo sandbox). |
+| **Demo Org Admin** | `demoadmin@salescrm.test` | `password` | Organization-wide CRM, users, teams, webhooks (demo sandbox). |
+| **Demo Sales Manager** | `demomanager@salescrm.test` | `password` | Enterprise Sales team records, discount approvals. |
+| **Demo Sales Rep** | `demorep@salescrm.test` | `password` | Own leads, deals, quotations & tasks (Enterprise Sales). |
+| **Demo SMB Rep** | `demosmbrep@salescrm.test` | `password` | Own records (SMB Inbound — isolated from Enterprise Sales). |
+| **Demo Analyst** | `demoanalyst@salescrm.test` | `password` | Read-only dashboards, pipelines & reports. |
 
 ### Immediate Steps Before Production Use
 1. Sign in as `superadmin@salescrm.test` and create your real administrator account under **Settings → Users & Teams** (`/settings/users`).

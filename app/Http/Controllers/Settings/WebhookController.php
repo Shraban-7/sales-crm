@@ -11,6 +11,7 @@ use App\Http\Requests\Webhooks\UpdateWebhookRequest;
 use App\Models\Team;
 use App\Models\Webhook;
 use App\Services\Audit\AuditLoggerService;
+use App\Support\SecuritySecret;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -50,7 +51,7 @@ final class WebhookController extends Controller
         $secret = trim((string) ($data['secret'] ?? ''));
 
         if ($secret === '') {
-            $secret = bin2hex(random_bytes(24));
+            $secret = SecuritySecret::generate(24);
             $generatedSecret = $secret;
         }
 

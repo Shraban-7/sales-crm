@@ -25,9 +25,12 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\Webhook;
 use App\Services\Settings\SystemSettingService;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -41,6 +44,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::shouldBeStrict(! $this->app->isProduction());
+
+        RateLimiter::for('lead-webhook', function (Request $request) {
+            $limit = (int) config('crm.rate_limiting.lead_webhook_per_minute', 60);
+
+            return Limit::perMinute($limit)->by($request->ip());
+        });
+
+        if (config('app.debug') && ! $this->app->isLocal() && ! $this->app->environment('testing')) {
+            logger()->warning('SECURITY WARNING: APP_DEBUG is enabled in a non-local environment. Set APP_DEBUG=false to avoid exposing sensitive debug stack traces.');
+        }
 
         Relation::enforceMorphMap([
             'user' => User::class,

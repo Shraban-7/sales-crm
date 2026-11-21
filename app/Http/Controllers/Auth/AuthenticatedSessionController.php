@@ -26,8 +26,10 @@ final class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request, AuditLoggerService $auditLogger): RedirectResponse
     {
         $throttleKey = Str::lower((string) $request->input('email')).'|'.$request->ip();
+        $maxAttempts = (int) config('crm.auth.max_login_attempts', 5);
+        $decaySeconds = (int) config('crm.auth.login_decay_seconds', 60);
 
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+        if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($throttleKey);
 
             throw ValidationException::withMessages([
@@ -42,7 +44,7 @@ final class AuthenticatedSessionController extends Controller
         ];
 
         if (! Auth::validate($credentials)) {
-            RateLimiter::hit($throttleKey, 60);
+            RateLimiter::hit($throttleKey, $decaySeconds);
 
             $auditLogger->log(
                 event: 'login_failed',

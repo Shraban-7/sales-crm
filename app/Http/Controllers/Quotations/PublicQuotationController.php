@@ -23,6 +23,14 @@ final class PublicQuotationController extends Controller
             abort(404);
         }
 
+        $validDays = (int) config('crm.quotations.public_link_days', 30);
+        $isExpired = ($quotation->valid_until && $quotation->valid_until->isPast())
+            || ($quotation->sent_at && $quotation->sent_at->addDays($validDays)->isPast());
+
+        if ($isExpired) {
+            abort(410, 'This quotation link has expired.');
+        }
+
         $quotation->load(['deal', 'company', 'contact', 'owner', 'items']);
 
         $expires = now()->addDays((int) config('crm.quotations.public_link_days', 30));
@@ -39,6 +47,22 @@ final class PublicQuotationController extends Controller
         Quotation $quotation,
         AcceptQuotationAction $acceptAction,
     ): RedirectResponse {
+        $validDays = (int) config('crm.quotations.public_link_days', 30);
+        $isExpired = ($quotation->valid_until && $quotation->valid_until->isPast())
+            || ($quotation->sent_at && $quotation->sent_at->addDays($validDays)->isPast());
+
+        if ($isExpired) {
+            abort(410, 'This quotation link has expired.');
+        }
+
+        if ($quotation->status === QuotationStatus::Accepted) {
+            return back()->with('status', 'This quotation has already been accepted.');
+        }
+
+        if ($quotation->status === QuotationStatus::Rejected) {
+            return back()->with('error', 'This quotation has already been declined.');
+        }
+
         $data = $request->validate([
             'acceptance_name' => ['required', 'string', 'max:150'],
             'acceptance_email' => ['nullable', 'email:rfc', 'max:191'],
@@ -60,6 +84,22 @@ final class PublicQuotationController extends Controller
         Quotation $quotation,
         RejectQuotationAction $rejectAction,
     ): RedirectResponse {
+        $validDays = (int) config('crm.quotations.public_link_days', 30);
+        $isExpired = ($quotation->valid_until && $quotation->valid_until->isPast())
+            || ($quotation->sent_at && $quotation->sent_at->addDays($validDays)->isPast());
+
+        if ($isExpired) {
+            abort(410, 'This quotation link has expired.');
+        }
+
+        if ($quotation->status === QuotationStatus::Accepted) {
+            return back()->with('error', 'Cannot decline a quotation that has already been accepted.');
+        }
+
+        if ($quotation->status === QuotationStatus::Rejected) {
+            return back()->with('status', 'This quotation has already been recorded as declined.');
+        }
+
         $data = $request->validate([
             'rejection_reason' => ['required', 'string', 'max:500'],
         ]);

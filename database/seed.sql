@@ -1,13 +1,13 @@
 -- ============================================================================
--- Sale Fusion CRM — Demo Seed Data (MySQL 8.0+)
--- Import AFTER database/schema.sql to populate roles, permissions, demo users,
--- B2B Enterprise Pipeline (all 7 Kanban stages), companies, contacts, leads,
--- deals, activities, tasks, follow-ups, and quotations.
+-- Sale Fusion CRM — Demo Data Blueprint (MySQL 8.0+)
+-- Import AFTER database/schema.sql to populate pipelines, stages, sample
+-- companies, contacts, leads, deals, activities, tasks, follow-ups, and quotations.
 -- 
--- IMPORTANT CREDENTIAL SECURITY NOTICE:
--- The seed accounts below contain cryptographically randomized placeholder password
--- hashes for schema demonstration integrity. To provision live accounts with known passwords,
--- configure CRM_ADMIN_PASSWORD and CRM_DEMO_PASSWORD in your .env file and execute:
+-- IMPORTANT CREDENTIAL SECURITY PROTOCOL:
+-- User accounts and passwords are STRICTLY EXCLUDED from this SQL file to guarantee
+-- that no default or pre-hashed credentials exist in static database dumps.
+-- To provision users and administrator accounts securely, execute:
+--   php artisan db:seed --class=AdminAccountSeeder
 --   php artisan db:seed --class=DemoCrmSeeder
 -- ============================================================================
 
@@ -35,6 +35,5 @@ INSERT INTO `roles` VALUES (1,'Super Admin','web','2026-11-21 03:33:16','2026-11
 INSERT INTO `system_settings` VALUES (1,'demo_mode','0','general','boolean','Enable or disable interactive demo mode and login demo credentials showcase','2026-11-21 03:33:17','2026-11-21 03:33:17');
 INSERT INTO `tasks` VALUES (1,1,7,5,'deal',1,'Send revised SLA addendum to Bengal Tech',NULL,'high','pending','2026-11-22 03:33:17',NULL,'2026-11-21 03:33:17','2026-11-21 03:33:17',NULL),(2,1,7,7,'deal',6,'Finalize legal redlines with Meghna Health',NULL,'urgent','pending','2026-11-23 03:33:17',NULL,'2026-11-21 03:33:17','2026-11-21 03:33:17',NULL),(3,2,9,9,'deal',4,'Prepare discovery questionnaire for Sylhet Tea Exports',NULL,'medium','pending','2026-11-24 03:33:17',NULL,'2026-11-21 03:33:17','2026-11-21 03:33:17',NULL);
 INSERT INTO `teams` VALUES (1,'Enterprise Sales','enterprise-sales',5,2500000.00,1,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(2,'SMB Inbound','smb-inbound',NULL,1000000.00,1,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL);
-INSERT INTO `users` VALUES (1,1,'Demo Super Admin','demosuperadmin@salescrm.test',NULL,NULL,'System Administrator','$2y$10$tEUXyww6vzm7T1AsONO/Du7XLwkF23uQffwqLTGyMMxegrbIwFDTa',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(2,1,'Super Admin','superadmin@salescrm.test',NULL,NULL,'System Administrator','$2y$12$MZx3klGS8kJVVH64mzx2RuxqCk2CXF9kFrbFf1hkxFOKL4XG9W.GC',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(3,1,'Demo Org Admin','demoadmin@salescrm.test',NULL,NULL,'VP of Revenue Operations','$2y$10$lrQSOEpOLMru1gncIZ/jD.eHxcHRY6kLxvh84.zKktuA0c.hdn6Fi',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(4,1,'Org Admin','admin@salescrm.test',NULL,NULL,'VP of Revenue Operations','$2y$10$T.80CIW2jvjbhTpn2zjTfeTU8LOj9i5.PvZOi5Lv40c2gyiWkHKAO',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(5,1,'Tariq Rahman','demomanager@salescrm.test',NULL,NULL,'Enterprise Sales Manager','$2y$10$.nrJFF7zHTwXs2rvAC7KmOD2LpI24nqEniwWGTj1DIZu7Zulw/EJa',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(6,1,'Tariq Rahman','manager@salescrm.test',NULL,NULL,'Enterprise Sales Manager','$2y$10$bRtTui0lu2JttBnsObJwj.9CjxGwyU2hd154fQ/SGBLay6L865cK2',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(7,1,'Nadia Karim','demorep@salescrm.test',NULL,NULL,'Account Executive','$2y$10$XezI5FJEm1VeAW3Nkxiio.joMJCbsagVIh2G7A/.QUYxCw6EfWGWS',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(8,1,'Nadia Karim','rep@salescrm.test',NULL,NULL,'Account Executive','$2y$10$OhKcflcrGFdEvzcPo/B7NuE3wOJXOZhGUDlaS.i9rGQLa9C7ic5ye',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(9,2,'Imran Hossain','demosmbrep@salescrm.test',NULL,NULL,'SMB Account Executive','$2y$10$0372vAPn95ceMFF0era8meMIeKomm4Q9F7mpk0SjwlSV8Jxhxs0nW',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(10,2,'Imran Hossain','smbrep@salescrm.test',NULL,NULL,'SMB Account Executive','$2y$10$e2/6v0aN6BA5N8Rht.bxSurjHlXtQHwsrHIk5NDWdog2w9wrV4Waa',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(11,1,'Farhana Yasmin','demoanalyst@salescrm.test',NULL,NULL,'Revenue Analyst','$2y$10$2M5k8wwD3DgwcBxba1vdNeMNmek3f3pJ4gZsQ5OzTkKyXj/e5ZK2G',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL),(12,1,'Farhana Yasmin','analyst@salescrm.test',NULL,NULL,'Revenue Analyst','$2y$10$HPp3seo/DHIBofuhfoq8UebzXd8qLQRFf0ThvdnZbZ6lP.t4NP2Qe',1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-11-21 03:33:16','2026-11-21 03:33:16',NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

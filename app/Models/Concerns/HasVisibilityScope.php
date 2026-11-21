@@ -16,12 +16,22 @@ trait HasVisibilityScope
         }
 
         if ($user->hasRole('Sales Manager')) {
+            if ($user->team_id === null) {
+                return $query->whereNull($this->qualifyColumn('team_id'));
+            }
+
             return $query->where($this->qualifyColumn('team_id'), $user->team_id);
         }
 
         $ownerColumn = property_exists($this, 'visibilityOwnerColumn')
             ? $this->visibilityOwnerColumn
             : 'owner_id';
+
+        if ($user->team_id === null) {
+            return $query
+                ->whereNull($this->qualifyColumn('team_id'))
+                ->where($this->qualifyColumn($ownerColumn), $user->id);
+        }
 
         return $query
             ->where($this->qualifyColumn('team_id'), $user->team_id)
