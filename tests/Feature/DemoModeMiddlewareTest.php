@@ -18,6 +18,8 @@ class DemoModeMiddlewareTest extends TestCase
 
     protected User $owner;
 
+    protected Team $team;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,10 +31,11 @@ class DemoModeMiddlewareTest extends TestCase
             'slug' => 'demo-team',
             'is_active' => true,
         ]);
+        $this->team = $team;
 
         $this->admin = User::factory()->create([
             'team_id' => $team->id,
-            'email' => 'admin@demo.yourproduct.com',
+            'email' => 'demosuperadmin@salescrm.test',
             'is_active' => true,
         ]);
         $this->admin->assignRole('Super Admin');
@@ -158,6 +161,56 @@ class DemoModeMiddlewareTest extends TestCase
         $this->assertDatabaseHas('system_settings', [
             'key' => 'company_name',
             'value' => 'Verified Owner Official CRM',
+        ]);
+    }
+
+    public function test_when_demo_mode_is_enabled_normal_users_do_not_see_demo_banner_and_can_mutate(): void
+    {
+        config(['crm.demo_mode' => true]);
+
+        $normalUser = User::factory()->create([
+            'team_id' => $this->team->id,
+            'email' => 'superadmin@salescrm.test',
+            'is_active' => true,
+        ]);
+        $normalUser->assignRole('Super Admin');
+
+        // Normal user visiting dashboard or settings does NOT see demo mode banner
+        $this->actingAs($normalUser)->get(route('dashboard'))
+            ->assertOk()
+            ->assertDontSee('Live Demo Account')
+            ->assertDontSee('Demo Role');
+
+        $this->actingAs($normalUser)->get(route('settings.system.edit'))
+            ->assertOk()
+            ->assertDontSee('Live Demo Mode &mdash;', false);
+
+        // Normal user can perform mutations even when demo_mode is true
+        $response = $this->actingAs($normalUser)
+            ->from(route('settings.system.edit'))
+            ->put(route('settings.system.update'), [
+                'company_name' => 'Normal Admin Production CRM',
+                'company_email' => 'admin@salescrm.test',
+                'company_phone' => '+1 555-0100',
+                'company_address' => '123 Business St',
+                'default_currency' => 'USD',
+                'currency_position' => 'before',
+                'default_country' => 'US',
+                'timezone' => 'UTC',
+                'date_format' => 'Y-m-d',
+                'quotation_number_prefix' => 'QT',
+                'proposal_number_prefix' => 'PR',
+                'discount_approval_threshold' => 15.00,
+                'quote_public_link_days' => 30,
+                'deal_rotting_days_default' => 14,
+                'records_per_page' => 20,
+            ]);
+
+        $response->assertRedirect(route('settings.system.edit'));
+        $response->assertSessionHas('status');
+        $this->assertDatabaseHas('system_settings', [
+            'key' => 'company_name',
+            'value' => 'Normal Admin Production CRM',
         ]);
     }
 }

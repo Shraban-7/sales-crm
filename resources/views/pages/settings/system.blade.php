@@ -1,6 +1,6 @@
 <x-layouts.app title="System Settings — Sale Fusion CRM" header="System & Site Settings">
     <div class="max-w-4xl space-y-6">
-        @if (config('crm.demo_mode') && ! auth()->user()?->isOwner())
+        @if (config('crm.demo_mode') && auth()->user()?->isDemoUser() && ! auth()->user()?->isOwner())
             <div class="rounded-2xl border border-amber-200 bg-amber-50/90 p-4 shadow-2xs flex items-start gap-3">
                 <svg class="h-5 w-5 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
@@ -81,6 +81,16 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Headquarters Physical Address</label>
                     <textarea name="company_address" rows="2" class="crm-input">{{ old('company_address', $allSettings['company_address']) }}</textarea>
+                </div>
+
+                <div class="pt-2">
+                    <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 cursor-pointer">
+                        <input type="checkbox" name="demo_mode" value="1" @checked(old('demo_mode', $allSettings['demo_mode'] ?? false)) class="h-4 w-4 rounded text-brand-600 focus:ring-brand-500">
+                        <div>
+                            <span class="text-xs font-semibold text-slate-800">Interactive Demo Mode &amp; Demo Credentials Showcase</span>
+                            <p class="text-[11px] text-slate-400">When enabled, the root URL (/) displays the marketing landing page, and /login displays demo credentials and quick-fill buttons. When disabled, the login page is clean and root redirects directly to sign in.</p>
+                        </div>
+                    </label>
                 </div>
             </div>
 
@@ -206,7 +216,7 @@
 
             <!-- Save Button -->
             <div class="flex items-center justify-end gap-3 pt-2">
-                @if (config('crm.demo_mode') && ! auth()->user()?->isOwner())
+                @if (config('crm.demo_mode') && auth()->user()?->isDemoUser() && ! auth()->user()?->isOwner())
                     <span class="inline-flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
                         <svg class="h-3.5 w-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />

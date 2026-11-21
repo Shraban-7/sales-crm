@@ -31,8 +31,8 @@ class EnsureNotDemoMode
 
         $user = $request->user();
 
-        // The verified site owner has full administrative write permissions.
-        if ($user && method_exists($user, 'isOwner') && $user->isOwner()) {
+        // Non-demo users (real admins, normal users like superadmin@salescrm.test) or verified owners have full write access.
+        if ($user && (! $user->isDemoUser() || $user->isOwner())) {
             return $next($request);
         }
 

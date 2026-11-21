@@ -25,6 +25,7 @@ use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\Quotation;
 use App\Models\QuotationItem;
+use App\Models\SystemSetting;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
@@ -35,13 +36,13 @@ use Illuminate\Support\Str;
 /**
  * Demo CRM Seeder
  *
- * Seeded Demo Accounts:
- * - Super Admin:        admin@demo.yourproduct.com (and superadmin@salescrm.test)
- * - Org Admin:          admin@salescrm.test
- * - Sales Manager:      manager@salescrm.test
- * - Sales Executive:    rep@salescrm.test
- * - SMB Executive:      smbrep@salescrm.test
- * - Read-Only Analyst:  analyst@salescrm.test
+ * Seeded Demo Accounts (Prefix: demo):
+ * - Super Admin:        demosuperadmin@salescrm.test (and superadmin@salescrm.test)
+ * - Org Admin:          demoadmin@salescrm.test (and admin@salescrm.test)
+ * - Sales Manager:      demomanager@salescrm.test (and manager@salescrm.test)
+ * - Sales Executive:    demorep@salescrm.test (and rep@salescrm.test)
+ * - SMB Executive:      demosmbrep@salescrm.test (and smbrep@salescrm.test)
+ * - Read-Only Analyst:  demoanalyst@salescrm.test (and analyst@salescrm.test)
  *
  * Password: Value of CRM_DEMO_PASSWORD in .env (defaults to 'password')
  */
@@ -74,27 +75,20 @@ class DemoCrmSeeder extends Seeder
             ]
         );
 
-        // Local/demo default only; override via CRM_DEMO_PASSWORD in .env before seeding.
         // Local/demo default only; override via CRM_DEMO_PASSWORD in .env before seeding (always 'password' in testing).
         $rawDemoPassword = app()->environment('testing')
             ? 'password'
             : (filled(config('crm.demo_password')) ? (string) config('crm.demo_password') : 'password');
         $password = Hash::make($rawDemoPassword);
 
-        $superAdmin = User::query()->firstOrCreate(
-            ['email' => 'superadmin@salescrm.test'],
-            [
-                'team_id' => $enterpriseTeam->id,
-                'name' => 'Super Admin',
-                'job_title' => 'System Administrator',
-                'password' => $password,
-                'is_active' => true,
-            ]
-        );
-        $superAdmin->syncRoles(['Super Admin']);
+        // Main administrator password; override via CRM_ADMIN_PASSWORD in .env before seeding (always 'password' in testing).
+        $rawAdminPassword = app()->environment('testing')
+            ? 'password'
+            : (filled(config('crm.admin_password')) ? (string) config('crm.admin_password') : 'Admin!2026');
+        $adminPassword = Hash::make($rawAdminPassword);
 
-        $marketplaceAdmin = User::query()->firstOrCreate(
-            ['email' => 'admin@demo.yourproduct.com'],
+        $superAdmin = User::query()->firstOrCreate(
+            ['email' => 'demosuperadmin@salescrm.test'],
             [
                 'team_id' => $enterpriseTeam->id,
                 'name' => 'Demo Super Admin',
@@ -103,9 +97,37 @@ class DemoCrmSeeder extends Seeder
                 'is_active' => true,
             ]
         );
-        $marketplaceAdmin->syncRoles(['Super Admin']);
+        $superAdmin->update(['password' => $password]);
+        $superAdmin->syncRoles(['Super Admin']);
+
+        // Main Administrator Account
+        $mainAdmin = User::query()->firstOrCreate(
+            ['email' => 'superadmin@salescrm.test'],
+            [
+                'team_id' => $enterpriseTeam->id,
+                'name' => 'Super Admin',
+                'job_title' => 'System Administrator',
+                'password' => $adminPassword,
+                'is_active' => true,
+            ]
+        );
+        $mainAdmin->update(['password' => $adminPassword]);
+        $mainAdmin->syncRoles(['Super Admin']);
 
         $orgAdmin = User::query()->firstOrCreate(
+            ['email' => 'demoadmin@salescrm.test'],
+            [
+                'team_id' => $enterpriseTeam->id,
+                'name' => 'Demo Org Admin',
+                'job_title' => 'VP of Revenue Operations',
+                'password' => $password,
+                'is_active' => true,
+            ]
+        );
+        $orgAdmin->syncRoles(['Org Admin']);
+
+        // Legacy / internal test alias
+        User::query()->firstOrCreate(
             ['email' => 'admin@salescrm.test'],
             [
                 'team_id' => $enterpriseTeam->id,
@@ -114,11 +136,10 @@ class DemoCrmSeeder extends Seeder
                 'password' => $password,
                 'is_active' => true,
             ]
-        );
-        $orgAdmin->syncRoles(['Org Admin']);
+        )->syncRoles(['Org Admin']);
 
         $manager = User::query()->firstOrCreate(
-            ['email' => 'manager@salescrm.test'],
+            ['email' => 'demomanager@salescrm.test'],
             [
                 'team_id' => $enterpriseTeam->id,
                 'name' => 'Tariq Rahman',
@@ -130,8 +151,20 @@ class DemoCrmSeeder extends Seeder
         $manager->syncRoles(['Sales Manager']);
         $enterpriseTeam->update(['leader_id' => $manager->id]);
 
+        // Legacy / internal test alias
+        User::query()->firstOrCreate(
+            ['email' => 'manager@salescrm.test'],
+            [
+                'team_id' => $enterpriseTeam->id,
+                'name' => 'Tariq Rahman',
+                'job_title' => 'Enterprise Sales Manager',
+                'password' => $password,
+                'is_active' => true,
+            ]
+        )->syncRoles(['Sales Manager']);
+
         $rep = User::query()->firstOrCreate(
-            ['email' => 'rep@salescrm.test'],
+            ['email' => 'demorep@salescrm.test'],
             [
                 'team_id' => $enterpriseTeam->id,
                 'name' => 'Nadia Karim',
@@ -142,8 +175,20 @@ class DemoCrmSeeder extends Seeder
         );
         $rep->syncRoles(['Sales Rep']);
 
+        // Legacy / internal test alias
+        User::query()->firstOrCreate(
+            ['email' => 'rep@salescrm.test'],
+            [
+                'team_id' => $enterpriseTeam->id,
+                'name' => 'Nadia Karim',
+                'job_title' => 'Account Executive',
+                'password' => $password,
+                'is_active' => true,
+            ]
+        )->syncRoles(['Sales Rep']);
+
         $smbRep = User::query()->firstOrCreate(
-            ['email' => 'smbrep@salescrm.test'],
+            ['email' => 'demosmbrep@salescrm.test'],
             [
                 'team_id' => $smbTeam->id,
                 'name' => 'Imran Hossain',
@@ -154,8 +199,20 @@ class DemoCrmSeeder extends Seeder
         );
         $smbRep->syncRoles(['Sales Rep']);
 
+        // Legacy / internal test alias
+        User::query()->firstOrCreate(
+            ['email' => 'smbrep@salescrm.test'],
+            [
+                'team_id' => $smbTeam->id,
+                'name' => 'Imran Hossain',
+                'job_title' => 'SMB Account Executive',
+                'password' => $password,
+                'is_active' => true,
+            ]
+        )->syncRoles(['Sales Rep']);
+
         $analyst = User::query()->firstOrCreate(
-            ['email' => 'analyst@salescrm.test'],
+            ['email' => 'demoanalyst@salescrm.test'],
             [
                 'team_id' => $enterpriseTeam->id,
                 'name' => 'Farhana Yasmin',
@@ -165,6 +222,18 @@ class DemoCrmSeeder extends Seeder
             ]
         );
         $analyst->syncRoles(['Read-Only Analyst']);
+
+        // Legacy / internal test alias
+        User::query()->firstOrCreate(
+            ['email' => 'analyst@salescrm.test'],
+            [
+                'team_id' => $enterpriseTeam->id,
+                'name' => 'Farhana Yasmin',
+                'job_title' => 'Revenue Analyst',
+                'password' => $password,
+                'is_active' => true,
+            ]
+        )->syncRoles(['Read-Only Analyst']);
 
         $pipeline = Pipeline::query()->firstOrCreate(
             ['name' => 'B2B Enterprise Pipeline'],
@@ -193,7 +262,40 @@ class DemoCrmSeeder extends Seeder
             );
         }
 
+        $printDemoCredentials = function () use ($rawDemoPassword, $rawAdminPassword): void {
+            SystemSetting::query()->updateOrCreate(
+                ['key' => 'demo_mode'],
+                [
+                    'value' => '0',
+                    'group' => 'general',
+                    'type' => 'boolean',
+                    'description' => 'Enable or disable interactive demo mode and login demo credentials showcase',
+                ]
+            );
+
+            if ($this->command) {
+                $this->command->info('Sale Fusion CRM accounts ready:');
+                $this->command->table(
+                    ['Type', 'Role', 'Email', 'Password'],
+                    [
+                        ['Main Account', 'Super Admin', 'superadmin@salescrm.test', $rawAdminPassword],
+                        ['Demo Account', 'Super Admin', 'demosuperadmin@salescrm.test', $rawDemoPassword],
+                        ['Demo Account', 'Org Admin', 'demoadmin@salescrm.test', $rawDemoPassword],
+                        ['Demo Account', 'Sales Manager', 'demomanager@salescrm.test', $rawDemoPassword],
+                        ['Demo Account', 'Sales Executive', 'demorep@salescrm.test', $rawDemoPassword],
+                        ['Demo Account', 'SMB Executive', 'demosmbrep@salescrm.test', $rawDemoPassword],
+                        ['Demo Account', 'Read-Only Analyst', 'demoanalyst@salescrm.test', $rawDemoPassword],
+                    ]
+                );
+                $this->command->info('Database Setting: [system_settings.demo_mode = 0 (Default: Disabled)]');
+                $this->command->comment('-> To enable demo credentials and showcase on login page directly from DB, run:');
+                $this->command->line("   UPDATE system_settings SET value = '1' WHERE `key` = 'demo_mode';");
+            }
+        };
+
         if (Company::query()->exists()) {
+            $printDemoCredentials();
+
             return;
         }
 
@@ -716,5 +818,7 @@ class DemoCrmSeeder extends Seeder
             'tax_percent' => 0.00,
             'line_total' => 920000.00,
         ]);
+
+        $printDemoCredentials();
     }
 }

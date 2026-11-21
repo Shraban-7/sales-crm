@@ -36,9 +36,11 @@ final class UrgentAttentionController extends Controller
             }
 
             $rottingDays = $deal->stage?->rotting_days ?? 14;
-            $daysSinceUpdate = (int) $deal->updated_at->diffInDays(now());
+            $reference = $deal->last_activity_at ?? $deal->stage_changed_at ?? $deal->updated_at ?? $deal->created_at;
+            $daysSinceUpdate = $reference ? (int) $reference->diffInDays(now()) : 0;
             if ($daysSinceUpdate >= $rottingDays) {
-                $reasons[] = "Stalled in '{$deal->stage?->name}' stage for {$daysSinceUpdate} days (threshold: {$rottingDays} days)";
+                $stageName = $deal->stage?->name ?? 'Pipeline';
+                $reasons[] = "Stalled in '{$stageName}' stage for {$daysSinceUpdate} days (threshold: {$rottingDays} days)";
             }
 
             if (! empty($reasons)) {
@@ -67,7 +69,7 @@ final class UrgentAttentionController extends Controller
 
         // 3. Overdue tasks
         $overdueTasks = Task::query()
-            ->with(['assignee', 'deal'])
+            ->with(['assignee', 'taskable'])
             ->visibleTo($user)
             ->whereIn('status', [TaskStatus::Pending->value, TaskStatus::InProgress->value])
             ->whereNotNull('due_at')

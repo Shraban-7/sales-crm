@@ -118,24 +118,14 @@
         </header>
 
         <main class="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
-            @if (config('crm.demo_mode'))
-                @if (auth()->user()?->isOwner())
-                    <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs text-emerald-800 flex items-center justify-between shadow-2xs">
-                        <span class="flex items-center gap-2">
-                            <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <strong class="font-semibold">Demo Mode (Owner Session):</strong> You are authenticated as the verified site owner ({{ auth()->user()->email }}) with full administrative write access.
-                        </span>
-                        <span class="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">Write Mode</span>
-                    </div>
-                @else
-                    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-800 flex items-center justify-between shadow-2xs">
-                        <span class="flex items-center gap-2">
-                            <span class="h-2 w-2 rounded-full bg-amber-500"></span>
-                            <strong class="font-semibold">Live Demo Mode:</strong> You are exploring with demo credentials. Full navigation is unlocked; site settings &amp; sample records are protected.
-                        </span>
-                        <span class="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">Explore Mode</span>
-                    </div>
-                @endif
+            @if (config('crm.demo_mode') && auth()->user()?->isDemoUser())
+                <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-800 flex items-center justify-between shadow-2xs">
+                    <span class="flex items-center gap-2">
+                        <span class="h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        <strong class="font-semibold">Live Demo Account:</strong> You are exploring with demo credentials ({{ auth()->user()->email }}). Full navigation is unlocked; site settings &amp; sample records are protected.
+                    </span>
+                    <span class="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">Demo Role</span>
+                </div>
             @endif
 
             @if (session('status'))

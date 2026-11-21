@@ -119,9 +119,13 @@
         </div>
 
         <div class="relative z-10 flex items-center justify-between text-xs text-slate-400 border-t border-white/10 pt-5">
-            <a href="{{ route('home') }}" class="font-medium text-slate-300 hover:text-white transition">
-                &larr; Back to Landing Page
-            </a>
+            @if (config('crm.demo_mode'))
+                <a href="{{ route('home') }}" class="font-medium text-slate-300 hover:text-white transition">
+                    &larr; Back to Landing Page
+                </a>
+            @else
+                <span>Role-Based Access Control &middot; Immutable Audit Trail</span>
+            @endif
             <a href="{{ route('leads.capture.show') }}" class="font-medium text-brand-100 hover:text-white transition">
                 Public Enquiry Form &rarr;
             </a>
@@ -185,6 +189,32 @@
                     </div>
                 @endif
 
+                @if (config('crm.demo_mode'))
+                    {{-- Demo Credentials Quick-Notice --}}
+                    <div class="rounded-2xl border border-indigo-200/90 bg-gradient-to-r from-indigo-50/90 via-brand-50/70 to-slate-50 p-3.5 text-xs text-indigo-950 shadow-xs space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-[11px] text-indigo-900">
+                                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Demo Mode Active
+                            </span>
+                            <span class="text-[11px] text-slate-500 font-medium">Seeder Demo Credentials</span>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 bg-white/95 rounded-xl px-3 py-2 border border-indigo-100 font-mono text-[11px] shadow-2xs">
+                            <div class="flex items-center gap-1.5 truncate">
+                                <span class="text-slate-400 font-sans font-medium text-[10px] uppercase">Email:</span>
+                                <span class="font-bold text-slate-900 select-all">demosuperadmin@salescrm.test</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span class="text-slate-400 font-sans font-medium text-[10px] uppercase">Password:</span>
+                                <span class="font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200/50 select-all">password</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-500">
+                            Pre-filled with Super Admin. Click <strong>Sign In</strong> directly, or select a role card below.
+                        </p>
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('login.store') }}" data-login-form class="space-y-4">
                     @csrf
 
@@ -199,7 +229,7 @@
                                 name="email"
                                 type="email"
                                 autocomplete="email"
-                                value="{{ old('email', request('email')) }}"
+                                value="{{ old('email', config('crm.demo_mode') ? request('email', 'demosuperadmin@salescrm.test') : '') }}"
                                 required
                                 autofocus
                                 placeholder="name@company.com"
@@ -219,7 +249,7 @@
                                 name="password"
                                 type="password"
                                 autocomplete="current-password"
-                                value="{{ old('password', request('email') ? 'password' : '') }}"
+                                value="{{ old('password', config('crm.demo_mode') ? 'password' : '') }}"
                                 required
                                 placeholder="Enter your password"
                                 class="crm-input py-2.5 pl-10 pr-10"
@@ -266,6 +296,106 @@
                     </button>
                 </form>
 
+                @if (config('crm.demo_mode'))
+                    {{-- 1-Click Demo Accounts Quick-Fill (Only rendered when in Demo Mode) --}}
+                    <div class="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/70 via-slate-50 to-brand-50/50 p-4 space-y-3 shadow-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-900">
+                                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Demo Accounts Quick-Fill
+                            </span>
+                            <span class="text-[11px] text-slate-500 font-medium">Click to test role:</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <button
+                                type="button"
+                                data-demo-fill
+                                data-email="demosuperadmin@salescrm.test"
+                                data-password="password"
+                                class="flex flex-col text-left p-2.5 rounded-xl border border-indigo-200/80 bg-white hover:border-brand-500 hover:bg-brand-50/50 hover:shadow-xs transition cursor-pointer"
+                            >
+                                <span class="font-bold text-slate-900 flex items-center justify-between">
+                                    <span>Super Admin</span>
+                                    <span class="text-[10px] text-purple-700 bg-purple-100 px-1.5 py-0.2 rounded font-semibold">Full</span>
+                                </span>
+                                <span class="text-[11px] text-slate-500 truncate font-mono">demosuperadmin@...</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                data-demo-fill
+                                data-email="demoadmin@salescrm.test"
+                                data-password="password"
+                                class="flex flex-col text-left p-2.5 rounded-xl border border-indigo-200/80 bg-white hover:border-brand-500 hover:bg-brand-50/50 hover:shadow-xs transition cursor-pointer"
+                            >
+                                <span class="font-bold text-slate-900 flex items-center justify-between">
+                                    <span>Org Admin</span>
+                                    <span class="text-[10px] text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded font-semibold">VP</span>
+                                </span>
+                                <span class="text-[11px] text-slate-500 truncate font-mono">demoadmin@...</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                data-demo-fill
+                                data-email="demomanager@salescrm.test"
+                                data-password="password"
+                                class="flex flex-col text-left p-2.5 rounded-xl border border-indigo-200/80 bg-white hover:border-brand-500 hover:bg-brand-50/50 hover:shadow-xs transition cursor-pointer"
+                            >
+                                <span class="font-bold text-slate-900 flex items-center justify-between">
+                                    <span>Sales Manager</span>
+                                    <span class="text-[10px] text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded font-semibold">Approvals</span>
+                                </span>
+                                <span class="text-[11px] text-slate-500 truncate font-mono">demomanager@...</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                data-demo-fill
+                                data-email="demorep@salescrm.test"
+                                data-password="password"
+                                class="flex flex-col text-left p-2.5 rounded-xl border border-indigo-200/80 bg-white hover:border-brand-500 hover:bg-brand-50/50 hover:shadow-xs transition cursor-pointer"
+                            >
+                                <span class="font-bold text-slate-900 flex items-center justify-between">
+                                    <span>Sales Rep</span>
+                                    <span class="text-[10px] text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded font-semibold">Quota</span>
+                                </span>
+                                <span class="text-[11px] text-slate-500 truncate font-mono">demorep@...</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                data-demo-fill
+                                data-email="demosmbrep@salescrm.test"
+                                data-password="password"
+                                class="flex flex-col text-left p-2.5 rounded-xl border border-indigo-200/80 bg-white hover:border-brand-500 hover:bg-brand-50/50 hover:shadow-xs transition cursor-pointer"
+                            >
+                                <span class="font-bold text-slate-900 flex items-center justify-between">
+                                    <span>SMB Rep</span>
+                                    <span class="text-[10px] text-cyan-700 bg-cyan-100 px-1.5 py-0.2 rounded font-semibold">Isolated</span>
+                                </span>
+                                <span class="text-[11px] text-slate-500 truncate font-mono">demosmbrep@...</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                data-demo-fill
+                                data-email="demoanalyst@salescrm.test"
+                                data-password="password"
+                                class="flex flex-col text-left p-2.5 rounded-xl border border-indigo-200/80 bg-white hover:border-brand-500 hover:bg-brand-50/50 hover:shadow-xs transition cursor-pointer"
+                            >
+                                <span class="font-bold text-slate-900 flex items-center justify-between">
+                                    <span>Read Analyst</span>
+                                    <span class="text-[10px] text-slate-700 bg-slate-100 px-1.5 py-0.2 rounded font-semibold">Read</span>
+                                </span>
+                                <span class="text-[11px] text-slate-500 truncate font-mono">demoanalyst@...</span>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-slate-400 text-center">Clicking any role fills email &amp; password automatically.</p>
+                    </div>
+                @endif
+
                 <div class="border-t border-slate-100 pt-4 flex items-center justify-between text-xs text-slate-500">
                     <span>Protected by rate limiting &amp; audit logs</span>
                     <a href="{{ route('leads.capture.show') }}" class="font-semibold text-brand-600 hover:text-brand-700 hover:underline">
@@ -276,5 +406,25 @@
         </div>
     </main>
 </div>
+@if (config('crm.demo_mode'))
+<script>
+    document.querySelectorAll('[data-demo-fill]').forEach(button => {
+        button.addEventListener('click', () => {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            if (emailInput && button.dataset.email) {
+                emailInput.value = button.dataset.email;
+                emailInput.classList.add('ring-2', 'ring-brand-500/50');
+                setTimeout(() => emailInput.classList.remove('ring-2', 'ring-brand-500/50'), 400);
+            }
+            if (passwordInput && button.dataset.password) {
+                passwordInput.value = button.dataset.password;
+                passwordInput.classList.add('ring-2', 'ring-brand-500/50');
+                setTimeout(() => passwordInput.classList.remove('ring-2', 'ring-brand-500/50'), 400);
+            }
+        });
+    });
+</script>
+@endif
 </body>
 </html>

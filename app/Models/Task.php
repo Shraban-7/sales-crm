@@ -69,6 +69,11 @@ class Task extends Model
         return $this->morphTo();
     }
 
+    public function deal(): BelongsTo
+    {
+        return $this->belongsTo(Deal::class, 'taskable_id');
+    }
+
     public function reminders(): MorphMany
     {
         return $this->morphMany(Reminder::class, 'remindable');

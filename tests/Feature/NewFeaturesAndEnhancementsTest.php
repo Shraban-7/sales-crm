@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Enums\DealStatus;
+use App\Enums\FollowUpChannel;
+use App\Enums\FollowUpStatus;
 use App\Enums\RoleId;
+use App\Enums\TaskPriority;
+use App\Enums\TaskStatus;
 use App\Models\Company;
 use App\Models\Deal;
 use App\Models\Event;
+use App\Models\FollowUp;
 use App\Models\Lead;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\Proposal;
 use App\Models\ProposalDocument;
 use App\Models\SmtpSetting;
+use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
@@ -96,6 +102,36 @@ final class NewFeaturesAndEnhancementsTest extends TestCase
         $response->assertOk();
         $response->assertSee('Stalled Enterprise Deal');
         $response->assertSee('Past expected close date');
+
+        // Create overdue task and overdue follow-up to test full rendering
+        Task::query()->create([
+            'team_id' => $this->team->id,
+            'assigned_to_id' => $this->rep->id,
+            'created_by_id' => $this->rep->id,
+            'taskable_type' => 'deal',
+            'taskable_id' => $deal->id,
+            'title' => 'Follow up on redlines urgently',
+            'priority' => TaskPriority::Urgent,
+            'status' => TaskStatus::Pending,
+            'due_at' => now()->subDay(),
+        ]);
+
+        FollowUp::query()->create([
+            'team_id' => $this->team->id,
+            'owner_id' => $this->rep->id,
+            'subject_type' => 'deal',
+            'subject_id' => $deal->id,
+            'channel' => FollowUpChannel::Call,
+            'status' => FollowUpStatus::Scheduled,
+            'scheduled_at' => now()->subHour(),
+            'objective' => 'Check in with CEO',
+        ]);
+
+        $responseWithOverdue = $this->actingAs($this->rep)->get(route('urgent-attention.index'));
+        $responseWithOverdue->assertOk();
+        $responseWithOverdue->assertSee('Follow up on redlines urgently');
+        $responseWithOverdue->assertSee('Stalled Enterprise Deal');
+        $responseWithOverdue->assertSee('Call with Stalled Enterprise Deal');
     }
 
     public function test_activities_index_feed_renders_my_and_team_tabs(): void

@@ -50,6 +50,7 @@ final class AllPagesRenderTest extends TestCase
             ->assertSee('data-toggle-password', false)
             ->assertDontSee('data-demo-panel', false)
             ->assertDontSee('superadmin@salescrm.test')
+            ->assertDontSee('demosuperadmin@salescrm.test')
             ->assertDontSee('&amp;amp;', false);
 
         $originalEnv = app()->environment();
@@ -59,6 +60,7 @@ final class AllPagesRenderTest extends TestCase
                 ->assertOk()
                 ->assertSee('Sign In to Workspace')
                 ->assertDontSee('superadmin@salescrm.test')
+                ->assertDontSee('demosuperadmin@salescrm.test')
                 ->assertDontSee('Local Demo Quick-Fill');
         } finally {
             app()->instance('env', $originalEnv);

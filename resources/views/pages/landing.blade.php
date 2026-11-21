@@ -339,11 +339,11 @@
                                 Full administrative control: manage users, create custom pipeline stages, configure SMTP, customize site settings, and inspect immutable audit logs.
                             </p>
                             <div class="rounded-xl bg-slate-950/60 border border-white/10 p-3 space-y-1 font-mono text-xs">
-                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">admin@demo.yourproduct.com</span></p>
+                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">demosuperadmin@salescrm.test</span></p>
                                 <p class="text-slate-400">Password: <span class="text-slate-200">password</span> <span class="text-[10px] text-slate-500">(or Demo!2026)</span></p>
                             </div>
                         </div>
-                        <a href="{{ route('login') }}?email=admin@demo.yourproduct.com" class="inline-flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-500 py-2.5 text-xs font-semibold text-white shadow transition">
+                        <a href="{{ route('login') }}?email=demosuperadmin@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-500 py-2.5 text-xs font-semibold text-white shadow transition">
                             <span>Sign In as Super Admin &rarr;</span>
                         </a>
                     </div>
@@ -362,11 +362,11 @@
                                 Cross-team executive view: evaluate sales velocity, bulk import and export CSV records, review user performance, and reassign records atomically.
                             </p>
                             <div class="rounded-xl bg-slate-950/60 border border-white/10 p-3 space-y-1 font-mono text-xs">
-                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">admin@salescrm.test</span></p>
+                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">demoadmin@salescrm.test</span></p>
                                 <p class="text-slate-400">Password: <span class="text-slate-200">password</span></p>
                             </div>
                         </div>
-                        <a href="{{ route('login') }}?email=admin@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 py-2.5 text-xs font-semibold text-white shadow transition">
+                        <a href="{{ route('login') }}?email=demoadmin@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 py-2.5 text-xs font-semibold text-white shadow transition">
                             <span>Sign In as Org Admin &rarr;</span>
                         </a>
                     </div>
@@ -385,11 +385,11 @@
                                 Team leader view: track Enterprise Sales team deals, review overdue follow-up escalations, and approve or reject quotation discounts &gt; 15%.
                             </p>
                             <div class="rounded-xl bg-slate-950/60 border border-white/10 p-3 space-y-1 font-mono text-xs">
-                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">manager@salescrm.test</span></p>
+                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">demomanager@salescrm.test</span></p>
                                 <p class="text-slate-400">Password: <span class="text-slate-200">password</span></p>
                             </div>
                         </div>
-                        <a href="{{ route('login') }}?email=manager@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-600 hover:bg-amber-500 py-2.5 text-xs font-semibold text-white shadow transition">
+                        <a href="{{ route('login') }}?email=demomanager@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-600 hover:bg-amber-500 py-2.5 text-xs font-semibold text-white shadow transition">
                             <span>Sign In as Sales Manager &rarr;</span>
                         </a>
                     </div>
@@ -408,11 +408,11 @@
                                 Front-line quota carrier: convert inbound leads into opportunities, drag cards across pipeline stages, draft quotations, and log calls.
                             </p>
                             <div class="rounded-xl bg-slate-950/60 border border-white/10 p-3 space-y-1 font-mono text-xs">
-                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">rep@salescrm.test</span></p>
+                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">demorep@salescrm.test</span></p>
                                 <p class="text-slate-400">Password: <span class="text-slate-200">password</span></p>
                             </div>
                         </div>
-                        <a href="{{ route('login') }}?email=rep@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 py-2.5 text-xs font-semibold text-white shadow transition">
+                        <a href="{{ route('login') }}?email=demorep@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 py-2.5 text-xs font-semibold text-white shadow transition">
                             <span>Sign In as Sales Rep &rarr;</span>
                         </a>
                     </div>
@@ -431,11 +431,11 @@
                                 SMB Inbound team rep: demonstrates row-level team security. Notice how Enterprise deals and leads are completely hidden from this view.
                             </p>
                             <div class="rounded-xl bg-slate-950/60 border border-white/10 p-3 space-y-1 font-mono text-xs">
-                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">smbrep@salescrm.test</span></p>
+                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">demosmbrep@salescrm.test</span></p>
                                 <p class="text-slate-400">Password: <span class="text-slate-200">password</span></p>
                             </div>
                         </div>
-                        <a href="{{ route('login') }}?email=smbrep@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 py-2.5 text-xs font-semibold text-white shadow transition">
+                        <a href="{{ route('login') }}?email=demosmbrep@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 py-2.5 text-xs font-semibold text-white shadow transition">
                             <span>Sign In as SMB Rep &rarr;</span>
                         </a>
                     </div>
@@ -454,11 +454,11 @@
                                 Revenue analyst: inspect high-level pipeline charts, win-loss conversion curves, and currency totals without permission to modify data.
                             </p>
                             <div class="rounded-xl bg-slate-950/60 border border-white/10 p-3 space-y-1 font-mono text-xs">
-                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">analyst@salescrm.test</span></p>
+                                <p class="text-slate-400">Email: <span class="text-brand-300 select-all">demoanalyst@salescrm.test</span></p>
                                 <p class="text-slate-400">Password: <span class="text-slate-200">password</span></p>
                             </div>
                         </div>
-                        <a href="{{ route('login') }}?email=analyst@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-700 hover:bg-slate-600 py-2.5 text-xs font-semibold text-white shadow transition">
+                        <a href="{{ route('login') }}?email=demoanalyst@salescrm.test" class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-700 hover:bg-slate-600 py-2.5 text-xs font-semibold text-white shadow transition">
                             <span>Sign In as Analyst &rarr;</span>
                         </a>
                     </div>

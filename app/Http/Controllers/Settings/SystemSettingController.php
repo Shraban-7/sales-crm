@@ -52,6 +52,7 @@ final class SystemSettingController extends Controller
             'quote_public_link_days' => ['required', 'integer', 'between:1,365'],
             'deal_rotting_days_default' => ['required', 'integer', 'between:1,180'],
             'lead_round_robin' => ['nullable', 'boolean'],
+            'demo_mode' => ['nullable', 'boolean'],
             'records_per_page' => ['required', 'integer', 'in:10,15,20,25,50,100'],
         ]);
 

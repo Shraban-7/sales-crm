@@ -26,6 +26,7 @@ final class SystemSettingService
         'company_address' => ['group' => 'general', 'type' => 'string', 'default' => '100 Innovation Way, Suite 400, San Francisco, CA 94105', 'label' => 'Headquarters Address'],
         'company_tax_id' => ['group' => 'general', 'type' => 'string', 'default' => 'US-EIN-987654321', 'label' => 'Tax ID / VAT Registration #'],
         'company_logo_url' => ['group' => 'general', 'type' => 'string', 'default' => '', 'label' => 'Company Logo URL'],
+        'demo_mode' => ['group' => 'general', 'type' => 'boolean', 'default' => false, 'label' => 'Interactive Demo Mode Active'],
 
         // Localization
         'default_currency' => ['group' => 'localization', 'type' => 'string', 'default' => 'USD', 'label' => 'Default Currency Code'],
@@ -149,6 +150,11 @@ final class SystemSettingService
         $perPage = $this->get('records_per_page');
         if ($perPage !== null) {
             Config::set('crm.pagination.per_page', (int) $perPage);
+        }
+
+        $dbDemoMode = SystemSetting::get('demo_mode') ?? SystemSetting::get('crm_demo_mode');
+        if ($dbDemoMode !== null) {
+            Config::set('crm.demo_mode', filter_var($dbDemoMode, FILTER_VALIDATE_BOOLEAN));
         }
     }
 }

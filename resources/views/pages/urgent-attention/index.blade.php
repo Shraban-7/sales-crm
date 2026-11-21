@@ -76,9 +76,17 @@
                 </div>
                 <div class="divide-y divide-slate-100 max-h-96 overflow-y-auto">
                     @forelse ($overdueFollowUps as $followUp)
+                        @php
+                            $subjectName = match (true) {
+                                $followUp->subject instanceof \App\Models\Deal => $followUp->subject->title,
+                                $followUp->subject instanceof \App\Models\Lead => $followUp->subject->full_name,
+                                default => $followUp->subject?->name ?? 'Customer',
+                            };
+                            $channelLabel = $followUp->channel instanceof \App\Enums\FollowUpChannel ? $followUp->channel->label() : ucfirst($followUp->channel?->value ?? 'Follow-Up');
+                        @endphp
                         <div class="p-3.5 text-xs hover:bg-slate-50">
-                            <p class="font-semibold text-slate-900">{{ $followUp->type }} with {{ $followUp->subject?->name ?? 'Customer' }}</p>
-                            <p class="text-slate-500 mt-0.5">Scheduled: {{ $followUp->scheduled_at?->diffForHumans() }} &middot; Rep: {{ $followUp->owner?->name }}</p>
+                            <p class="font-semibold text-slate-900">{{ $channelLabel }} with {{ $subjectName }}</p>
+                            <p class="text-slate-500 mt-0.5">Scheduled: {{ $followUp->scheduled_at?->diffForHumans() }} &middot; Rep: {{ $followUp->owner?->name ?? 'Unassigned' }}</p>
                         </div>
                     @empty
                         <div class="p-6 text-center text-slate-400 text-xs">No overdue follow-ups.</div>
@@ -97,9 +105,22 @@
                 </div>
                 <div class="divide-y divide-slate-100 max-h-96 overflow-y-auto">
                     @forelse ($overdueTasks as $task)
+                        @php
+                            $linkedTitle = match (true) {
+                                $task->taskable instanceof \App\Models\Deal => $task->taskable->title,
+                                $task->taskable instanceof \App\Models\Lead => $task->taskable->full_name,
+                                default => $task->taskable?->name,
+                            };
+                        @endphp
                         <div class="p-3.5 text-xs hover:bg-slate-50">
                             <p class="font-semibold text-slate-900">{{ $task->title }}</p>
-                            <p class="text-slate-500 mt-0.5">Due: {{ $task->due_at?->diffForHumans() }} &middot; Assigned to: {{ $task->assignee?->name }}</p>
+                            <p class="text-slate-500 mt-0.5">
+                                Due: <span class="text-rose-600 font-medium">{{ $task->due_at?->diffForHumans() }}</span> &middot;
+                                Assigned to: {{ $task->assignee?->name ?? 'Unassigned' }}
+                                @if ($linkedTitle)
+                                    &middot; Linked to: <span class="font-medium text-slate-700">{{ $linkedTitle }}</span>
+                                @endif
+                            </p>
                         </div>
                     @empty
                         <div class="p-6 text-center text-slate-400 text-xs">No overdue tasks.</div>

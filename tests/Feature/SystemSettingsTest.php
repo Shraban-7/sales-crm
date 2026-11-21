@@ -91,6 +91,7 @@ final class SystemSettingsTest extends TestCase
             'quote_public_link_days' => 45,
             'deal_rotting_days_default' => 21,
             'lead_round_robin' => '1',
+            'demo_mode' => '1',
             'records_per_page' => 50,
         ]);
 
@@ -103,11 +104,13 @@ final class SystemSettingsTest extends TestCase
         $this->assertSame(20.0, (float) SystemSetting::get('discount_approval_threshold'));
         $this->assertSame(45, (int) SystemSetting::get('quote_public_link_days'));
         $this->assertTrue((bool) SystemSetting::get('lead_round_robin'));
+        $this->assertTrue((bool) SystemSetting::get('demo_mode'));
         $this->assertSame(50, (int) SystemSetting::get('records_per_page'));
 
         $service = app(SystemSettingService::class);
         $this->assertSame('Acme Global CRM', $service->get('company_name'));
         $this->assertSame('EUR', config('crm.currency'));
+        $this->assertTrue((bool) config('crm.demo_mode'));
 
         // Verify Audit Log
         $this->assertDatabaseHas('audit_logs', [

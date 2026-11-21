@@ -73,12 +73,18 @@ Route::post('/q/{quotation:ulid}/reject', [PublicQuotationController::class, 're
     ->name('quotations.public.reject');
 
 // Public Landing Page (Root `/`)
+// If in demo mode (CRM_DEMO_MODE=true), display marketing landing page.
+// If client installation (CRM_DEMO_MODE=false), redirect directly to login / dashboard.
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('dashboard');
     }
 
-    return view('pages.landing');
+    if ((bool) config('crm.demo_mode', false)) {
+        return view('pages.landing');
+    }
+
+    return redirect()->route('login');
 })->name('home');
 
 Route::get('/welcome', function () {

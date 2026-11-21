@@ -106,16 +106,12 @@ class User extends Authenticatable
 
     public function isDemoUser(): bool
     {
-        $demoEmails = [
-            'admin@demo.yourproduct.com',
-            'superadmin@salescrm.test',
-            'admin@salescrm.test',
-            'manager@salescrm.test',
-            'rep@salescrm.test',
-            'smbrep@salescrm.test',
-            'analyst@salescrm.test',
-        ];
+        $email = strtolower($this->email);
 
-        return in_array(strtolower($this->email), $demoEmails, true);
+        if (str_starts_with($email, 'demo')) {
+            return true;
+        }
+
+        return $email === 'admin@demo.yourproduct.com';
     }
 }

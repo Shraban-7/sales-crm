@@ -15,6 +15,13 @@ class SystemSetting extends Model
     public const CACHE_KEY = 'crm_system_settings_cache';
 
     /**
+     * Request-scoped in-memory cache to guarantee zero cache staleness on direct DB edits.
+     *
+     * @var array<string, mixed>|null
+     */
+    private static ?array $requestCache = null;
+
+    /**
      * @var list<string>
      */
     protected $fillable = [
@@ -61,19 +68,30 @@ class SystemSetting extends Model
      */
     public static function getAllCached(): array
     {
-        return Cache::rememberForever(self::CACHE_KEY, function (): array {
-            $settings = [];
+        if (self::$requestCache !== null) {
+            return self::$requestCache;
+        }
+
+        $settings = [];
+        try {
             foreach (static::query()->get() as $item) {
                 $settings[$item->key] = $item->castValue();
             }
+        } catch (\Throwable) {
+            return [];
+        }
 
-            return $settings;
-        });
+        return self::$requestCache = $settings;
     }
 
     public static function clearCache(): void
     {
-        Cache::forget(self::CACHE_KEY);
+        self::$requestCache = null;
+        try {
+            Cache::forget(self::CACHE_KEY);
+        } catch (\Throwable) {
+            //
+        }
     }
 
     public function castValue(): mixed
