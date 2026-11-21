@@ -68,7 +68,7 @@ Route::middleware('guest')->group(function (): void {
 
 // Public, signed quotation links (no login required)
 Route::get('/q/{quotation:ulid}', [PublicQuotationController::class, 'show'])
-    ->middleware('signed')
+    ->middleware(['signed', 'throttle:30,1'])
     ->name('quotations.public.show');
 Route::post('/q/{quotation:ulid}/accept', [PublicQuotationController::class, 'accept'])
     ->middleware(['signed', 'throttle:10,1'])

@@ -21,11 +21,11 @@ final readonly class AcceptQuotationAction
     {
         $snapshot = Quotation::query()->findOrFail($quotation->id);
 
-        if ($snapshot->status === QuotationStatus::Sent && $snapshot->valid_until->isPast()) {
+        if ($snapshot->isExpired()) {
             $snapshot->update(['status' => QuotationStatus::Expired]);
 
             throw new DomainRuleException(
-                'This quotation expired on '.$snapshot->valid_until->toFormattedDateString().' and can no longer be accepted.',
+                'This quotation expired on '.$snapshot->valid_until?->toFormattedDateString().' and can no longer be accepted.',
                 409,
             );
         }
@@ -34,19 +34,12 @@ final readonly class AcceptQuotationAction
             /** @var Quotation $locked */
             $locked = Quotation::query()->lockForUpdate()->findOrFail($quotation->id);
 
-            if ($locked->status === QuotationStatus::Expired) {
+            if ($locked->isExpired()) {
                 throw new DomainRuleException('This quotation has expired and can no longer be accepted.', 409);
             }
 
             if ($locked->status !== QuotationStatus::Sent) {
                 throw new DomainRuleException('Only sent quotations can be accepted.', 409);
-            }
-
-            if ($locked->valid_until->isPast()) {
-                throw new DomainRuleException(
-                    'This quotation has expired and can no longer be accepted.',
-                    409,
-                );
             }
 
             $oldStatus = $locked->status->value;

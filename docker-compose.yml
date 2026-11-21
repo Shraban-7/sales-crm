@@ -9,10 +9,16 @@ services:
     volumes:
       - ./:/var/www/html
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       DB_HOST: db
       DB_PORT: 3306
+      DB_DATABASE: "${DB_DATABASE:-sales_crm}"
+      DB_USERNAME: "${DB_USERNAME:-crm_user}"
+      DB_PASSWORD: "${DB_PASSWORD:-crm_secret_password}"
+      APP_ENV: "${APP_ENV:-production}"
+      APP_DEBUG: "${APP_DEBUG:-false}"
     depends_on:
       db:
         condition: service_healthy
@@ -63,10 +69,16 @@ services:
     volumes:
       - ./:/var/www/html
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       DB_HOST: db
       DB_PORT: 3306
+      DB_DATABASE: "${DB_DATABASE:-sales_crm}"
+      DB_USERNAME: "${DB_USERNAME:-crm_user}"
+      DB_PASSWORD: "${DB_PASSWORD:-crm_secret_password}"
+      APP_ENV: "${APP_ENV:-production}"
+      APP_DEBUG: "${APP_DEBUG:-false}"
     depends_on:
       db:
         condition: service_healthy

@@ -4,6 +4,16 @@
 
 All notable changes to **Sale Fusion CRM** are documented in this file. This project adheres to [Semantic Versioning](https://semver.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.3] - 2026-11-21
+
+### Security & Architecture Hardening (Vibe96 Audit Hardening - Round 4)
+- **Modularized Seeder Architecture:** Refactored monolithic 811-line `DemoCrmSeeder` into clean, discrete sub-seeders (`DemoAccountSeeder`, `DemoPipelineSeeder`, and `DemoBusinessDataSeeder`) orchestrated by a lightweight `DemoCrmSeeder`, resolving oversized seeder configuration warnings while maintaining full credential reporting.
+- **Deduplicated Quotation & Proposal Expiry Logic:** Centralized all quotation and proposal date-validity logic into `Quotation::isPublicLinkExpired()`, `Quotation::isExpired()`, `ScheduledJobs::expireQuotations()`, and `ScheduledJobs::expireProposals()`, eliminating duplicate expiry routines across commands, actions, and controllers.
+- **Enhanced Multi-Tenant Visibility Scope (`HasVisibilityScope`):** Handled unassigned records (`team_id = null`) explicitly for Sales Reps and Sales Managers, preventing inadvertent record omission while maintaining strict tenant isolation.
+- **Deterministic Docker Clean-Machine Reproducibility:** Updated `docker-compose.yml` with non-blocking `.env` inclusion (`path: .env, required: false`) and environment defaults (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `APP_ENV`, `APP_DEBUG`), allowing container orchestration to boot cleanly even on a fresh clone before `.env` creation.
+- **Synchronized Dependency Specifications:** Normalized `composer.json` package constraints (`laravel/framework`, `laravel/tinker`, `spatie/laravel-permission`, `phpunit/phpunit`) to standard semantic constraints and updated `composer.lock` content hashes, ensuring `composer validate` is 100% clean with zero lock file drift.
+- **Public Quotation Link Rate Limiting:** Added `throttle:30,1` rate limiting to `GET /q/{quotation:ulid}` to prevent brute-force token enumeration.
+
 ## [1.0.1] - 2026-11-20
 
 ### Security & Hardening (Vibe96 Audit Hardening - Round 2 & Round 3)

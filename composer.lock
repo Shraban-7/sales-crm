@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23115b747b5fb9216cfc53ba0ee0c5d6",
+    "content-hash": "903eaecb5ab3e765965c536ed0344d1c",
     "packages": [
         {
             "name": "brick/math",
@@ -2226,8 +2226,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-03-11T10:58:44+00:00",
-            "published-time": "2026-03-11T10:59:39+00:00"
+            "time": "2026-03-11T10:58:44+00:00"
         },
         {
             "name": "mpdf/psr-http-message-shim",
@@ -2275,8 +2274,7 @@
                 "issues": "https://github.com/mpdf/psr-http-message-shim/issues",
                 "source": "https://github.com/mpdf/psr-http-message-shim/tree/v2.0.1"
             },
-            "time": "2023-10-02T14:34:03+00:00",
-            "published-time": "2023-10-02T14:34:41+00:00"
+            "time": "2023-10-02T14:34:03+00:00"
         },
         {
             "name": "mpdf/psr-log-aware-trait",
@@ -2320,8 +2318,7 @@
                 "issues": "https://github.com/mpdf/psr-log-aware-trait/issues",
                 "source": "https://github.com/mpdf/psr-log-aware-trait/tree/v3.0.0"
             },
-            "time": "2023-05-03T06:19:36+00:00",
-            "published-time": "2023-05-03T05:49:17+00:00"
+            "time": "2023-05-03T06:19:36+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2839,8 +2836,7 @@
                 "issues": "https://github.com/paragonie/random_compat/issues",
                 "source": "https://github.com/paragonie/random_compat"
             },
-            "time": "2020-10-15T08:29:30+00:00",
-            "published-time": "2020-10-15T08:34:16+00:00"
+            "time": "2020-10-15T08:29:30+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -3630,8 +3626,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-09T10:58:35+00:00",
-            "published-time": "2026-11-09T11:01:49+00:00"
+            "time": "2026-11-09T10:58:35+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -9023,5 +9018,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.11.0"
+    "plugin-api-version": "2.6.0"
 }

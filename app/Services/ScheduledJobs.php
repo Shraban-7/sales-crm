@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Enums\DealStatus;
 use App\Enums\FollowUpStatus;
+use App\Enums\QuotationStatus;
 use App\Enums\TaskStatus;
 use App\Models\Deal;
 use App\Models\FollowUp;
@@ -47,21 +48,27 @@ final class ScheduledJobs
             ->update(['status' => FollowUpStatus::Missed->value]);
     }
 
+    public function expireQuotations(): int
+    {
+        return Quotation::query()
+            ->where('status', QuotationStatus::Sent->value)
+            ->whereNotNull('valid_until')
+            ->where('valid_until', '<', now()->toDateString())
+            ->update(['status' => QuotationStatus::Expired->value]);
+    }
+
+    public function expireProposals(): int
+    {
+        return Proposal::query()
+            ->where('status', 'sent')
+            ->whereNotNull('valid_until')
+            ->where('valid_until', '<', now()->toDateString())
+            ->update(['status' => 'expired']);
+    }
+
     public function checkProposalExpiry(): int
     {
-        $expiredProposals = Proposal::query()
-            ->where('status', 'sent')
-            ->whereNotNull('valid_until')
-            ->where('valid_until', '<', now()->toDateString())
-            ->update(['status' => 'expired']);
-
-        $expiredQuotes = Quotation::query()
-            ->where('status', 'sent')
-            ->whereNotNull('valid_until')
-            ->where('valid_until', '<', now()->toDateString())
-            ->update(['status' => 'expired']);
-
-        return $expiredProposals + $expiredQuotes;
+        return $this->expireProposals() + $this->expireQuotations();
     }
 
     public function scoreDeals(): int
