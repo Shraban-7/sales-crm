@@ -237,7 +237,7 @@ When seeded via `DemoCrmSeeder` or `database/seed.sql`, the following accounts a
 ### 1. Main Production Account
 | Role | Email | Password | Default Scope |
 | :--- | :--- | :--- | :--- |
-| **Super Admin (Main)** | `superadmin@salescrm.test` | `Admin!2026` *(set via `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted system access, roles, users, webhooks, audit logs (no demo restrictions or banners). |
+| **Super Admin (Main)** | `superadmin@salescrm.test` | *(Set via `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted system access, roles, users, webhooks, audit logs (no demo restrictions or banners). |
 
 ### 2. Demo Sandbox Accounts (Default demo password: `password`, or your `CRM_DEMO_PASSWORD` override)
 | Role | Email | Default Scope |

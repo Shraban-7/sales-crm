@@ -17,6 +17,8 @@ class Event extends Model
     use HasVisibilityScope;
     use SoftDeletes;
 
+    protected string $visibilityOwnerColumn = 'created_by_id';
+
     /**
      * @var list<string>
      */

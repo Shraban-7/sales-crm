@@ -84,8 +84,12 @@ class DemoCrmSeeder extends Seeder
         // Main administrator password; override via CRM_ADMIN_PASSWORD in .env before seeding (always 'password' in testing).
         $rawAdminPassword = app()->environment('testing')
             ? 'password'
-            : (filled(config('crm.admin_password')) ? (string) config('crm.admin_password') : 'Admin!2026');
+            : (filled(config('crm.admin_password')) ? (string) config('crm.admin_password') : Str::password(16));
         $adminPassword = Hash::make($rawAdminPassword);
+
+        if (! filled(config('crm.admin_password')) && ! app()->environment('testing')) {
+            $this->command?->warn("Notice: CRM_ADMIN_PASSWORD was not set in .env. Generated temporary administrator password: {$rawAdminPassword}");
+        }
 
         $superAdmin = User::query()->firstOrCreate(
             ['email' => 'demosuperadmin@salescrm.test'],

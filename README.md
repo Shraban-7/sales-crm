@@ -44,7 +44,7 @@ This is the primary production administrator account with **no demo mode restric
 
 | Role | Who Uses This | Email Address | Password | What They Can See & Do |
 | :--- | :--- | :--- | :--- | :--- |
-| **Super Admin (Main)** | System Owner / Primary Admin | `superadmin@salescrm.test` | `Admin!2026` *(configurable via `CRM_ADMIN_PASSWORD`)* | Full unrestricted access to every record, system setting, user management, audit logs, and configuration. |
+| **Super Admin (Main)** | System Owner / Primary Admin | `superadmin@salescrm.test` | *(Configurable via `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted access to every record, system setting, user management, audit logs, and configuration. |
 
 ### Demo Showcase Accounts
 When seeded with sample data (`DemoCrmSeeder` or `database/seed.sql`), you can sign in using any of the **6 role accounts** below:

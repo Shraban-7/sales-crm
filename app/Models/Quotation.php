@@ -11,12 +11,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class Quotation extends Model
 {
     use HasFactory;
     use HasVisibilityScope;
     use SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::creating(function (Quotation $quotation): void {
+            if (empty($quotation->ulid)) {
+                $quotation->ulid = (string) Str::ulid();
+            }
+        });
+    }
 
     /**
      * @var list<string>
@@ -93,6 +104,17 @@ class Quotation extends Model
     public function requiresDiscountApproval(): bool
     {
         return $this->discountPercent() > (float) config('crm.quotations.discount_approval_threshold', 15.00);
+    }
+
+    public function getPublicSignedUrl(?int $days = null): string
+    {
+        $validDays = $days ?? (int) config('crm.quotations.public_link_days', 30);
+
+        return URL::temporarySignedRoute(
+            'quotations.public.show',
+            now()->addDays($validDays),
+            ['quotation' => $this->ulid]
+        );
     }
 
     public function team(): BelongsTo

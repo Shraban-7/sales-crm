@@ -188,34 +188,39 @@ Route::middleware('auth')->group(function (): void {
 
     // Settings (Users, Teams, Webhooks, Audit Logs)
     Route::prefix('settings')->name('settings.')->group(function (): void {
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::post('/users', [UserController::class, 'store'])->middleware('can:users.manage')->name('users.store');
-        Route::put('/users/{user}', [UserController::class, 'update'])->middleware('can:users.manage')->name('users.update');
-        Route::post('/users/{user}/reassign', [UserController::class, 'reassign'])->middleware('can:users.manage')->name('users.reassign');
-        Route::post('/teams', [TeamController::class, 'store'])->middleware('can:teams.manage')->name('teams.store');
-
-        Route::get('/stages', [StagesController::class, 'index'])->middleware('can:pipelines.manage')->name('stages.index');
-        Route::post('/stages', [StagesController::class, 'store'])->middleware('can:pipelines.manage')->name('stages.store');
-
-        Route::get('/smtp', [SmtpController::class, 'index'])->middleware('can:settings.manage')->name('smtp.index');
-        Route::post('/smtp', [SmtpController::class, 'store'])->middleware('can:settings.manage')->name('smtp.store');
-        Route::post('/smtp/test', [SmtpController::class, 'testEmail'])->middleware('can:settings.manage')->name('smtp.test');
-
-        Route::get('/system', [SystemSettingController::class, 'edit'])->middleware('can:settings.manage')->name('system.edit');
-        Route::put('/system', [SystemSettingController::class, 'update'])->middleware('can:settings.manage')->name('system.update');
-
+        // Authenticated user self-service settings
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-        Route::middleware('can:webhooks.manage')->group(function (): void {
-            Route::get('/webhooks', [WebhookController::class, 'index'])->name('webhooks.index');
-            Route::post('/webhooks', [WebhookController::class, 'store'])->name('webhooks.store');
-            Route::put('/webhooks/{webhook}', [WebhookController::class, 'update'])->name('webhooks.update');
-            Route::delete('/webhooks/{webhook}', [WebhookController::class, 'destroy'])->name('webhooks.destroy');
-        });
-
-        Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
         Route::get('/security', [SecurityController::class, 'edit'])->name('security.edit');
         Route::put('/security', [SecurityController::class, 'update'])->name('security.update');
+
+        // Administrative system configuration: role-gated to Super Admin & Org Admin
+        Route::middleware(['role:Super Admin|Org Admin'])->group(function (): void {
+            Route::get('/users', [UserController::class, 'index'])->name('users.index');
+            Route::post('/users', [UserController::class, 'store'])->middleware('can:users.manage')->name('users.store');
+            Route::put('/users/{user}', [UserController::class, 'update'])->middleware('can:users.manage')->name('users.update');
+            Route::post('/users/{user}/reassign', [UserController::class, 'reassign'])->middleware('can:users.manage')->name('users.reassign');
+            Route::post('/teams', [TeamController::class, 'store'])->middleware('can:teams.manage')->name('teams.store');
+
+            Route::get('/stages', [StagesController::class, 'index'])->middleware('can:pipelines.manage')->name('stages.index');
+            Route::post('/stages', [StagesController::class, 'store'])->middleware('can:pipelines.manage')->name('stages.store');
+
+            Route::get('/smtp', [SmtpController::class, 'index'])->middleware('can:settings.manage')->name('smtp.index');
+            Route::post('/smtp', [SmtpController::class, 'store'])->middleware('can:settings.manage')->name('smtp.store');
+            Route::post('/smtp/test', [SmtpController::class, 'testEmail'])->middleware('can:settings.manage')->name('smtp.test');
+
+            Route::get('/system', [SystemSettingController::class, 'edit'])->middleware('can:settings.manage')->name('system.edit');
+            Route::put('/system', [SystemSettingController::class, 'update'])->middleware('can:settings.manage')->name('system.update');
+
+            Route::middleware('can:webhooks.manage')->group(function (): void {
+                Route::get('/webhooks', [WebhookController::class, 'index'])->name('webhooks.index');
+                Route::post('/webhooks', [WebhookController::class, 'store'])->name('webhooks.store');
+                Route::put('/webhooks/{webhook}', [WebhookController::class, 'update'])->name('webhooks.update');
+                Route::delete('/webhooks/{webhook}', [WebhookController::class, 'destroy'])->name('webhooks.destroy');
+            });
+
+            Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+        });
     });
 });
