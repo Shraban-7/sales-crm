@@ -40,8 +40,8 @@ services:
     environment:
       MYSQL_DATABASE: "${DB_DATABASE:-sales_crm}"
       MYSQL_USER: "${DB_USERNAME:-crm_user}"
-      MYSQL_PASSWORD: "${DB_PASSWORD:?Set DB_PASSWORD in .env}"
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD in .env}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:-crm_secret_password}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-crm_root_password}"
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - crm_mysql_data:/var/lib/mysql

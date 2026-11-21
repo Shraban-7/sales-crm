@@ -19,17 +19,7 @@ final class PublicQuotationController extends Controller
 {
     public function show(Request $request, Quotation $quotation): View
     {
-        if ($quotation->status === QuotationStatus::Draft) {
-            abort(404);
-        }
-
-        $validDays = (int) config('crm.quotations.public_link_days', 30);
-        $isExpired = ($quotation->valid_until && $quotation->valid_until->isPast())
-            || ($quotation->sent_at && $quotation->sent_at->addDays($validDays)->isPast());
-
-        if ($isExpired) {
-            abort(410, 'This quotation link has expired.');
-        }
+        $this->ensurePublicLinkAccessible($quotation);
 
         $quotation->load(['deal', 'company', 'contact', 'owner', 'items']);
 
@@ -47,13 +37,7 @@ final class PublicQuotationController extends Controller
         Quotation $quotation,
         AcceptQuotationAction $acceptAction,
     ): RedirectResponse {
-        $validDays = (int) config('crm.quotations.public_link_days', 30);
-        $isExpired = ($quotation->valid_until && $quotation->valid_until->isPast())
-            || ($quotation->sent_at && $quotation->sent_at->addDays($validDays)->isPast());
-
-        if ($isExpired) {
-            abort(410, 'This quotation link has expired.');
-        }
+        $this->ensurePublicLinkAccessible($quotation);
 
         if ($quotation->status === QuotationStatus::Accepted) {
             return back()->with('status', 'This quotation has already been accepted.');
@@ -84,13 +68,7 @@ final class PublicQuotationController extends Controller
         Quotation $quotation,
         RejectQuotationAction $rejectAction,
     ): RedirectResponse {
-        $validDays = (int) config('crm.quotations.public_link_days', 30);
-        $isExpired = ($quotation->valid_until && $quotation->valid_until->isPast())
-            || ($quotation->sent_at && $quotation->sent_at->addDays($validDays)->isPast());
-
-        if ($isExpired) {
-            abort(410, 'This quotation link has expired.');
-        }
+        $this->ensurePublicLinkAccessible($quotation);
 
         if ($quotation->status === QuotationStatus::Accepted) {
             return back()->with('error', 'Cannot decline a quotation that has already been accepted.');
@@ -113,6 +91,20 @@ final class PublicQuotationController extends Controller
         );
 
         return back()->with('status', 'Thank you — your response has been recorded.');
+    }
+
+    /**
+     * Verify quotation public link access validity and expiration.
+     */
+    private function ensurePublicLinkAccessible(Quotation $quotation): void
+    {
+        if ($quotation->status === QuotationStatus::Draft) {
+            abort(404, 'Quotation not found.');
+        }
+
+        if ($quotation->isPublicLinkExpired()) {
+            abort(410, 'This quotation link has expired.');
+        }
     }
 
     private function notifyOwner(Quotation $quotation, string $title, string $message): void

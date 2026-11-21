@@ -151,4 +151,15 @@ class Quotation extends Model
     {
         return $this->hasMany(QuotationItem::class)->orderBy('position');
     }
+
+    /**
+     * Determine if this quotation's public access link has expired.
+     */
+    public function isPublicLinkExpired(): bool
+    {
+        $validDays = (int) config('crm.quotations.public_link_days', 30);
+
+        return ($this->valid_until !== null && $this->valid_until->isPast())
+            || ($this->sent_at !== null && $this->sent_at->addDays($validDays)->isPast());
+    }
 }
