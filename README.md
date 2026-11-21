@@ -35,22 +35,30 @@
 
 ---
 
-## 2. Demo Site Access & Login Credentials
+## 2. Login Credentials & Accounts
 
 **Site URL:** [`https://sales-crm.devshraban.com`](https://sales-crm.devshraban.com) *(or your local server when testing offline)*
 
-When seeded with the sample company dataset (`DemoCrmSeeder`), you can sign in using any of the **6 role accounts** below to experience how permissions and views adapt automatically by job title:
+### Main Administrator Account
+This is the primary production administrator account with **no demo mode restrictions** and zero demo banners:
+
+| Role | Who Uses This | Email Address | Password | What They Can See & Do |
+| :--- | :--- | :--- | :--- | :--- |
+| **Super Admin (Main)** | System Owner / Primary Admin | `superadmin@salescrm.test` | `Admin!2026` *(configurable via `CRM_ADMIN_PASSWORD`)* | Full unrestricted access to every record, system setting, user management, audit logs, and configuration. |
+
+### Demo Showcase Accounts
+When seeded with sample data (`DemoCrmSeeder` or `database/seed.sql`), you can sign in using any of the **6 role accounts** below:
 
 | Job Role | Who Uses This | Email Address | Password | What They Can See & Do |
 | :--- | :--- | :--- | :--- | :--- |
-| **Super Admin** | System Owner / IT Head | `superadmin@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Full access to every record, pipeline configuration, user provisioning, audit logs, and system settings. |
-| **Org Admin** | Operations / RevOps Lead | `admin@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Organization-wide access across all teams, users, companies, deals, quotations, imports, and audit logs. |
-| **Sales Manager** | Enterprise Team Lead (*Tariq Rahman*) | `manager@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Sees and manages all leads, deals, tasks, follow-ups, and high-discount quote approvals for the **Enterprise Sales** team. |
-| **Sales Rep** | Enterprise Rep (*Nadia Karim*) | `rep@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Works on her own assigned leads, companies, contacts, deals, tasks, follow-ups, and draft quotes (cannot view other teams' data). |
-| **Sales Rep (Team B)** | SMB Rep (*Imran Hossain*) | `smbrep@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Works exclusively inside the **SMB Inbound** team (useful to verify team data isolation). |
-| **Read-Only Analyst** | Finance / BI Analyst (*Farhana Yasmin*) | `analyst@salescrm.test` | Set via `CRM_DEMO_PASSWORD` | Views dashboards, reports, pipelines, and records without permission to create, edit, or delete business data. |
+| **Demo Super Admin** | System Owner / IT Head | `demosuperadmin@salescrm.test` | Set via `CRM_DEMO_PASSWORD` *(default: `password`)* | Full access to every record, pipeline configuration, user provisioning, audit logs, and system settings. |
+| **Demo Org Admin** | Operations / RevOps Lead | `demoadmin@salescrm.test` | Set via `CRM_DEMO_PASSWORD` *(default: `password`)* | Organization-wide access across all teams, users, companies, deals, quotations, imports, and audit logs. |
+| **Demo Sales Manager** | Enterprise Team Lead (*Tariq Rahman*) | `demomanager@salescrm.test` | Set via `CRM_DEMO_PASSWORD` *(default: `password`)* | Sees and manages all leads, deals, tasks, follow-ups, and high-discount quote approvals for the **Enterprise Sales** team. |
+| **Demo Sales Rep** | Enterprise Rep (*Nadia Karim*) | `demorep@salescrm.test` | Set via `CRM_DEMO_PASSWORD` *(default: `password`)* | Works on her own assigned leads, companies, contacts, deals, tasks, follow-ups, and draft quotes (cannot view other teams' data). |
+| **Demo Sales Rep (Team B)** | SMB Rep (*Imran Hossain*) | `demosmbrep@salescrm.test` | Set via `CRM_DEMO_PASSWORD` *(default: `password`)* | Works exclusively inside the **SMB Inbound** team (useful to verify team data isolation). |
+| **Demo Read-Only Analyst** | Finance / BI Analyst (*Farhana Yasmin*) | `demoanalyst@salescrm.test` | Set via `CRM_DEMO_PASSWORD` *(default: `password`)* | Views dashboards, reports, pipelines, and records without permission to create, edit, or delete business data. |
 
-> **Security Reminder for Live Production:** Demo accounts exist only when you choose to run `DemoCrmSeeder` for testing or evaluation. All demo accounts share the password defined in the `CRM_DEMO_PASSWORD` environment variable (defaults to `password` in development). Before opening `https://sales-crm.devshraban.com` to real customers, set a strong `CRM_DEMO_PASSWORD` value or omit running `DemoCrmSeeder` entirely and create real administrator accounts instead. See [HowToSetup.md](HowToSetup.md) for the complete production checklist.
+> **Interactive Demo Mode:** Demo mode defaults to `false` for a clean corporate installation. You can enable demo mode and login pre-fill showcase anytime directly from the database (`UPDATE system_settings SET value = '1' WHERE `key` = 'demo_mode';`) or via the in-app **System Settings** page (`/settings/system`).
 
 ### Quick 3-Minute Guided Demo (Try It Yourself)
 1. Go to **`/login`** and sign in as **`manager@salescrm.test`** (password: the value of `CRM_DEMO_PASSWORD`, default `password` in dev) so you can see team oversight + discount approvals.

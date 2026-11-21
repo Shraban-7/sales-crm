@@ -232,18 +232,22 @@ Visit **http://localhost:8080/login** in your browser.
 
 ## First Admin Login & Security Checklist
 
-When seeded via `DemoCrmSeeder` or `database/seed.sql`, the following accounts are available immediately (default demo password: `password`, or your `CRM_DEMO_PASSWORD` override):
+When seeded via `DemoCrmSeeder` or `database/seed.sql`, the following accounts are available immediately:
 
-> **⚠️ Warning:** The seeder refuses to run in a `production` environment unless `CRM_DEMO_PASSWORD` is explicitly set in `.env` to a strong value. Never deploy with the default `password` credential.
+### 1. Main Production Account
+| Role | Email | Password | Default Scope |
+| :--- | :--- | :--- | :--- |
+| **Super Admin (Main)** | `superadmin@salescrm.test` | `Admin!2026` *(set via `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted system access, roles, users, webhooks, audit logs (no demo restrictions or banners). |
 
+### 2. Demo Sandbox Accounts (Default demo password: `password`, or your `CRM_DEMO_PASSWORD` override)
 | Role | Email | Default Scope |
 | :--- | :--- | :--- |
-| **Super Admin** | `superadmin@salescrm.test` | Full system access, roles, users, webhooks, audit logs |
-| **Org Admin** | `admin@salescrm.test` | Organization-wide CRM, users, teams, webhooks |
-| **Sales Manager** | `manager@salescrm.test` | Enterprise Sales team records, discount approvals |
-| **Sales Rep** | `rep@salescrm.test` | Own leads, deals, quotations & tasks (Enterprise Sales) |
-| **Sales Rep (Team 2)** | `smbrep@salescrm.test` | Own records (SMB Inbound — isolated from Enterprise Sales) |
-| **Read-Only Analyst** | `analyst@salescrm.test` | Read-only dashboards, pipelines & reports |
+| **Demo Super Admin** | `demosuperadmin@salescrm.test` | Full system access, roles, users, webhooks, audit logs (demo sandbox). |
+| **Demo Org Admin** | `demoadmin@salescrm.test` | Organization-wide CRM, users, teams, webhooks (demo sandbox). |
+| **Demo Sales Manager** | `demomanager@salescrm.test` | Enterprise Sales team records, discount approvals. |
+| **Demo Sales Rep** | `demorep@salescrm.test` | Own leads, deals, quotations & tasks (Enterprise Sales). |
+| **Demo SMB Rep** | `demosmbrep@salescrm.test` | Own records (SMB Inbound — isolated from Enterprise Sales). |
+| **Demo Analyst** | `demoanalyst@salescrm.test` | Read-only dashboards, pipelines & reports. |
 
 ### Immediate Steps Before Production Use
 1. Sign in as `superadmin@salescrm.test` and create your real administrator account under **Settings → Users & Teams** (`/settings/users`).
