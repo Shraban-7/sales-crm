@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Companies\StoreCompanyRequest;
 use App\Http\Requests\Companies\UpdateCompanyRequest;
 use App\Models\Company;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -43,10 +44,31 @@ final class CompanyController extends Controller
         $this->authorize('create', Company::class);
 
         $user = $request->user();
-        $company = Company::query()->create(array_merge($request->validated(), [
-            'team_id' => $user->team_id,
-            'owner_id' => $user->id,
-        ]));
+        $data = $request->validated();
+        $contactData = [
+            'first_name' => $data['contact_first_name'] ?? null,
+            'last_name' => $data['contact_last_name'] ?? null,
+            'email' => $data['contact_email'] ?? null,
+            'phone' => $data['contact_phone'] ?? null,
+        ];
+        unset($data['contact_first_name'], $data['contact_last_name'], $data['contact_email'], $data['contact_phone']);
+
+        $company = DB::transaction(function () use ($data, $contactData, $user): Company {
+            $company = Company::query()->create(array_merge($data, [
+                'team_id' => $user->team_id,
+                'owner_id' => $user->id,
+            ]));
+
+            if ($contactData['first_name'] !== null) {
+                $company->contacts()->create([
+                    'team_id' => $user->team_id,
+                    'owner_id' => $user->id,
+                    ...$contactData,
+                ]);
+            }
+
+            return $company;
+        });
 
         return redirect()->route('companies.show', $company)->with('status', 'Company created.');
     }

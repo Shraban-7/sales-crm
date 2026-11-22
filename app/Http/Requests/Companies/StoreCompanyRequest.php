@@ -32,6 +32,10 @@ final class StoreCompanyRequest extends FormRequest
             'shipping_address' => ['nullable', 'string', 'max:1000'],
             'city' => ['nullable', 'string', 'max:100'],
             'country' => ['required', 'string', 'size:2'],
+            'contact_first_name' => ['nullable', 'required_with:contact_last_name,contact_email,contact_phone', 'string', 'max:100'],
+            'contact_last_name' => ['nullable', 'required_with:contact_first_name,contact_email,contact_phone', 'string', 'max:100'],
+            'contact_email' => ['nullable', 'email:rfc', 'max:191'],
+            'contact_phone' => ['nullable', 'string', 'max:30'],
         ];
     }
 }

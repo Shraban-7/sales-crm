@@ -1,4 +1,10 @@
 <x-layouts.app title="{{ $lead->full_name }} — Lead" header="Lead Profile">
+    @php
+        $leadPhone = \App\Support\PhoneNumber::normalize($lead->phone);
+        $leadPhoneIsUsable = $leadPhone !== null && preg_match('/^\+?\d{7,15}$/', $leadPhone) === 1;
+        $leadSmsBody = rawurlencode('Hi '.$lead->first_name.', I wanted to follow up with you.');
+    @endphp
+
     <div class="crm-card p-5 flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-4">
             <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-700 font-bold text-base ring-1 ring-brand-200/80">
@@ -13,14 +19,22 @@
             </div>
         </div>
 
-        @can('convert', $lead)
-            <button type="button" onclick="document.getElementById('convert-lead-dialog').showModal()" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-emerald-700 transition">
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
-                </svg>
-                Convert to Deal
-            </button>
-        @endcan
+        <div class="flex flex-wrap items-center gap-2">
+            @if ($leadPhoneIsUsable)
+                <a href="tel:{{ $leadPhone }}" class="crm-btn-secondary py-1.5 text-xs" aria-label="Call {{ $lead->full_name }}">Call</a>
+                <a href="sms:{{ $leadPhone }}?body={{ $leadSmsBody }}" class="crm-btn-secondary py-1.5 text-xs" aria-label="Text {{ $lead->full_name }}">SMS</a>
+            @elseif ($lead->phone)
+                <span class="text-xs text-slate-500" title="Use a phone number with 7 to 15 digits, optionally starting with +.">Call and SMS need a valid phone number</span>
+            @endif
+            @can('convert', $lead)
+                <button type="button" onclick="document.getElementById('convert-lead-dialog').showModal()" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-emerald-700 transition">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                    </svg>
+                    Convert to Deal
+                </button>
+            @endcan
+        </div>
     </div>
 
     @if ($lead->isConverted())

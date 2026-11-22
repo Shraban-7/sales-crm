@@ -1,4 +1,13 @@
 <x-layouts.app title="{{ $contact->full_name }} — Contact" header="{{ $contact->full_name }}">
+    @php
+        $contactPhone = \App\Support\PhoneNumber::normalize($contact->mobile ?: $contact->phone);
+        $contactPhoneIsUsable = $contactPhone !== null && preg_match('/^\+?\d{7,15}$/', $contactPhone) === 1;
+        $contactSmsBody = rawurlencode('Hi '.$contact->first_name.', I wanted to follow up with you.');
+        $whatsappUrl = $contactPhone !== null && preg_match('/^\+[1-9]\d{7,14}$/', $contactPhone) === 1
+            ? 'https://wa.me/'.substr($contactPhone, 1).'?text='.$contactSmsBody
+            : null;
+    @endphp
+
     <div class="crm-card p-5 flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-3.5">
             <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700 font-bold text-base ring-1 ring-brand-200">
@@ -15,6 +24,19 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
+            @if ($contact->do_not_contact)
+                <span class="text-xs text-rose-700" role="status">Call, SMS, and WhatsApp are unavailable: Do Not Contact is enabled.</span>
+            @else
+                @if ($contactPhoneIsUsable)
+                    <a href="tel:{{ $contactPhone }}" class="crm-btn-secondary py-1.5 text-xs" aria-label="Call {{ $contact->full_name }}">Call</a>
+                    <a href="sms:{{ $contactPhone }}?body={{ $contactSmsBody }}" class="crm-btn-secondary py-1.5 text-xs" aria-label="Text {{ $contact->full_name }}">SMS</a>
+                @endif
+                @if ($whatsappUrl)
+                    <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="crm-btn-secondary py-1.5 text-xs" aria-label="Open WhatsApp chat with {{ $contact->full_name }}">
+                        WhatsApp
+                    </a>
+                @endif
+            @endif
             @can('update', $contact)
                 <button type="button" onclick="document.getElementById('edit-contact-dialog').showModal()" class="crm-btn-secondary py-1.5 text-xs">
                     Edit Contact

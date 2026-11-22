@@ -129,6 +129,17 @@
                             <option value="0" @selected(! $user->is_active)>Inactive</option>
                         </select>
                     </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Set new password</label>
+                            <input type="password" name="password" autocomplete="new-password" class="crm-input py-1.5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Confirm new password</label>
+                            <input type="password" name="password_confirmation" autocomplete="new-password" class="crm-input py-1.5">
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500">Leave both blank to keep the current password. The new password is stored as a hash.</p>
                     <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
                         <button type="button" onclick="document.getElementById('edit-user-{{ $user->id }}').close()" class="crm-btn-secondary py-1.5">Cancel</button>
                         <button type="submit" class="crm-btn-dark py-1.5">Save</button>

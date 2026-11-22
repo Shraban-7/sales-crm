@@ -7,6 +7,7 @@ namespace App\Http\Requests\Users;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 final class UpdateUserRequest extends FormRequest
 {
@@ -36,6 +37,7 @@ final class UpdateUserRequest extends FormRequest
             'team_id' => ['required', 'integer', 'exists:teams,id'],
             'role' => ['required', 'string', Rule::in($allowedRoles)],
             'is_active' => ['boolean'],
+            'password' => ['nullable', 'confirmed', Password::defaults()],
         ];
     }
 }

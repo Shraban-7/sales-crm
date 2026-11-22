@@ -20,10 +20,30 @@
             @csrf
             <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500">Add Company Account</h2>
             <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
-                <input type="text" name="name" placeholder="Company Name *" required class="md:col-span-2 crm-input">
-                <input type="text" name="industry" placeholder="Industry" class="crm-input">
-                <input type="text" name="city" placeholder="City" class="crm-input">
-                <input type="text" name="country" value="{{ config('crm.country', 'BD') }}" maxlength="2" required class="crm-input uppercase">
+                <input type="text" name="name" value="{{ old('name') }}" placeholder="Company Name *" required class="md:col-span-2 crm-input">
+                <input type="text" name="industry" value="{{ old('industry') }}" placeholder="Industry" class="crm-input">
+                <input type="text" name="city" value="{{ old('city') }}" placeholder="City" class="crm-input">
+                <input type="text" name="country" value="{{ old('country', config('crm.country', 'BD')) }}" maxlength="2" required class="crm-input uppercase">
+            </div>
+            <fieldset class="space-y-2 border-t border-slate-100 pt-3">
+                <legend class="text-xs font-semibold uppercase tracking-wider text-slate-500">Primary Contact (optional)</legend>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <label class="space-y-1 text-xs font-medium text-slate-600">First name
+                        <input type="text" name="contact_first_name" value="{{ old('contact_first_name') }}" autocomplete="given-name" class="crm-input">
+                    </label>
+                    <label class="space-y-1 text-xs font-medium text-slate-600">Last name
+                        <input type="text" name="contact_last_name" value="{{ old('contact_last_name') }}" autocomplete="family-name" class="crm-input">
+                    </label>
+                    <label class="space-y-1 text-xs font-medium text-slate-600">Email
+                        <input type="email" name="contact_email" value="{{ old('contact_email') }}" autocomplete="email" class="crm-input">
+                    </label>
+                    <label class="space-y-1 text-xs font-medium text-slate-600">Phone
+                        <input type="tel" name="contact_phone" value="{{ old('contact_phone') }}" autocomplete="tel" class="crm-input">
+                    </label>
+                </div>
+                <p class="text-xs text-slate-500">Fill in the contact name to create a linked contact with this company.</p>
+            </fieldset>
+            <div class="flex justify-end">
                 <button type="submit" class="crm-btn-primary">Add Company</button>
             </div>
         </form>

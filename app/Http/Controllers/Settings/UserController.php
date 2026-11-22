@@ -90,6 +90,10 @@ final class UserController extends Controller
             'is_active' => $isActive,
         ]);
 
+        if (filled($data['password'] ?? null)) {
+            $user->update(['password' => Hash::make($data['password'])]);
+        }
+
         $user->syncRoles([$data['role']]);
 
         $auditLogger->log(
@@ -97,11 +101,18 @@ final class UserController extends Controller
             auditable: $user,
             actor: $request->user(),
             oldValues: $oldValues,
-            newValues: $user->only(['name', 'email', 'team_id', 'is_active']) + ['role' => $data['role']],
+            newValues: $user->only(['name', 'email', 'team_id', 'is_active']) + [
+                'role' => $data['role'],
+                'password_reset' => filled($data['password'] ?? null),
+            ],
             teamId: $user->team_id,
         );
 
-        return back()->with('status', "User {$user->name} updated.");
+        $status = filled($data['password'] ?? null)
+            ? "User {$user->name} updated and password reset."
+            : "User {$user->name} updated.";
+
+        return back()->with('status', $status);
     }
 
     public function reassign(
