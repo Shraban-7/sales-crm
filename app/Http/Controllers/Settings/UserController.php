@@ -12,10 +12,12 @@ use App\Http\Requests\Users\UpdateUserRequest;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\Audit\AuditLoggerService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 
 final class UserController extends Controller
 {
@@ -91,7 +93,19 @@ final class UserController extends Controller
         ]);
 
         if (filled($data['password'] ?? null)) {
-            $user->update(['password' => Hash::make($data['password'])]);
+            DB::transaction(function () use ($user, $data): void {
+                $user->forceFill([
+                    'password' => Hash::make($data['password']),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                if (config('session.driver') === 'database') {
+                    DB::connection(config('session.connection'))
+                        ->table(config('session.table', 'sessions'))
+                        ->where('user_id', $user->id)
+                        ->delete();
+                }
+            });
         }
 
         $user->syncRoles([$data['role']]);

@@ -100,7 +100,7 @@ Route::get('/welcome', function () {
 | Enforced by: role.rep & role.not_read_only (blocks Read-Only Analyst & Viewer)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role.rep', 'role.not_read_only'])->group(function (): void {
+Route::middleware(['auth', 'auth.session', 'role.rep', 'role.not_read_only'])->group(function (): void {
     // Quotations Authoring (Defined before wildcard {quotation} route)
     Route::get('/quotations/create', [QuotationController::class, 'create'])->name('quotations.create');
     Route::post('/quotations', [QuotationController::class, 'store'])->name('quotations.store');
@@ -169,7 +169,7 @@ Route::middleware(['auth', 'role.rep', 'role.not_read_only'])->group(function ()
 | Enforced by: role.manager (Super Admin, Org Admin, Head of Sales, Sales Manager)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role.manager'])->group(function (): void {
+Route::middleware(['auth', 'auth.session', 'role.manager'])->group(function (): void {
     // High-Discount Quotation Approvals
     Route::post('/quotations/{quotation}/approve-discount', [QuotationWorkflowController::class, 'approveDiscount'])
         ->name('quotations.approve-discount');
@@ -192,7 +192,7 @@ Route::middleware(['auth', 'role.manager'])->group(function (): void {
 | Enforced by: role.admin (Super Admin, Org Admin, Head of Sales)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role.admin'])->group(function (): void {
+Route::middleware(['auth', 'auth.session', 'role.admin'])->group(function (): void {
     // Pipeline Structure & Stage Management
     Route::post('/pipelines', [PipelineController::class, 'store'])->name('pipelines.store');
     Route::post('/pipelines/{pipeline}/stages', [PipelineStageController::class, 'store'])->name('pipelines.stages.store');
@@ -234,7 +234,7 @@ Route::middleware(['auth', 'role.admin'])->group(function (): void {
 | Enforced by: role.super_admin
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role.super_admin'])->prefix('super-admin')->name('super-admin.')->group(function (): void {
+Route::middleware(['auth', 'auth.session', 'role.super_admin'])->prefix('super-admin')->name('super-admin.')->group(function (): void {
     Route::get('/status', function () {
         return response()->json([
             'status' => 'healthy',
@@ -250,7 +250,7 @@ Route::middleware(['auth', 'role.super_admin'])->prefix('super-admin')->name('su
 | Accessible to: All authenticated users (including Read-Only Analyst & Viewer)
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', 'auth.session'])->group(function (): void {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     // User Self-Service Profile & Security
