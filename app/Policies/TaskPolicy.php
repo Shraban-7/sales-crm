@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\Task;
+use App\Enums\RoleId;
 use App\Models\User;
 use App\Policies\Concerns\ResolvesTeamOwnership;
 
@@ -29,11 +30,11 @@ final class TaskPolicy
 
     public function update(User $user, Task $task): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $task->team_id === (int) $user->team_id
                 && $user->can('tasks.update.own');
         }

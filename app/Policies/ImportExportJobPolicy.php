@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\RoleId;
 use App\Models\ImportExportJob;
 use App\Models\User;
 
@@ -16,7 +17,7 @@ final class ImportExportJobPolicy
 
     public function view(User $user, ImportExportJob $job): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 

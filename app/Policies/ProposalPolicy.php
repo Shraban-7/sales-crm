@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\Proposal;
+use App\Enums\RoleId;
 use App\Models\User;
 use App\Policies\Concerns\ResolvesTeamOwnership;
 
@@ -19,11 +20,11 @@ final class ProposalPolicy
 
     public function view(User $user, Proposal $proposal): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin', 'Read-Only Analyst', 'Viewer', 'Head of Sales'])) {
+        if ($user->hasAnyRole(RoleId::organizationReaders())) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $proposal->team_id === (int) $user->team_id;
         }
 
@@ -33,16 +34,16 @@ final class ProposalPolicy
 
     public function create(User $user): bool
     {
-        return ! $user->hasAnyRole(['Read-Only Analyst', 'Viewer']);
+        return ! $user->hasAnyRole(RoleId::readOnly());
     }
 
     public function update(User $user, Proposal $proposal): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin', 'Head of Sales'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $proposal->team_id === (int) $user->team_id;
         }
 

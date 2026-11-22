@@ -1,20 +1,27 @@
 # Role-Permission Matrix — Sale Fusion CRM
 
-**Last Updated:** 2026-11-19  
+**Last Updated:** 2026-11-22
 **Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/security/authorization.md`, `docs/modules/users-teams-and-permissions.md`
 
 ## 1. Canonical CRM Roles
 
-1. **Super Admin (`super_admin`):** Full system configuration, role management, all-team record access, audit log access. Bypass granted via `Gate::before` except on immutable domain rules (e.g., cannot edit an already-converted lead or mutate an audit log).
-2. **Org Admin (`org_admin`):** Manages users, teams, pipelines, stages, imports/exports, and all commercial records across teams; cannot modify `Super Admin` accounts.
-3. **Sales Manager (`sales_manager`):** Full view, edit, reassignment, discount approval, and reporting visibility across all records within their assigned `team_id`.
-4. **Sales Rep (`sales_rep`):** Creates and manages their own (`owner_id === $user->id`) Leads, Contacts, Companies, Deals, Activities, Tasks, Follow-Ups, and Draft Quotations.
-5. **Read-Only Analyst (`read_only_analyst`):** Read-only access to commercial records, pipelines, and executive analytics reports; zero create/update/delete capabilities.
+1. **Super Admin:** Full system configuration and cross-organization access, with domain rules still enforced.
+2. **Org Admin:** Organization-wide CRM administration; cannot modify Super Admin accounts.
+3. **Head of Sales:** Inherits the Org Admin permission set and organization-wide CRM access.
+4. **Sales Manager:** Team-scoped CRM management, reassignment, discount approval, and reporting.
+5. **Sales Rep:** Manages records they own within the assigned team.
+6. **Sales Executive:** Inherits the Sales Rep permission set.
+7. **Read-Only Analyst:** Read-only access to organization-wide commercial records and reports.
+8. **Viewer:** Inherits the Read-Only Analyst permission set.
+
+These role identifiers are defined by `app/Enums/RoleId.php`; the permission inheritance is applied by `RolePermissionSeeder`.
 
 ## 2. Granular Permission Matrix
 
 Legend: `All` = Organization-wide | `Team` = Within `user->team_id` | `Own` = Where `owner_id === user->id` | `—` = Denied (`403`)
+
+The table below shows the base roles. Head of Sales inherits Org Admin permissions, Sales Executive inherits Sales Rep permissions, and Viewer inherits Read-Only Analyst permissions.
 
 | Module & Action | Permission Slug | Super Admin | Org Admin | Sales Manager | Sales Rep | Read-Only Analyst |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |

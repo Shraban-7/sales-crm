@@ -97,10 +97,10 @@ Route::get('/welcome', function () {
 /*
 |--------------------------------------------------------------------------
 | 2. Sales Rep Guard (Mutating Routes & Authoring)
-| Enforced by: role.rep & role.not_read_only (blocks Read-Only Analyst & Viewer)
+| Enforced by: role.group:sales_rep & role.not_read_only (blocks Read-Only Analyst & Viewer)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'auth.session', 'role.rep', 'role.not_read_only'])->group(function (): void {
+Route::middleware(['auth', 'auth.session', 'role.group:sales_rep', 'role.not_read_only'])->group(function (): void {
     // Quotations Authoring (Defined before wildcard {quotation} route)
     Route::get('/quotations/create', [QuotationController::class, 'create'])->name('quotations.create');
     Route::post('/quotations', [QuotationController::class, 'store'])->name('quotations.store');
@@ -166,10 +166,10 @@ Route::middleware(['auth', 'auth.session', 'role.rep', 'role.not_read_only'])->g
 /*
 |--------------------------------------------------------------------------
 | 3. Sales Manager Guard Routes
-| Enforced by: role.manager (Super Admin, Org Admin, Head of Sales, Sales Manager)
+| Enforced by: role.group:sales_manager
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'auth.session', 'role.manager'])->group(function (): void {
+Route::middleware(['auth', 'auth.session', 'role.group:sales_manager'])->group(function (): void {
     // High-Discount Quotation Approvals
     Route::post('/quotations/{quotation}/approve-discount', [QuotationWorkflowController::class, 'approveDiscount'])
         ->name('quotations.approve-discount');
@@ -189,10 +189,10 @@ Route::middleware(['auth', 'auth.session', 'role.manager'])->group(function (): 
 /*
 |--------------------------------------------------------------------------
 | 4. Org Admin & Super Admin Guard Routes
-| Enforced by: role.admin (Super Admin, Org Admin, Head of Sales)
+| Enforced by: role.group:organization_admin
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'auth.session', 'role.admin'])->group(function (): void {
+Route::middleware(['auth', 'auth.session', 'role.group:organization_admin'])->group(function (): void {
     // Pipeline Structure & Stage Management
     Route::post('/pipelines', [PipelineController::class, 'store'])->name('pipelines.store');
     Route::post('/pipelines/{pipeline}/stages', [PipelineStageController::class, 'store'])->name('pipelines.stages.store');
@@ -231,10 +231,10 @@ Route::middleware(['auth', 'auth.session', 'role.admin'])->group(function (): vo
 /*
 |--------------------------------------------------------------------------
 | 5. Super Admin Exclusive Guard Routes
-| Enforced by: role.super_admin
+| Enforced by: role.group:super_admin
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'auth.session', 'role.super_admin'])->prefix('super-admin')->name('super-admin.')->group(function (): void {
+Route::middleware(['auth', 'auth.session', 'role.group:super_admin'])->prefix('super-admin')->name('super-admin.')->group(function (): void {
     Route::get('/status', function () {
         return response()->json([
             'status' => 'healthy',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies\Concerns;
 
+use App\Enums\RoleId;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,11 +12,11 @@ trait ResolvesTeamOwnership
 {
     protected function canViewScoped(User $user, Model $record, string $module, string $ownerColumn = 'owner_id'): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin', 'Read-Only Analyst']) && $user->can("{$module}.view.all")) {
+        if ($user->hasAnyRole(RoleId::organizationReaders()) && $user->can("{$module}.view.all")) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $record->getAttribute('team_id') === (int) $user->team_id
                 && $user->can("{$module}.view.team");
         }
@@ -27,11 +28,11 @@ trait ResolvesTeamOwnership
 
     protected function canUpdateScoped(User $user, Model $record, string $module, string $ownerColumn = 'owner_id'): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $record->getAttribute('team_id') === (int) $user->team_id
                 && $user->can("{$module}.update.team");
         }
@@ -43,11 +44,11 @@ trait ResolvesTeamOwnership
 
     protected function canDeleteScoped(User $user, Model $record, string $module): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        return $user->hasRole('Sales Manager')
+        return $user->hasRole(RoleId::SalesManager->value)
             && (int) $record->getAttribute('team_id') === (int) $user->team_id
             && $user->can("{$module}.delete");
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\Quotation;
+use App\Enums\RoleId;
 use App\Models\User;
 use App\Policies\Concerns\ResolvesTeamOwnership;
 
@@ -33,11 +34,11 @@ final class QuotationPolicy
             return false;
         }
 
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $quotation->team_id === (int) $user->team_id;
         }
 
@@ -48,11 +49,11 @@ final class QuotationPolicy
 
     public function send(User $user, Quotation $quotation): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $quotation->team_id === (int) $user->team_id && $user->can('quotations.send');
         }
 
@@ -80,7 +81,7 @@ final class QuotationPolicy
             return false;
         }
 
-        return $user->hasAnyRole(['Super Admin', 'Org Admin'])
+        return $user->hasAnyRole(RoleId::organizationWriters())
             || (int) $quotation->team_id === (int) $user->team_id;
     }
 }

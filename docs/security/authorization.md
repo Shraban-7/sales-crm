@@ -1,6 +1,6 @@
 # Authorization, RBAC & Data Isolation (IDOR Prevention) — Sale Fusion CRM
 
-**Last Updated:** 2026-11-19  
+**Last Updated:** 2026-11-22
 **Implementation Status:** `Implemented (Active Engineering Specification)`  
 **Related Docs:** `docs/security/role-permission-matrix.md`, `docs/adr/ADR-003-authentication-and-authorization.md`
 
@@ -11,107 +11,26 @@ To guarantee that users can neither execute unauthorized actions nor access reco
 1. **Capability Layer ([Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/v8/installation-laravel)):** Checks whether the user's assigned Role grants the permission slug (e.g., `deals.update.own` vs `deals.update.team`).
 2. **Record Ownership & Team Layer (Laravel Policies + Eloquent Query Scopes):** Verifies whether the specific model instance's `owner_id` or `team_id` matches the authenticated user.
 
+The canonical role identifiers and shared role groups are defined in `app/Enums/RoleId.php`. The seeded roles are Super Admin, Org Admin, Head of Sales, Sales Manager, Sales Rep, Sales Executive, Read-Only Analyst, and Viewer. Head of Sales inherits the Org Admin permission set; Sales Executive inherits Sales Rep permissions; Viewer inherits Read-Only Analyst permissions.
+
 ## 2. Record Visibility Query Scope (`HasVisibilityScope` Trait)
 
-Every primary CRM model (`Lead`, `Contact`, `Company`, `Deal`, `Quotation`, `Activity`, `Task`, `FollowUp`) must implement `scopeVisibleTo(Builder $query, User $user): Builder`:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Models\Concerns;
-
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-
-trait HasVisibilityScope
-{
-    public function scopeVisibleTo(Builder $query, User $user): Builder
-    {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin', 'Read-Only Analyst'])) {
-            return $query;
-        }
-
-        if ($user->hasRole('Sales Manager')) {
-            return $query->where($this->qualifyColumn('team_id'), $user->team_id);
-        }
-
-        // Default: Sales Rep sees only records they own within their team
-        return $query
-            ->where($this->qualifyColumn('team_id'), $user->team_id)
-            ->where($this->qualifyColumn('owner_id'), $user->id);
-    }
-}
-```
+The CRM models use the `HasVisibilityScope` trait. Call `visibleTo($user)` explicitly on list, search, dashboard, report, export, and import duplicate queries; it is an opt-in local scope, not a global scope. Organization readers (including Head of Sales and Viewer) can read all rows. Sales Managers see their team and legacy unassigned rows; sales representatives see owned rows in their team and legacy unassigned rows. A user with no team is restricted to their own rows (or unassigned team rows for an unassigned manager).
 
 ## 3. Policy Implementation Pattern (`app/Policies/DealPolicy.php`)
 
-```php
-<?php
+`DealPolicy` and other scoped policies reuse `ResolvesTeamOwnership` for record ownership checks. Policies may add domain rules for state transitions; for example, converted leads cannot be edited and non-draft quotations cannot be changed.
 
-declare(strict_types=1);
-
-namespace App\Policies;
-
-use App\Models\Deal;
-use App\Models\User;
-
-final class DealPolicy
-{
-    public function view(User $user, Deal $deal): bool
-    {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin', 'Read-Only Analyst'])) {
-            return true;
-        }
-
-        if ($user->hasRole('Sales Manager')) {
-            return $deal->team_id === $user->team_id && $user->can('deals.view.team');
-        }
-
-        return $deal->team_id === $user->team_id
-            && $deal->owner_id === $user->id
-            && $user->can('deals.view.own');
-    }
-
-    public function update(User $user, Deal $deal): bool
-    {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
-            return true;
-        }
-
-        if ($user->hasRole('Sales Manager')) {
-            return $deal->team_id === $user->team_id && $user->can('deals.update.team');
-        }
-
-        return $deal->team_id === $user->team_id
-            && $deal->owner_id === $user->id
-            && $user->can('deals.update.own');
-    }
-
-    public function delete(User $user, Deal $deal): bool
-    {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
-            return true;
-        }
-
-        return $user->hasRole('Sales Manager')
-            && $deal->team_id === $user->team_id
-            && $user->can('deals.delete');
-    }
-}
-```
-
-## 4. Route-Level Role Guards (`app/Http/Middleware/Ensure*`)
+## 4. Route-Level Role Guards (`app/Http/Middleware/EnsureRoleGroup.php`)
 
 In addition to controller-level Policy checks, **Sale Fusion CRM** enforces dedicated route middleware guards at the HTTP routing boundary (`routes/web.php`) so that unauthorized role types are rejected before controller invocation:
 
-| Role Guard Middleware | Alias | Permitted Roles | Protected Endpoints |
+| Role Group | Alias | Permitted Roles | Protected Endpoints |
 | :--- | :--- | :--- | :--- |
-| `EnsureSuperAdmin` | `role.super_admin` | `Super Admin` | System super-administration, cross-tenant overrides |
-| `EnsureOrgAdmin` | `role.admin` | `Super Admin`, `Org Admin`, `Head of Sales` | `/settings/users`, `/settings/teams`, `/settings/stages`, `/settings/smtp`, `/settings/system`, `/settings/webhooks`, `/settings/audit-logs`, `/pipelines` schema mutations |
-| `EnsureSalesManager` | `role.manager` | `Super Admin`, `Org Admin`, `Head of Sales`, `Sales Manager` | `/quotations/{quotation}/approve-discount`, `/imports/bulk`, `/targets` configuration |
-| `EnsureSalesRep` | `role.rep` | `Super Admin`, `Org Admin`, `Head of Sales`, `Sales Manager`, `Sales Rep`, `Sales Executive` | Commercial mutation routes (`leads.*`, `companies.*`, `contacts.*`, `deals.*`, `tasks.*`, `quotations.*`, `proposals.*`, `mobile.*`) |
+| `super_admin` | `role.group:super_admin` | `Super Admin` | System super-administration, cross-tenant overrides |
+| `organization_admin` | `role.group:organization_admin` | `Super Admin`, `Org Admin`, `Head of Sales` | `/settings/users`, `/settings/teams`, `/settings/stages`, `/settings/smtp`, `/settings/system`, `/settings/webhooks`, `/settings/audit-logs`, `/pipelines` schema mutations |
+| `sales_manager` | `role.group:sales_manager` | Organization writers and `Sales Manager` | `/quotations/{quotation}/approve-discount`, `/imports/bulk`, `/targets` configuration |
+| `sales_rep` | `role.group:sales_rep` | Organization writers, `Sales Manager`, `Sales Rep`, `Sales Executive` | Commercial mutation routes (`leads.*`, `companies.*`, `contacts.*`, `deals.*`, `tasks.*`, `quotations.*`, `proposals.*`, `mobile.*`) |
 | `EnsureNotReadOnly` | `role.not_read_only` | Any non-read-only role | Rejects `Read-Only Analyst` and `Viewer` from all data-mutating routes (`POST`, `PUT`, `PATCH`, `DELETE`) with HTTP 403 Forbidden |
 | `EnsureReadOnlyAnalyst`| `role.analyst` | All authenticated roles | Executive analytics dashboards and read-only reports |
 

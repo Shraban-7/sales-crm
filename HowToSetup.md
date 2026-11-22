@@ -46,7 +46,7 @@ php artisan key:generate
 > 1. `APP_KEY` (generated via `php artisan key:generate`)
 > 2. `DB_PASSWORD` & `DB_ROOT_PASSWORD` (strong database passwords)
 > 3. `CRM_ADMIN_PASSWORD` (password for primary administrator: `superadmin@salescrm.test`)
-> 4. `CRM_DEMO_PASSWORD` (optional demo account password; auto-generated with 16 characters if blank)
+> 4. `CRM_DEMO_PASSWORD` (required when seeding demo accounts)
 
 Edit `.env` with your production values:
 
@@ -109,6 +109,8 @@ mysql -u crm_user -p sales_crm < database/schema.sql
 # 2. (Optional) Load sample roles, demo users, pipelines, deals, contacts, quotations & tasks
 mysql -u crm_user -p sales_crm < database/seed.sql
 ```
+
+The Laravel migrations are the canonical schema source. `database/schema.sql` and `database/seed.sql` are optional exports for operators who prefer direct MySQL import; keep them synchronized with migrations and seeders. The `composer setup` shortcut does not create a database: create it, configure `.env` (including both CRM passwords), then run `composer setup`. Its preflight checks required values and stops with a list of missing settings before migrations or seeders.
 
 ### 5. Link Storage, Set Permissions & Cache Config
 

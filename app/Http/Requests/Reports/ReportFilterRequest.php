@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Reports;
 
+use App\Enums\RoleId;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Validator;
@@ -17,7 +18,7 @@ final class ReportFilterRequest extends FormRequest
             return false;
         }
 
-        if ($user->hasRole('Sales Rep')) {
+        if ($user->hasAnyRole([RoleId::SalesRep->value, RoleId::SalesExecutive->value])) {
             if ($this->filled('owner_id') && (int) $this->input('owner_id') !== $user->id) {
                 return false;
             }
@@ -26,7 +27,7 @@ final class ReportFilterRequest extends FormRequest
             }
         }
 
-        if ($user->hasRole('Sales Manager') && $this->filled('team_id') && (int) $this->input('team_id') !== (int) $user->team_id) {
+        if ($user->hasRole(RoleId::SalesManager->value) && $this->filled('team_id') && (int) $this->input('team_id') !== (int) $user->team_id) {
             return false;
         }
 

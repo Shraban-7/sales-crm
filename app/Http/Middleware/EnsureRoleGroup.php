@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Enums\RoleId;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-final class EnsureOrgAdmin
+final class EnsureRoleGroup
 {
-    /**
-     * Handle an incoming request.
-     */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $group): Response
     {
         $user = $request->user();
 
@@ -21,9 +19,7 @@ final class EnsureOrgAdmin
             return redirect()->guest(route('login'));
         }
 
-        if (! $user->hasAnyRole(['Super Admin', 'Org Admin', 'Head of Sales'])) {
-            abort(403, 'This action requires Organization Administrator privileges.');
-        }
+        abort_unless($user->hasAnyRole(RoleId::routeGroup($group)), 403, 'Your role cannot access this area.');
 
         return $next($request);
     }

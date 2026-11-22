@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\RoleId;
 use App\Models\Attachment;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -12,7 +13,7 @@ final class AttachmentPolicy
 {
     public function view(User $user, Attachment $attachment): bool
     {
-        if ((int) $attachment->team_id !== (int) $user->team_id && ! $user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ((int) $attachment->team_id !== (int) $user->team_id && ! $user->hasAnyRole(RoleId::organizationReaders())) {
             return false;
         }
 
@@ -23,7 +24,7 @@ final class AttachmentPolicy
 
     public function delete(User $user, Attachment $attachment): bool
     {
-        if ((int) $attachment->team_id !== (int) $user->team_id && ! $user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ((int) $attachment->team_id !== (int) $user->team_id && ! $user->hasAnyRole(RoleId::organizationWriters())) {
             return false;
         }
 
@@ -37,6 +38,6 @@ final class AttachmentPolicy
             return true;
         }
 
-        return $user->hasAnyRole(['Super Admin', 'Org Admin', 'Sales Manager']);
+        return $user->hasAnyRole([...RoleId::organizationWriters(), RoleId::SalesManager->value]);
     }
 }

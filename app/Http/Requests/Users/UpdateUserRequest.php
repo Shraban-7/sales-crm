@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Users;
 
+use App\Enums\RoleId;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -25,7 +26,7 @@ final class UpdateUserRequest extends FormRequest
         $targetUser = $this->route('user');
 
         $allowedRoles = ['Org Admin', 'Sales Manager', 'Sales Rep', 'Read-Only Analyst'];
-        if ($this->user()->hasRole('Super Admin')) {
+        if ($this->user()->hasRole(RoleId::SuperAdmin->value)) {
             $allowedRoles[] = 'Super Admin';
         }
 

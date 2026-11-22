@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Concerns;
 
+use App\Enums\RoleId;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -11,11 +12,11 @@ trait HasVisibilityScope
 {
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin', 'Read-Only Analyst'])) {
+        if ($user->hasAnyRole(RoleId::organizationReaders())) {
             return $query;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             if ($user->team_id === null) {
                 return $query->whereNull($this->qualifyColumn('team_id'));
             }

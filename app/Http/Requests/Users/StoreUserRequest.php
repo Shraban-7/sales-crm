@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Users;
 
+use App\Enums\RoleId;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -21,7 +22,7 @@ final class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         $allowedRoles = ['Org Admin', 'Sales Manager', 'Sales Rep', 'Read-Only Analyst'];
-        if ($this->user()->hasRole('Super Admin')) {
+        if ($this->user()->hasRole(RoleId::SuperAdmin->value)) {
             $allowedRoles[] = 'Super Admin';
         }
 

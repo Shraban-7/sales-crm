@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Enums\LeadStatus;
+use App\Enums\RoleId;
 use App\Models\Lead;
 use App\Models\User;
 use App\Policies\Concerns\ResolvesTeamOwnership;
@@ -43,11 +44,11 @@ final class LeadPolicy
             return false;
         }
 
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $lead->team_id === (int) $user->team_id && $user->can('leads.convert');
         }
 

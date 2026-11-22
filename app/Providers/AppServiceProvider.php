@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Enums\RoleId;
 use App\Enums\ActivityType;
 use App\Models\Activity;
 use App\Models\Attachment;
@@ -91,7 +92,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::before(function (User $user, string $ability, array $arguments = []): ?bool {
-            if (! $user->hasRole('Super Admin')) {
+            if (! $user->hasRole(RoleId::SuperAdmin->value)) {
                 return null;
             }
 

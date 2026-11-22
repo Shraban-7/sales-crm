@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\Deal;
+use App\Enums\RoleId;
 use App\Models\User;
 use App\Policies\Concerns\ResolvesTeamOwnership;
 
@@ -34,11 +35,11 @@ final class DealPolicy
 
     public function moveStage(User $user, Deal $deal): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        if ($user->hasRole('Sales Manager')) {
+        if ($user->hasRole(RoleId::SalesManager->value)) {
             return (int) $deal->team_id === (int) $user->team_id && $user->can('deals.update.team');
         }
 
@@ -49,11 +50,11 @@ final class DealPolicy
 
     public function reassign(User $user, Deal $deal): bool
     {
-        if ($user->hasAnyRole(['Super Admin', 'Org Admin'])) {
+        if ($user->hasAnyRole(RoleId::organizationWriters())) {
             return true;
         }
 
-        return $user->hasRole('Sales Manager')
+        return $user->hasRole(RoleId::SalesManager->value)
             && (int) $deal->team_id === (int) $user->team_id
             && $user->can('deals.reassign');
     }

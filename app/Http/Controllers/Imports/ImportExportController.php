@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Imports;
 
+use App\Enums\RoleId;
 use App\Enums\ImportExportModule;
 use App\Enums\ImportExportStatus;
 use App\Enums\ImportExportType;
@@ -29,7 +30,7 @@ final class ImportExportController extends Controller
         $jobs = ImportExportJob::query()
             ->with('user')
             ->when(
-                ! $user->hasAnyRole(['Super Admin', 'Org Admin']),
+                ! $user->hasAnyRole(RoleId::organizationWriters()),
                 fn ($q) => $q->where('team_id', $user->team_id)->where('user_id', $user->id)
             )
             ->latest()

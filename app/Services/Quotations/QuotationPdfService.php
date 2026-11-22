@@ -29,6 +29,8 @@ final class QuotationPdfService
             'margin_bottom' => 16,
             'margin_left' => 14,
             'tempDir' => $tempDir,
+            'allow_output_buffering' => false,
+            'curlAllowUnsafeSslRequests' => false,
         ]);
 
         $mpdf->autoScriptToLang = true;

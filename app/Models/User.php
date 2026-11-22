@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\RoleId;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -108,7 +109,7 @@ class User extends Authenticatable
         }
 
         // Must match owner email AND hold the Super Admin role.
-        return strcasecmp($this->email, $ownerEmail) === 0 && $this->hasRole('Super Admin');
+        return strcasecmp($this->email, $ownerEmail) === 0 && $this->hasRole(RoleId::SuperAdmin->value);
     }
 
     public function isDemoUser(): bool

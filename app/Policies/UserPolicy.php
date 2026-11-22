@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\RoleId;
 use App\Models\User;
 
 final class UserPolicy
@@ -33,7 +34,7 @@ final class UserPolicy
             return false;
         }
 
-        if ($model->hasRole('Super Admin') && ! $user->hasRole('Super Admin')) {
+        if ($model->hasRole(RoleId::SuperAdmin->value) && ! $user->hasRole(RoleId::SuperAdmin->value)) {
             return false;
         }
 

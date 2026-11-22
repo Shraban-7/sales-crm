@@ -7,7 +7,7 @@
 
 ## 1. Context
 
-Sale Fusion CRM requires role-based capabilities across 5 roles (`Super Admin`, `Org Admin`, `Sales Manager`, `Sales Rep`, `Read-Only Analyst`) combined with strict record-level isolation (`Own` vs `Team` vs `All`) so sales reps cannot view or mutate competitors' deals within the organization.
+Sale Fusion CRM requires role-based capabilities across eight canonical roles (`Super Admin`, `Org Admin`, `Head of Sales`, `Sales Manager`, `Sales Rep`, `Sales Executive`, `Read-Only Analyst`, `Viewer`) combined with record-level isolation (`Own` vs `Team` vs `All`) so sales representatives cannot mutate records they do not own or manage.
 
 ## 2. Proposed Decision
 

@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 use App\Http\Middleware\EnsureNotDemoMode;
 use App\Http\Middleware\EnsureNotReadOnly;
-use App\Http\Middleware\EnsureOrgAdmin;
 use App\Http\Middleware\EnsureReadOnlyAnalyst;
-use App\Http\Middleware\EnsureSalesManager;
-use App\Http\Middleware\EnsureSalesRep;
-use App\Http\Middleware\EnsureSuperAdmin;
+use App\Http\Middleware\EnsureRoleGroup;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\VerifyWebhookSignature;
 use Illuminate\Foundation\Application;
@@ -40,11 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhook.hmac' => VerifyWebhookSignature::class,
             'active' => EnsureUserIsActive::class,
 
-            // Dedicated Role Guards for every role type
-            'role.super_admin' => EnsureSuperAdmin::class,
-            'role.admin' => EnsureOrgAdmin::class,
-            'role.manager' => EnsureSalesManager::class,
-            'role.rep' => EnsureSalesRep::class,
+            'role.group' => EnsureRoleGroup::class,
             'role.not_read_only' => EnsureNotReadOnly::class,
             'role.analyst' => EnsureReadOnlyAnalyst::class,
         ]);
