@@ -19,10 +19,8 @@ class DemoCrmSeeder extends Seeder
 {
     public function run(): void
     {
-        if (app()->isProduction() && (! filled(config('crm.demo_password')) || ! filled(config('crm.admin_password')))) {
-            $this->command?->error('CRM_DEMO_PASSWORD and CRM_ADMIN_PASSWORD must be set in .env before seeding in production. Aborting.');
-
-            return;
+        if (! app()->environment('testing') && (! filled(config('crm.demo_password')) || ! filled(config('crm.admin_password')))) {
+            throw new \RuntimeException('Set CRM_ADMIN_PASSWORD and CRM_DEMO_PASSWORD before seeding. No demo data was created.');
         }
 
         $this->call([

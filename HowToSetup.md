@@ -212,7 +212,7 @@ DB_ROOT_PASSWORD=replace-with-strong-root-password
 
 ### 2. Start PHP-FPM, Nginx, Background Queue Worker & MySQL 8
 
-Run the initial Docker Compose build and application bootstrap:
+Run the initial Docker Compose build and application bootstrap. The PHP entrypoint installs Composer dependencies and builds frontend assets when the bind-mounted source tree does not already contain them:
 
 ```bash
 # 1. Build Docker images with multi-stage entrypoint
@@ -244,7 +244,7 @@ Visit **http://localhost:8080/login** in your browser.
 
 ## First Admin Login & Security Checklist
 
-When seeded via `DemoCrmSeeder`, set `CRM_ADMIN_PASSWORD` and `CRM_DEMO_PASSWORD` to strong unique values first. Production seeding refuses to run without both values. The seeder lists account emails but never prints passwords. The static `database/seed.sql` intentionally contains no user accounts.
+When seeded via `DemoCrmSeeder`, set `CRM_ADMIN_PASSWORD` and `CRM_DEMO_PASSWORD` to strong unique values first. Seeding refuses to run outside tests without both values. The seeder lists account emails but never prints passwords. The static `database/seed.sql` intentionally contains no user accounts.
 
 When seeded via `DemoCrmSeeder`, the following accounts are available:
 

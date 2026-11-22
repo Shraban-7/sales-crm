@@ -101,7 +101,8 @@ try {
         '^project-discovery-report\.md$',
         '^report\.md$',
         '^docs/CHANGELOG\.md$',
-        '^docs/prompts(/|$)'
+        '^docs/prompts(/|$)',
+        '^scripts/package-vibe96\.ps1$'
     )
 
     $AllFiles = Get-ChildItem -LiteralPath $RepoRoot -Recurse -Force -File

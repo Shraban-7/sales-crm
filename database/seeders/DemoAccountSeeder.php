@@ -26,10 +26,8 @@ class DemoAccountSeeder extends Seeder
 {
     public function run(): void
     {
-        if (app()->isProduction() && ! filled(config('crm.demo_password'))) {
-            $this->command?->error('CRM_DEMO_PASSWORD must be set in .env before seeding in production. Aborting.');
-
-            return;
+        if (! filled(config('crm.demo_password')) && ! app()->environment('testing')) {
+            throw new \RuntimeException('Set CRM_DEMO_PASSWORD before seeding. No demo accounts were created.');
         }
 
         $enterpriseTeam = Team::query()->firstOrCreate(
@@ -52,10 +50,6 @@ class DemoAccountSeeder extends Seeder
 
         $rawDemoPassword = SecuritySecret::resolveDemoPassword();
         $password = Hash::make($rawDemoPassword);
-
-        if (! filled(config('crm.demo_password')) && ! app()->environment('testing')) {
-            $this->command?->warn("Notice: CRM_DEMO_PASSWORD was not set in .env. Generated temporary demo account password: {$rawDemoPassword}");
-        }
 
         $superAdmin = User::query()->firstOrCreate(
             ['email' => 'demosuperadmin@salescrm.test'],

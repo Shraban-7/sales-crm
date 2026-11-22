@@ -34,7 +34,8 @@ final class FollowUpPolicy
         }
 
         if ($user->hasRole('Sales Manager')) {
-            return (int) $followUp->team_id === (int) $user->team_id;
+            return (int) $followUp->team_id === (int) $user->team_id
+                && $user->can('follow_ups.update.own');
         }
 
         return (int) $followUp->team_id === (int) $user->team_id

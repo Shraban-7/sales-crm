@@ -14,16 +14,14 @@ use Illuminate\Support\Facades\Hash;
  * Main Administrator Account Seeder
  *
  * Provisions the primary superadmin@salescrm.test account with full system access.
- * Password: Set via CRM_ADMIN_PASSWORD in .env (or generated secure secret).
+ * Password: Set via CRM_ADMIN_PASSWORD in .env before seeding.
  */
 class AdminAccountSeeder extends Seeder
 {
     public function run(): void
     {
-        if (app()->isProduction() && ! filled(config('crm.admin_password'))) {
-            $this->command?->error('CRM_ADMIN_PASSWORD must be set in .env before seeding in production. Aborting.');
-
-            return;
+        if (! filled(config('crm.admin_password')) && ! app()->environment('testing')) {
+            throw new \RuntimeException('Set CRM_ADMIN_PASSWORD before seeding. No administrator account was created.');
         }
 
         $enterpriseTeam = Team::query()->firstOrCreate(
@@ -37,10 +35,6 @@ class AdminAccountSeeder extends Seeder
 
         $rawAdminPassword = SecuritySecret::resolveAdminPassword();
         $adminPassword = Hash::make($rawAdminPassword);
-
-        if (! filled(config('crm.admin_password')) && ! app()->environment('testing')) {
-            $this->command?->warn("Notice: CRM_ADMIN_PASSWORD was not set in .env. Generated temporary administrator password: {$rawAdminPassword}");
-        }
 
         $mainAdmin = User::query()->firstOrCreate(
             ['email' => 'superadmin@salescrm.test'],

@@ -34,7 +34,8 @@ final class TaskPolicy
         }
 
         if ($user->hasRole('Sales Manager')) {
-            return (int) $task->team_id === (int) $user->team_id;
+            return (int) $task->team_id === (int) $user->team_id
+                && $user->can('tasks.update.own');
         }
 
         return (int) $task->team_id === (int) $user->team_id

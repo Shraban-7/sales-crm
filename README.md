@@ -61,7 +61,7 @@ When seeded with sample data (`DemoCrmSeeder` or `database/seed.sql`), you can s
 > **Interactive Demo Mode:** Demo mode defaults to `false` for a clean corporate installation. You can enable demo mode and login pre-fill showcase anytime directly from the database (`UPDATE system_settings SET value = '1' WHERE `key` = 'demo_mode';`) or via the in-app **System Settings** page (`/settings/system`).
 
 ### Quick 3-Minute Guided Demo (Try It Yourself)
-1. Go to **`/login`** and sign in as **`demomanager@salescrm.test`** (password: configured in `CRM_DEMO_PASSWORD` in `.env` or shown upon seeding) so you can see team oversight + discount approvals.
+1. Set `CRM_DEMO_PASSWORD` in `.env`, seed the demo accounts, then sign in at **`/login`** as **`demomanager@salescrm.test`** to see team oversight and discount approvals.
 2. Open **Leads** in the left menu and click **`Kamrul Hasan`** (*Apex Textiles BD*, score `82/100`).
 3. Click **Convert to Deal** to turn him into a live Company, Contact, and Opportunity in one click.
 4. Open **Pipeline Kanban** and drag a deal card between columns—notice totals and stage counts update automatically.

@@ -48,6 +48,8 @@ final class ProposalController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('create', Proposal::class);
+
         $data = $request->validate([
             'title' => ['required', 'string', 'max:191'],
             'deal_id' => ['nullable', 'integer', 'exists:deals,id'],
@@ -60,13 +62,28 @@ final class ProposalController extends Controller
         ]);
 
         $user = $request->user();
+        $deal = isset($data['deal_id']) ? Deal::query()->findOrFail((int) $data['deal_id']) : null;
+        $company = isset($data['company_id']) ? Company::query()->findOrFail((int) $data['company_id']) : null;
+        $contact = isset($data['contact_id']) ? Contact::query()->findOrFail((int) $data['contact_id']) : null;
+
+        if ($deal !== null) {
+            $this->authorize('view', $deal);
+        }
+
+        if ($company !== null) {
+            $this->authorize('view', $company);
+        }
+
+        if ($contact !== null) {
+            $this->authorize('view', $contact);
+        }
 
         $proposal = Proposal::query()->create([
             'team_id' => $user->team_id,
             'owner_id' => $user->id,
-            'deal_id' => $data['deal_id'] ?? null,
-            'company_id' => $data['company_id'] ?? null,
-            'contact_id' => $data['contact_id'] ?? null,
+            'deal_id' => $deal?->id,
+            'company_id' => $company?->id,
+            'contact_id' => $contact?->id,
             'proposal_number' => Proposal::generateProposalNumber(),
             'title' => $data['title'],
             'amount' => $data['amount'],
