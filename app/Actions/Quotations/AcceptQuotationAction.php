@@ -17,7 +17,13 @@ final readonly class AcceptQuotationAction
         private AuditLoggerService $auditLogger,
     ) {}
 
-    public function handle(Quotation $quotation, ?User $actor = null, ?string $acceptedByName = null): Quotation
+    public function handle(
+        Quotation $quotation,
+        ?User $actor = null,
+        ?string $acceptedByName = null,
+        ?string $acceptedByEmail = null,
+        ?string $acceptedFromIp = null,
+    ): Quotation
     {
         $snapshot = Quotation::query()->findOrFail($quotation->id);
 
@@ -30,7 +36,7 @@ final readonly class AcceptQuotationAction
             );
         }
 
-        return DB::transaction(function () use ($quotation, $actor, $acceptedByName): Quotation {
+        return DB::transaction(function () use ($quotation, $actor, $acceptedByName, $acceptedByEmail, $acceptedFromIp): Quotation {
             /** @var Quotation $locked */
             $locked = Quotation::query()->lockForUpdate()->findOrFail($quotation->id);
 
@@ -63,6 +69,8 @@ final readonly class AcceptQuotationAction
                     'status' => QuotationStatus::Accepted->value,
                     'grand_total' => $locked->grand_total,
                     'accepted_by_name' => $acceptedByName,
+                    'accepted_by_email' => $acceptedByEmail,
+                    'accepted_from_ip' => $acceptedFromIp,
                 ], fn ($value): bool => $value !== null),
                 teamId: $locked->team_id,
             );

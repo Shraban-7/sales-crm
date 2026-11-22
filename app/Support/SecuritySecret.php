@@ -6,6 +6,10 @@ namespace App\Support;
 
 final class SecuritySecret
 {
+    private static ?string $adminPassword = null;
+
+    private static ?string $demoPassword = null;
+
     /**
      * Generate a cryptographically secure hex secret of the given byte length.
      */
@@ -21,7 +25,7 @@ final class SecuritySecret
     {
         $configured = config('crm.admin_password');
 
-        return filled($configured) ? (string) $configured : 'Admin@Fusion2026!';
+        return filled($configured) ? (string) $configured : (self::$adminPassword ??= self::generate(8));
     }
 
     /**
@@ -31,6 +35,6 @@ final class SecuritySecret
     {
         $configured = config('crm.demo_password');
 
-        return filled($configured) ? (string) $configured : 'password';
+        return filled($configured) ? (string) $configured : (self::$demoPassword ??= self::generate(8));
     }
 }

@@ -20,6 +20,12 @@ class AdminAccountSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction() && ! filled(config('crm.admin_password'))) {
+            $this->command?->error('CRM_ADMIN_PASSWORD must be set in .env before seeding in production. Aborting.');
+
+            return;
+        }
+
         $enterpriseTeam = Team::query()->firstOrCreate(
             ['slug' => 'enterprise-sales'],
             [

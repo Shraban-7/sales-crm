@@ -32,8 +32,8 @@ return [
     'rate_limiting' => [
         'lead_webhook_per_minute' => (int) env('CRM_LEAD_WEBHOOK_RATE_LIMIT', 60),
     ],
-    'demo_password' => env('CRM_DEMO_PASSWORD', 'password'),
-    'admin_password' => env('CRM_ADMIN_PASSWORD', 'Admin@Fusion2026!'),
+    'demo_password' => env('CRM_DEMO_PASSWORD'),
+    'admin_password' => env('CRM_ADMIN_PASSWORD'),
     'demo_mode' => (bool) env('CRM_DEMO_MODE', false),
     'owner_email' => env('CRM_OWNER_EMAIL'),
 ];

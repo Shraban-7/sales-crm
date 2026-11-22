@@ -35,7 +35,7 @@ class DemoBusinessDataSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Company::query()->exists()) {
+        if (Company::query()->where('name', 'Bengal Tech Holdings Ltd.')->exists()) {
             return;
         }
 

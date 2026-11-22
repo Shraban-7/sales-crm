@@ -21,7 +21,7 @@ final readonly class RejectQuotationAction
     {
         $snapshot = Quotation::query()->findOrFail($quotation->id);
 
-        if ($snapshot->status === QuotationStatus::Sent && $snapshot->valid_until->isPast()) {
+        if ($snapshot->isExpired()) {
             $snapshot->update(['status' => QuotationStatus::Expired]);
 
             throw new DomainRuleException('This quotation has expired and can no longer be rejected.', 409);

@@ -85,7 +85,7 @@ class Quotation extends Model
     public function isExpired(): bool
     {
         return $this->status === QuotationStatus::Expired
-            || ($this->status === QuotationStatus::Sent && $this->valid_until->isPast());
+            || ($this->status === QuotationStatus::Sent && $this->valid_until !== null && $this->valid_until->isPast());
     }
 
     public function canBeAccepted(): bool

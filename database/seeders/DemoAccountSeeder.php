@@ -26,6 +26,12 @@ class DemoAccountSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction() && ! filled(config('crm.demo_password'))) {
+            $this->command?->error('CRM_DEMO_PASSWORD must be set in .env before seeding in production. Aborting.');
+
+            return;
+        }
+
         $enterpriseTeam = Team::query()->firstOrCreate(
             ['slug' => 'enterprise-sales'],
             [
@@ -190,20 +196,18 @@ class DemoAccountSeeder extends Seeder
             ]
         );
 
-        $rawAdminPassword = SecuritySecret::resolveAdminPassword();
-
         if ($this->command) {
             $this->command->info('Sale Fusion CRM demo accounts provisioned:');
             $this->command->table(
-                ['Type', 'Role', 'Email', 'Password'],
+                ['Type', 'Role', 'Email'],
                 [
-                    ['Main Account', 'Super Admin', 'superadmin@salescrm.test', $rawAdminPassword],
-                    ['Demo Account', 'Super Admin', 'demosuperadmin@salescrm.test', $rawDemoPassword],
-                    ['Demo Account', 'Org Admin', 'demoadmin@salescrm.test', $rawDemoPassword],
-                    ['Demo Account', 'Sales Manager', 'demomanager@salescrm.test', $rawDemoPassword],
-                    ['Demo Account', 'Sales Executive', 'demorep@salescrm.test', $rawDemoPassword],
-                    ['Demo Account', 'SMB Executive', 'demosmbrep@salescrm.test', $rawDemoPassword],
-                    ['Demo Account', 'Read-Only Analyst', 'demoanalyst@salescrm.test', $rawDemoPassword],
+                    ['Main Account', 'Super Admin', 'superadmin@salescrm.test'],
+                    ['Demo Account', 'Super Admin', 'demosuperadmin@salescrm.test'],
+                    ['Demo Account', 'Org Admin', 'demoadmin@salescrm.test'],
+                    ['Demo Account', 'Sales Manager', 'demomanager@salescrm.test'],
+                    ['Demo Account', 'Sales Executive', 'demorep@salescrm.test'],
+                    ['Demo Account', 'SMB Executive', 'demosmbrep@salescrm.test'],
+                    ['Demo Account', 'Read-Only Analyst', 'demoanalyst@salescrm.test'],
                 ]
             );
             $this->command->info('Database Setting: [system_settings.demo_mode = 0 (Default: Disabled)]');

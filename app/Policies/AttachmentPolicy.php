@@ -27,6 +27,12 @@ final class AttachmentPolicy
             return false;
         }
 
+        $attachable = $attachment->attachable;
+
+        if ($attachable === null || ! Gate::forUser($user)->allows('view', $attachable)) {
+            return false;
+        }
+
         if ((int) $attachment->uploaded_by_id === (int) $user->id) {
             return true;
         }

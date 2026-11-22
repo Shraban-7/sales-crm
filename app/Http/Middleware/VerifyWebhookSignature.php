@@ -23,18 +23,17 @@ final class VerifyWebhookSignature
             abort(503, 'Lead webhook is not configured.');
         }
 
+        $timestamp = $request->header('X-CRM-Timestamp');
+        if ($timestamp === null || ! is_numeric($timestamp) || abs(now()->timestamp - (int) $timestamp) > 300) {
+            abort(401, 'Webhook timestamp expired or invalid.');
+        }
+
         $signature = (string) $request->header('X-CRM-Signature', '');
-        $expected = hash_hmac('sha256', $request->getContent(), $secret);
+        $signedPayload = $timestamp.'.'.$request->getContent();
+        $expected = hash_hmac('sha256', $signedPayload, $secret);
 
         if ($signature === '' || ! hash_equals($expected, $signature)) {
             abort(401, 'Invalid signature.');
-        }
-
-        $timestamp = $request->header('X-CRM-Timestamp');
-        if ($timestamp !== null && $timestamp !== '') {
-            if (! is_numeric($timestamp) || abs(now()->timestamp - (int) $timestamp) > 300) {
-                abort(401, 'Webhook timestamp expired or invalid.');
-            }
         }
 
         return $next($request);

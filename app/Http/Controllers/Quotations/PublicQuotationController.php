@@ -10,6 +10,7 @@ use App\Enums\QuotationStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Quotation;
 use App\Notifications\CrmAlertNotification;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -23,7 +24,7 @@ final class PublicQuotationController extends Controller
 
         $quotation->load(['deal', 'company', 'contact', 'owner', 'items']);
 
-        $expires = now()->addDays((int) config('crm.quotations.public_link_days', 30));
+        $expires = Carbon::createFromTimestamp((int) $request->query('expires'));
 
         return view('pages.quotations.public', [
             'quotation' => $quotation,
@@ -47,12 +48,21 @@ final class PublicQuotationController extends Controller
             return back()->with('error', 'This quotation has already been declined.');
         }
 
+        abort_unless($quotation->status === QuotationStatus::Sent, 409, 'Only sent quotations can be accepted.');
+
         $data = $request->validate([
             'acceptance_name' => ['required', 'string', 'max:150'],
             'acceptance_email' => ['nullable', 'email:rfc', 'max:191'],
         ]);
 
-        $acceptAction->handle($quotation, null, $data['acceptance_name']);
+        $acceptanceEmail = $data['acceptance_email'] ?? null;
+        $contactEmail = $quotation->contact?->email;
+
+        if ($acceptanceEmail !== null && $contactEmail !== null && mb_strtolower($acceptanceEmail) !== mb_strtolower($contactEmail)) {
+            return back()->withErrors(['acceptance_email' => 'The email address must match the quotation contact.'])->withInput();
+        }
+
+        $acceptAction->handle($quotation, null, $data['acceptance_name'], $acceptanceEmail, $request->ip());
 
         $this->notifyOwner(
             $quotation,
@@ -77,6 +87,8 @@ final class PublicQuotationController extends Controller
         if ($quotation->status === QuotationStatus::Rejected) {
             return back()->with('status', 'This quotation has already been recorded as declined.');
         }
+
+        abort_unless($quotation->status === QuotationStatus::Sent, 409, 'Only sent quotations can be rejected.');
 
         $data = $request->validate([
             'rejection_reason' => ['required', 'string', 'max:500'],

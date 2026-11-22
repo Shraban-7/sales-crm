@@ -1,6 +1,6 @@
 # How to Set Up Sale Fusion CRM
 
-This guide walks through deploying **Sale Fusion CRM** (Laravel 13 · PHP 8.3+ · MySQL 8.0+ · Tailwind CSS v4 · Vite) on either a **Linux VPS** or **Docker**, logging in as the first administrator, and customizing your company branding.
+This guide walks through deploying **Sale Fusion CRM** (Laravel 13 · PHP 8.3+ · Docker PHP 8.4 · Node 20+ · MySQL 8.0+ · Tailwind CSS v4 · Vite) on either a **Linux VPS** or **Docker**, logging in as the first administrator, and customizing your company branding.
 
 ---
 
@@ -11,6 +11,7 @@ This guide walks through deploying **Sale Fusion CRM** (Laravel 13 · PHP 8.3+ �
 Install the required runtime packages on your server:
 
 - **PHP 8.3+** with extensions: `php8.3-fpm`, `php8.3-mysql`, `php8.3-mbstring`, `php8.3-xml`, `php8.3-curl`, `php8.3-zip`, `php8.3-gd`, `php8.3-bcmath`, `php8.3-intl`, `php8.3-fileinfo`
+- **Node.js 20+ and npm 10+** for frontend builds (Docker uses Node.js 22)
 - **Composer 2.x**
 - **Node.js 20+ & npm** (for compiling Tailwind CSS v4 and ES2022 modules via Vite)
 - **MySQL 8.0+** (`InnoDB`, `utf8mb4_unicode_ci`)
@@ -243,22 +244,24 @@ Visit **http://localhost:8080/login** in your browser.
 
 ## First Admin Login & Security Checklist
 
-When seeded via `DemoCrmSeeder` or `database/seed.sql`, the following accounts are available immediately:
+When seeded via `DemoCrmSeeder`, set `CRM_ADMIN_PASSWORD` and `CRM_DEMO_PASSWORD` to strong unique values first. Production seeding refuses to run without both values. The seeder lists account emails but never prints passwords. The static `database/seed.sql` intentionally contains no user accounts.
+
+When seeded via `DemoCrmSeeder`, the following accounts are available:
 
 ### 1. Main Production Account
 | Role | Email | Password | Default Scope |
 | :--- | :--- | :--- | :--- |
-| **Super Admin (Main)** | `superadmin@salescrm.test` | `Admin@Fusion2026!` *(or `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted system access, roles, users, webhooks, audit logs (no demo restrictions or banners). |
+| **Super Admin (Main)** | `superadmin@salescrm.test` | Set `CRM_ADMIN_PASSWORD` before seeding. | Full unrestricted system access, roles, users, webhooks, audit logs (no demo restrictions or banners). |
 
-### 2. Demo Sandbox Accounts (Password: `password` or `CRM_DEMO_PASSWORD` in `.env`)
+### 2. Demo Sandbox Accounts (set `CRM_DEMO_PASSWORD` in `.env` before seeding)
 | Role | Email | Password | Default Scope |
 | :--- | :--- | :--- | :--- |
-| **Demo Super Admin** | `demosuperadmin@salescrm.test` | `password` | Full system access, roles, users, webhooks, audit logs (demo sandbox). |
-| **Demo Org Admin** | `demoadmin@salescrm.test` | `password` | Organization-wide CRM, users, teams, webhooks (demo sandbox). |
-| **Demo Sales Manager** | `demomanager@salescrm.test` | `password` | Enterprise Sales team records, discount approvals. |
-| **Demo Sales Rep** | `demorep@salescrm.test` | `password` | Own leads, deals, quotations & tasks (Enterprise Sales). |
-| **Demo SMB Rep** | `demosmbrep@salescrm.test` | `password` | Own records (SMB Inbound — isolated from Enterprise Sales). |
-| **Demo Analyst** | `demoanalyst@salescrm.test` | `password` | Read-only dashboards, pipelines & reports. |
+| **Demo Super Admin** | `demosuperadmin@salescrm.test` | `CRM_DEMO_PASSWORD` | Full system access, roles, users, webhooks, audit logs (demo sandbox). |
+| **Demo Org Admin** | `demoadmin@salescrm.test` | `CRM_DEMO_PASSWORD` | Organization-wide CRM, users, teams, webhooks (demo sandbox). |
+| **Demo Sales Manager** | `demomanager@salescrm.test` | `CRM_DEMO_PASSWORD` | Enterprise Sales team records, discount approvals. |
+| **Demo Sales Rep** | `demorep@salescrm.test` | `CRM_DEMO_PASSWORD` | Own leads, deals, quotations & tasks (Enterprise Sales). |
+| **Demo SMB Rep** | `demosmbrep@salescrm.test` | `CRM_DEMO_PASSWORD` | Own records (SMB Inbound — isolated from Enterprise Sales). |
+| **Demo Analyst** | `demoanalyst@salescrm.test` | `CRM_DEMO_PASSWORD` | Read-only dashboards, pipelines & reports. |
 
 ### Immediate Steps Before Production Use
 1. Sign in as `superadmin@salescrm.test` and create your real administrator account under **Settings → Users & Teams** (`/settings/users`).

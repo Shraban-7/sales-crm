@@ -17,7 +17,7 @@ trait HasVisibilityScope
 
         if ($user->hasRole('Sales Manager')) {
             if ($user->team_id === null) {
-                return $query;
+                return $query->whereNull($this->qualifyColumn('team_id'));
             }
 
             return $query->where(function (Builder $sub) use ($user): void {

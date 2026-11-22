@@ -44,19 +44,19 @@ This is the primary production administrator account with **no demo mode restric
 
 | Role | Who Uses This | Email Address | Password | What They Can See & Do |
 | :--- | :--- | :--- | :--- | :--- |
-| **Super Admin (Main)** | System Owner / Primary Admin | `superadmin@salescrm.test` | `Admin@Fusion2026!` *(Configurable via `CRM_ADMIN_PASSWORD` in `.env`)* | Full unrestricted access to every record, system setting, user management, audit logs, and configuration. |
+| **Super Admin (Main)** | System Owner / Primary Admin | `superadmin@salescrm.test` | Set `CRM_ADMIN_PASSWORD` before seeding. | Full unrestricted access to every record, system setting, user management, audit logs, and configuration. |
 
 ### Demo Showcase Accounts
 When seeded with sample data (`DemoCrmSeeder` or `database/seed.sql`), you can sign in using any of the **6 role accounts** below:
 
 | Job Role | Who Uses This | Email Address | Password | What They Can See & Do |
 | :--- | :--- | :--- | :--- | :--- |
-| **Demo Super Admin** | System Owner / IT Head | `demosuperadmin@salescrm.test` | `password` *(or `CRM_DEMO_PASSWORD` in `.env`)* | Full access to every record, pipeline configuration, user provisioning, audit logs, and system settings. |
-| **Demo Org Admin** | Operations / RevOps Lead | `demoadmin@salescrm.test` | `password` *(or `CRM_DEMO_PASSWORD` in `.env`)* | Organization-wide access across all teams, users, companies, deals, quotations, imports, and audit logs. |
-| **Demo Sales Manager** | Enterprise Team Lead (*Tariq Rahman*) | `demomanager@salescrm.test` | `password` *(or `CRM_DEMO_PASSWORD` in `.env`)* | Sees and manages all leads, deals, tasks, follow-ups, and high-discount quote approvals for the **Enterprise Sales** team. |
-| **Demo Sales Rep** | Enterprise Rep (*Nadia Karim*) | `demorep@salescrm.test` | `password` *(or `CRM_DEMO_PASSWORD` in `.env`)* | Works on her own assigned leads, companies, contacts, deals, tasks, follow-ups, and draft quotes (cannot view other teams' data). |
-| **Demo Sales Rep (Team B)** | SMB Rep (*Imran Hossain*) | `demosmbrep@salescrm.test` | `password` *(or `CRM_DEMO_PASSWORD` in `.env`)* | Works exclusively inside the **SMB Inbound** team (useful to verify team data isolation). |
-| **Demo Read-Only Analyst** | Finance / BI Analyst (*Farhana Yasmin*) | `demoanalyst@salescrm.test` | `password` *(or `CRM_DEMO_PASSWORD` in `.env`)* | Views dashboards, reports, pipelines, and records without permission to create, edit, or delete business data. |
+| **Demo Super Admin** | System Owner / IT Head | `demosuperadmin@salescrm.test` | Set `CRM_DEMO_PASSWORD` before seeding. | Full access to every record, pipeline configuration, user provisioning, audit logs, and system settings. |
+| **Demo Org Admin** | Operations / RevOps Lead | `demoadmin@salescrm.test` | Set `CRM_DEMO_PASSWORD` before seeding. | Organization-wide access across all teams, users, companies, deals, quotations, imports, and audit logs. |
+| **Demo Sales Manager** | Enterprise Team Lead (*Tariq Rahman*) | `demomanager@salescrm.test` | Set `CRM_DEMO_PASSWORD` before seeding. | Sees and manages all leads, deals, tasks, follow-ups, and high-discount quote approvals for the **Enterprise Sales** team. |
+| **Demo Sales Rep** | Enterprise Rep (*Nadia Karim*) | `demorep@salescrm.test` | Set `CRM_DEMO_PASSWORD` before seeding. | Works on her own assigned leads, companies, contacts, deals, tasks, follow-ups, and draft quotes (cannot view other teams' data). |
+| **Demo Sales Rep (Team B)** | SMB Rep (*Imran Hossain*) | `demosmbrep@salescrm.test` | Set `CRM_DEMO_PASSWORD` before seeding. | Works exclusively inside the **SMB Inbound** team (useful to verify team data isolation). |
+| **Demo Read-Only Analyst** | Finance / BI Analyst (*Farhana Yasmin*) | `demoanalyst@salescrm.test` | Set `CRM_DEMO_PASSWORD` before seeding. | Views dashboards, reports, pipelines, and records without permission to create, edit, or delete business data. |
 
 > **Interactive Demo Mode:** Demo mode defaults to `false` for a clean corporate installation. You can enable demo mode and login pre-fill showcase anytime directly from the database (`UPDATE system_settings SET value = '1' WHERE `key` = 'demo_mode';`) or via the in-app **System Settings** page (`/settings/system`).
 
